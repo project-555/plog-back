@@ -1,10 +1,11 @@
-package com.plogcareers.backend.blog.entity;
+package com.plogcareers.backend.blog.domain.entity;
 
 import com.plogcareers.backend.ums.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name="blog", schema = "plog_blog")
@@ -17,6 +18,7 @@ public class Blog {
     private String title;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "short_intro")
