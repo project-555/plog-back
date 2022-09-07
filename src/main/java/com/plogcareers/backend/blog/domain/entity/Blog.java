@@ -1,11 +1,10 @@
 package com.plogcareers.backend.blog.domain.entity;
 
 import com.plogcareers.backend.ums.domain.entity.User;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import javax.persistence.*;
+
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name="blog", schema = "plog_blog")

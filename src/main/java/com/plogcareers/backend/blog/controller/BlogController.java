@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/blog")
 public class BlogController {
 
-    @Autowired
-    BlogRepository blogRepository;
 
     @GetMapping("/hello")
     public String helloWorld(){
