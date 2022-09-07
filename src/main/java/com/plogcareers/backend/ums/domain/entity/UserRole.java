@@ -2,7 +2,7 @@ package com.plogcareers.backend.ums.domain.entity;
 
 import lombok.*;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 
 @AllArgsConstructor

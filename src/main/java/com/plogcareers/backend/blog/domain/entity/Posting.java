@@ -1,10 +1,11 @@
 package com.plogcareers.backend.blog.domain.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(schema = "plog_blog", name = "posting")
 public class Posting {
-    // TODO: 작성 예정
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long id;
 }
