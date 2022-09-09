@@ -1,9 +1,5 @@
 # Postgresql
 spring:
-  datasource:
-    url: jdbc:postgresql://db.plogcareers.com:5432/plog_dev
-    username: plog
-    password: 565plog9632@
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -14,7 +10,15 @@ spring:
       ddl-auto: none
       format_sql: true
     show-sql: true
-
 #logging:
 #  level:
 #    root: debug
+
+---
+spring:
+  profiles:
+    active: local
+---
+spring:
+  profiles:
+    active: dev
