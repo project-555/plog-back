@@ -1,3 +1,5 @@
+server:
+  port: 80
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/plog_dev
