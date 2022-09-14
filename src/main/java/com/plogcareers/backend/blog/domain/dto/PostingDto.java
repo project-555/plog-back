@@ -1,15 +1,16 @@
-package com.plogcareers.backend.post.dto;
+package com.plogcareers.backend.blog.domain.dto;
 
-import com.plogcareers.backend.post.entity.Post;
+import com.plogcareers.backend.blog.domain.entity.Posting;
 import lombok.*;
 
+import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
-public class PostDto {
+public class PostingDto {
     private Long id;
     private String title;
     private String htmlContent;
@@ -25,8 +26,8 @@ public class PostDto {
     private String thumbnailImageUrl;
     private String mdContent;
 
-    public Post toEntity() {
-        Post post = Post.builder()
+    public Posting ToString() {
+        Posting posting = Posting.builder()
                 .id(id)
                 .title(title)
                 .htmlContent(htmlContent)
@@ -42,11 +43,11 @@ public class PostDto {
                 .thumbnailImageUrl(thumbnailImageUrl)
                 .mdContent(mdContent)
                 .build();
-        return post;
+        return posting;
     }
 
     @Builder
-    public PostDto(Long id, String title, String htmlContent, int userId, int categoryId, int blogId, int stateId, int hitCnt, LocalDateTime createDt, LocalDateTime updateDt, boolean isCommentAllowed, boolean isStarAllowed, String thumbnailImageUrl, String mdContent) {
+    public PostingDto(Long id, String title, String htmlContent, int userId, int categoryId, int blogId, int stateId, int hitCnt, LocalDateTime createDt, LocalDateTime updateDt, boolean isCommentAllowed, boolean isStarAllowed, String thumbnailImageUrl, String mdContent) {
         this.id = id;
         this.title = title;
         this.htmlContent = htmlContent;
