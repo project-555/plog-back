@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://db.plogcareers.com:5432/plog_dev
+    username: plog
+    password: 565plog9632@

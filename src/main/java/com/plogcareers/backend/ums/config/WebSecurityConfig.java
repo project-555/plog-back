@@ -46,7 +46,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT,"/blog/**").hasRole("USER")
                 .antMatchers(HttpMethod.PATCH,"/blog/**").hasRole("USER")
                 .antMatchers(HttpMethod.DELETE,"/blog/**").hasRole("USER")
-                .antMatchers("/hello").hasRole("USER")
                 .anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),

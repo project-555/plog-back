@@ -1,7 +1,7 @@
 package com.plogcareers.backend.ums.security;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.security.core.Authentication;
 
