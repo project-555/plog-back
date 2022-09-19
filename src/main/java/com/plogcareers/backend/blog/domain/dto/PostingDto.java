@@ -4,13 +4,16 @@ import com.plogcareers.backend.blog.domain.entity.Posting;
 import lombok.*;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
+@NoArgsConstructor()
 public class PostingDto {
+    @Id
     private Long id;
     private String title;
     private String htmlContent;
@@ -26,7 +29,7 @@ public class PostingDto {
     private String thumbnailImageUrl;
     private String mdContent;
 
-    public Posting ToString() {
+    public Posting toEntity() {
         Posting posting = Posting.builder()
                 .id(id)
                 .title(title)
