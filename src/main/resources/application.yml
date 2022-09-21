@@ -1,5 +1,7 @@
 # Postgresql
 spring:
+  profiles:
+    include: errors
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -13,6 +15,7 @@ spring:
 #logging:
 #  level:
 #    root: debug
+
 
 ---
 spring:
