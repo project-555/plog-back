@@ -1,31 +1,32 @@
 package com.plogcareers.backend.blog.service;
 
 import com.plogcareers.backend.blog.domain.entity.Posting;
-import com.plogcareers.backend.blog.domain.dto.PostingDto;
+import com.plogcareers.backend.blog.domain.dto.PostingRequest;
 import com.plogcareers.backend.blog.repository.PostingRepository;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 
 @Service
 @RequiredArgsConstructor
 public class PostingService {
 
-    private PostingRepository postingRepository;
+    private final PostingRepository postingRepository;
 
     // 글 저장
     @Transactional
-    public Long savePost(@NotNull PostingDto postingDto) {
-        return postingRepository.save(postingDto.toEntity()).getId();
+    public void savePost(@NotNull PostingRequest postingRequest) {
+        Posting posting = postingRepository.save(postingRequest.toEntity());
+        System.out.println(posting);
     }
 
     // 글 가져오기
     @Transactional
-    public PostingDto getPost(Long id) {
+    public PostingRequest getPost(Long id) {
         Posting posting = postingRepository.findById(id).get();
-        PostingDto postingDto = PostingDto.builder()
+        PostingRequest postingDto = PostingRequest.builder()
                 .id(posting.getId())
                 .title(posting.getTitle())
                 .htmlContent(posting.getHtmlContent())

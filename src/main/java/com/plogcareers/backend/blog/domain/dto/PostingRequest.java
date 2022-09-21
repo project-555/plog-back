@@ -8,6 +8,11 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+enum categoryId
+
+
+enum stateId
+
 @Getter
 @Setter
 @ToString
@@ -30,7 +35,7 @@ public class PostingDto {
     private String mdContent;
 
     public Posting toEntity() {
-        Posting posting = Posting.builder()
+        return Posting.builder()
                 .id(id)
                 .title(title)
                 .htmlContent(htmlContent)
@@ -39,14 +44,13 @@ public class PostingDto {
                 .blogId(blogId)
                 .stateId(stateId)
                 .hitCnt(hitCnt)
-                .createDt(createDt)
-                .updateDt(updateDt)
+                .createDt(LocalDateTime.now())
+                .updateDt(LocalDateTime.now())
                 .isCommentAllowed(isCommentAllowed)
                 .isStarAllowed(isStarAllowed)
                 .thumbnailImageUrl(thumbnailImageUrl)
                 .mdContent(mdContent)
                 .build();
-        return posting;
     }
 
     @Builder
