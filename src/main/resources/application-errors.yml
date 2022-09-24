@@ -1,0 +1,11 @@
+std-errors:
+  errors:
+    LOGIN_EMAIL_PW_UNMATCHED:
+      code: 1001
+      message: "이메일이나 비밀번호가 일치하지 않습니다."
+    EMAIL_ALREADY_EXIST:
+      code: 1002
+      message: "해당 이메일이 이미 존재합니다."
+    JOIN_FAILED:
+      code: 1003
+      message: "회원가입에 실패하였습니다."
