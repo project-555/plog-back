@@ -1,5 +1,7 @@
 package com.plogcareers.backend.blog.service;
 
+import com.plogcareers.backend.blog.domain.dto.PostingDeleteRequest;
+import com.plogcareers.backend.blog.domain.dto.PostingResponse;
 import com.plogcareers.backend.blog.domain.entity.Posting;
 import com.plogcareers.backend.blog.domain.dto.PostingRequest;
 import com.plogcareers.backend.blog.repository.PostingRepository;
@@ -24,9 +26,9 @@ public class PostingService {
 
     // 글 가져오기
     @Transactional
-    public PostingRequest getPost(Long id) {
+    public PostingResponse getPost(Long id) {
         Posting posting = postingRepository.findById(id).get();
-        PostingRequest postingDto = PostingRequest.builder()
+        PostingResponse postingResponse = PostingResponse.builder()
                 .id(posting.getId())
                 .title(posting.getTitle())
                 .htmlContent(posting.getHtmlContent())
@@ -37,12 +39,12 @@ public class PostingService {
                 .thumbnailImageUrl(posting.getThumbnailImageUrl())
                 .mdContent(posting.getMdContent())
                 .build();
-        return postingDto;
+        return postingResponse;
     }
 
     // 글 삭제
     @Transactional
-    public void deletePost(Long id) {
-        postingRepository.deleteById(id);
+    public void deletePost(@NotNull PostingDeleteRequest postingDeleteRequest) {
+        postingRepository.deleteById(postingDeleteRequest.toEntity().getId());
     }
 }
