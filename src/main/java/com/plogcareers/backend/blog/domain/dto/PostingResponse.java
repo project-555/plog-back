@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class PostingRequest {
+public class PostingResponse {
 
     private Long id;
     private String title;
@@ -45,7 +45,7 @@ public class PostingRequest {
     }
 
     @Builder
-    public PostingRequest(Long id, String title, String htmlContent, int userId, int categoryId, int blogId, int stateId, int hitCnt, LocalDateTime createDt, LocalDateTime updateDt, boolean isCommentAllowed, boolean isStarAllowed, String thumbnailImageUrl, String mdContent) {
+    public PostingResponse(Long id, String title, String htmlContent, int userId, int categoryId, int blogId, int stateId, int hitCnt, LocalDateTime createDt, LocalDateTime updateDt, boolean isCommentAllowed, boolean isStarAllowed, String thumbnailImageUrl, String mdContent) {
         this.id = id;
         this.title = title;
         this.htmlContent = htmlContent;
