@@ -5,7 +5,13 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-# JPA
+
+# springfox
+springfox:
+  documentation:
+    swagger:
+      use-model-v3: false
+  # JPA
   jpa:
     hibernate:
       dialect: org.hibernate.dialect.PostgreSQL10Dialect
