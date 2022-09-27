@@ -2,6 +2,7 @@ package com.plogcareers.backend.blog.service;
 
 import com.plogcareers.backend.blog.domain.dto.PostingDeleteRequest;
 import com.plogcareers.backend.blog.domain.dto.PostingResponse;
+import com.plogcareers.backend.blog.domain.dto.PostingUpdateRequest;
 import com.plogcareers.backend.blog.domain.entity.Posting;
 import com.plogcareers.backend.blog.domain.dto.PostingRequest;
 import com.plogcareers.backend.blog.repository.PostingRepository;
@@ -39,8 +40,21 @@ public class PostingService {
                 .thumbnailImageUrl(posting.getThumbnailImageUrl())
                 .mdContent(posting.getMdContent())
                 .build();
+        System.out.println(postingResponse);
         return postingResponse;
     }
+
+//    @Transactional
+//    public void updatePost(Long id, PostingUpdateRequest postingUpdateRequest){
+//        Posting posting = postingRepository.findById(id).get();
+//        posting.setTitle(postingUpdateRequest.getTitle());
+//        posting.setHtmlContent(postingUpdateRequest.getHtmlContent());
+//        posting.setCategoryId(postingUpdateRequest.getCategoryId());
+//        posting.setStateId(postingUpdateRequest.getStateId());
+//        posting.setThumbnailImageUrl(postingUpdateRequest.getThumbnailImageUrl());
+//        posting.setMdContent(postingUpdateRequest.getMdContent());
+//        posting = postingRepository.save(postingUpdateRequest.toEntity());
+//    }
 
     // 글 삭제
     @Transactional
