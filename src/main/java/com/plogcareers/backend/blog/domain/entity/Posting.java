@@ -1,19 +1,24 @@
 package com.plogcareers.backend.blog.domain.entity;
 
+import com.plogcareers.backend.blog.domain.dto.PostingDetailResponse;
+import com.plogcareers.backend.ums.domain.entity.User;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Builder
 @Getter
 @Setter
 @Entity
 @Table(name = "posting", schema = "plog_blog")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
+@AllArgsConstructor
 @DynamicInsert
+@DynamicUpdate
 public class Posting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,17 +30,19 @@ public class Posting {
     @Column(name = "html_content")
     private String htmlContent;
 
-    @Column(name = "user_id", nullable = false)
-    private int userId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name = "category_id", nullable = false)
-    private int categoryId;
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     @Column(name = "blog_id", nullable = false)
-    private int blogId;
+    private Long blogId;
 
     @Column(name = "state_id")
-    private int stateId;
+    private Long stateId;
 
     @Column(name = "hit_cnt", columnDefinition = "0")
     private int hitCnt;
@@ -58,23 +65,17 @@ public class Posting {
     @Column(name = "md_content", nullable = false)
     private String mdContent;
 
-
-    @Builder
-    public Posting(Long id, String title, String htmlContent, int userId, int categoryId, int blogId, int stateId, int hitCnt, LocalDateTime createDt, LocalDateTime updateDt, boolean isCommentAllowed, boolean isStarAllowed, String thumbnailImageUrl, String mdContent) {
-        this.id = id;
-        this.title = title;
-        this.htmlContent = htmlContent;
-        this.userId = userId;
-        this.categoryId = categoryId;
-        this.blogId = blogId;
-        this.stateId = stateId;
-        this.hitCnt = hitCnt;
-        this.createDt = createDt;
-        this.updateDt = updateDt;
-        this.isCommentAllowed = isCommentAllowed;
-        this.isStarAllowed = isStarAllowed;
-        this.thumbnailImageUrl = thumbnailImageUrl;
-        this.mdContent = mdContent;
+    public PostingDetailResponse toPostingDetailResponse() {
+        return PostingDetailResponse.builder()
+                .id(this.id)
+                .htmlContent(this.htmlContent)
+                .mdContent(this.mdContent)
+                .category(this.category.toPostingDetailCategoryDto())
+                .isStarAllowed(this.isStarAllowed)
+                .isCommentAllowed(this.isCommentAllowed)
+                .userNickname(this.user.getNickname())
+                .updateDt(this.updateDt)
+                .createDt(this.createDt)
+                .build();
     }
-
 }
