@@ -1,4 +1,4 @@
-package com.plogcareers.backend.blog.domain.dto;
+package com.plogcareers.backend.blog.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostingDetailCommentDto {
+public class PostingCommentDTO {
 
     private String commentContent;
     private boolean is_secret;

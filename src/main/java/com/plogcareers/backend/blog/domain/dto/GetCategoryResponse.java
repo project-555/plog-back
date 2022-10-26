@@ -1,15 +1,12 @@
 package com.plogcareers.backend.blog.domain.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostingDetailCategoryDto {
+public class GetCategoryResponse {
     private Long categoryId;
     private String categoryName;
 }

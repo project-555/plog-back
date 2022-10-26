@@ -2,6 +2,7 @@ package com.plogcareers.backend.ums.domain.dto;
 
 import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.domain.entity.UserRole;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,33 +3,34 @@ package com.plogcareers.backend.blog.domain.dto;
 import com.plogcareers.backend.blog.domain.entity.Posting;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @ToString
 @Builder
-@RequiredArgsConstructor
-public class PostingUpdateRequest {
+@AllArgsConstructor
+public class CreatePostingRequest {
 
+    private Long id;
     private String title;
     private String htmlContent;
-    private Long categoryId;
+    private Long blogId;
     private Long stateId;
-    private LocalDateTime updateDt;
+    private Long userId;
+    private int hitCnt;
     private boolean isCommentAllowed;
     private boolean isStarAllowed;
     private String thumbnailImageUrl;
     private String mdContent;
 
-    public Posting toPostingEntity(Long id) {
+    public Posting toEntity() {
         return Posting.builder()
                 .id(id)
                 .title(title)
                 .htmlContent(htmlContent)
-                .category(categoryId)
+                .blogId(blogId)
+                .userId(userId)
                 .stateId(stateId)
-                .updateDt(updateDt)
+                .hitCnt(hitCnt)
                 .isCommentAllowed(isCommentAllowed)
                 .isStarAllowed(isStarAllowed)
                 .thumbnailImageUrl(thumbnailImageUrl)

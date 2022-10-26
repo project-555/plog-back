@@ -1,7 +1,5 @@
 package com.plogcareers.backend.blog.domain.dto;
 
-import com.plogcareers.backend.blog.domain.entity.Posting;
-import com.plogcareers.backend.ums.domain.entity.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,13 +10,12 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PostingDetailResponse {
+public class GetPostingResponse {
 
     private Long id;
     private String title;
     private String htmlContent;
-    private String userNickname;
-    private PostingDetailCategoryDto category;
+    private Long categoryId;
     private Long stateId;
     private int hitCnt;
     private LocalDateTime createDt;

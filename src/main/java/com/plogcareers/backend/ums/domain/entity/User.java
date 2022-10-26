@@ -66,6 +66,7 @@ public class User implements UserDetails {
     @Column(name = "nickname")
     private String nickname;
 
+    @Builder.Default
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     private List<UserRole> roles = new ArrayList<>();
 

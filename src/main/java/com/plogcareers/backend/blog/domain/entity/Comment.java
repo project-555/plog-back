@@ -2,6 +2,8 @@ package com.plogcareers.backend.blog.domain.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "comment", schema = "plog_blog")
@@ -18,6 +20,13 @@ public class Comment {
 
     @Column(name = "parent_comment_id")
     private Long parentCommentId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "parent_comment_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Comment parent;
+
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
+    private List<Comment> children = new ArrayList<>();
 
     @Column(name = "depth")
     private Long depth;

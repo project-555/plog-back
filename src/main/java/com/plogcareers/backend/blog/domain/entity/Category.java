@@ -1,10 +1,12 @@
 package com.plogcareers.backend.blog.domain.entity;
 
-import com.plogcareers.backend.blog.domain.dto.PostingDetailCategoryDto;
+import com.plogcareers.backend.blog.domain.dto.GetCategoryResponse;
+import lombok.Getter;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 @Table(name = "category", schema = "plog_blog")
 public class Category {
     @Id
@@ -23,7 +25,10 @@ public class Category {
     @Column(name = "blog_id")
     private Long blogId;
 
-    public PostingDetailCategoryDto toPostingDetailCategoryDto(){
-        return null;
+    public GetCategoryResponse toPostingDetailCategoryDto(){
+        return GetCategoryResponse.builder()
+                .categoryId(this.id)
+                .categoryName(this.categoryName)
+                .build();
     }
 }
