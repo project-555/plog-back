@@ -1,5 +1,6 @@
 std-errors:
   errors:
+    # ums domain
     LOGIN_EMAIL_PW_UNMATCHED:
       code: 1001
       message: "이메일이나 비밀번호가 일치하지 않습니다."
@@ -9,3 +10,11 @@ std-errors:
     JOIN_FAILED:
       code: 1003
       message: "회원가입에 실패하였습니다."
+    USER_NOT_FOUND:
+      code: 1004
+      message: "정보가 일치하는 유저가 없습니다."
+
+    # blog domain
+    POSTING_NOT_FOUND:
+      code: 2001
+      message: "게시물이 존재하지 않습니다."
