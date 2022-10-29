@@ -2,8 +2,9 @@ package com.plogcareers.backend.blog.controller;
 
 import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
 import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
+import com.plogcareers.backend.blog.domain.dto.ListPostingTagResponse;
 import com.plogcareers.backend.blog.exception.PostingNotFoundException;
-import com.plogcareers.backend.blog.service.BlogService;
+import com.plogcareers.backend.blog.exception.TagNotFoundException;
 import com.plogcareers.backend.blog.service.PostingService;
 import com.plogcareers.backend.common.domain.dto.SDataResponse;
 import com.plogcareers.backend.common.domain.dto.SResponse;
@@ -23,14 +24,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/blog")
 public class BlogController {
 
-    private final BlogService blogService;
     private final PostingService postingService;
     private final ErrorMapper errorMapper;
     // 포스팅 단건을 생성하는 메서드
     @PostMapping("/posting")
-    public ResponseEntity<SResponse> createPosting(@RequestBody CreatePostingRequest postingRequest){
-        postingService.createPosting(postingRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<SResponse> createPosting(@RequestBody CreatePostingRequest postingRequest) throws TagNotFoundException {
+        Long postingId = postingService.createPosting(postingRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new SDataResponse<>(postingId));
     }
     // 포스팅 단건을 조회하는 메서드
     @GetMapping("/posting/{id}")
@@ -70,6 +70,17 @@ public class BlogController {
             return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.listStates()));
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMapper.toErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    // 포스팅 태그를 조회하는 메서드
+    @GetMapping("/posting/{postingId}/tag")
+    public ResponseEntity GetPostingTag(@PathVariable Long postingId) {
+        try {
+            ListPostingTagResponse listPostingTag = postingService.listPostingTag(postingId);
+            return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(listPostingTag));
+        } catch (PostingNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse("POSTING_NOT_FOUND"));
         }
     }
 }

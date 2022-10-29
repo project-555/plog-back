@@ -3,6 +3,8 @@ package com.plogcareers.backend.blog.domain.dto;
 import com.plogcareers.backend.blog.domain.entity.Posting;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
@@ -10,7 +12,6 @@ import lombok.*;
 @AllArgsConstructor
 public class CreatePostingRequest {
 
-    private Long id;
     private String title;
     private String htmlContent;
     private Long blogId;
@@ -21,10 +22,10 @@ public class CreatePostingRequest {
     private boolean isStarAllowed;
     private String thumbnailImageUrl;
     private String mdContent;
+    private List<Long> tagIds;
 
     public Posting toEntity() {
         return Posting.builder()
-                .id(id)
                 .title(title)
                 .htmlContent(htmlContent)
                 .blogId(blogId)

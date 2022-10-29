@@ -8,6 +8,13 @@ import com.plogcareers.backend.blog.domain.entity.Category;
 import com.plogcareers.backend.blog.domain.entity.Posting;
 import com.plogcareers.backend.blog.domain.entity.PostingTag;
 import com.plogcareers.backend.blog.domain.entity.State;
+import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
+import com.plogcareers.backend.blog.domain.dto.GetCategoryResponse;
+import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
+import com.plogcareers.backend.blog.domain.dto.ListPostingTagResponse;
+import com.plogcareers.backend.blog.domain.entity.Category;
+import com.plogcareers.backend.blog.domain.entity.Posting;
+import com.plogcareers.backend.blog.domain.entity.PostingTag;
 import com.plogcareers.backend.blog.domain.model.PostingTagDTO;
 import com.plogcareers.backend.blog.domain.model.StateDTO;
 import com.plogcareers.backend.blog.exception.PostingNotFoundException;
@@ -15,6 +22,11 @@ import com.plogcareers.backend.blog.repository.CategoryRepository;
 import com.plogcareers.backend.blog.repository.PostingRepository;
 import com.plogcareers.backend.blog.repository.PostingTagRepository;
 import com.plogcareers.backend.blog.repository.StateRepository;
+import com.plogcareers.backend.blog.exception.TagNotFoundException;
+import com.plogcareers.backend.blog.repository.CategoryRepository;
+import com.plogcareers.backend.blog.repository.PostingRepository;
+import com.plogcareers.backend.blog.repository.PostingTagRepository;
+import com.plogcareers.backend.blog.repository.TagRepository;
 import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.repository.UserRepository;
@@ -23,9 +35,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,12 +44,21 @@ public class PostingService {
     private final PostingRepository postingRepository;
     private final CategoryRepository categoryRepository;
     private final PostingTagRepository postingTagRepository;
+    private final TagRepository tagRepository;
     private final UserRepository userRepository;
     private final StateRepository stateRepository;
     // 글 저장
     @Transactional
-    public Long createPosting(@NotNull CreatePostingRequest createPostingRequest) {
+    public Long createPosting(@NotNull CreatePostingRequest createPostingRequest) throws TagNotFoundException {
         Posting posting = postingRepository.save(createPostingRequest.toEntity());
+        for (Long tagId: createPostingRequest.getTagIds()) {
+            postingTagRepository.save(
+                    PostingTag.builder()
+                            .posting(posting)
+                            .tag(tagRepository.findById(tagId).orElseThrow(TagNotFoundException::new))
+                            .build()
+            );
+        }
         return posting.getId();
     }
 
@@ -71,10 +90,10 @@ public class PostingService {
     // 포스팅 태그 가져오기
     @Transactional
     public ListPostingTagResponse listPostingTag(Long postingId) throws PostingNotFoundException {
-        ArrayList<PostingTagDTO> postingTagList = postingTagRepository.findPostingTagsByPostingId(postingId)
+        List<PostingTagDTO> postingTagList = postingTagRepository.findPostingTagsByPostingId(postingId)
                 .stream()
                 .map(PostingTag::toPostingTagDto)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .toList();
         return ListPostingTagResponse.builder()
                 .postingTags(postingTagList)
                 .build();
