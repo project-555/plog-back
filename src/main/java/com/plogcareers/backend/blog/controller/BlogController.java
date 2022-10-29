@@ -7,6 +7,7 @@ import com.plogcareers.backend.blog.service.BlogService;
 import com.plogcareers.backend.blog.service.PostingService;
 import com.plogcareers.backend.common.domain.dto.SDataResponse;
 import com.plogcareers.backend.common.domain.dto.SResponse;
+import com.plogcareers.backend.common.error.ErrorCode;
 import com.plogcareers.backend.common.error.ErrorMapper;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import io.swagger.annotations.ApiOperation;
@@ -38,9 +39,11 @@ public class BlogController {
             GetPostingResponse posting = postingService.getPosting(id);
             return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(posting));
         } catch (PostingNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse("POSTING_NOT_FOUND"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse(ErrorCode.POSTING_NOT_FOUND));
         } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse("USER_NOT_FOUND"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse(ErrorCode.USER_NOT_FOUND));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMapper.toErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
         }
     }
     // 포스팅 단건을 삭제하는 메서드
@@ -50,7 +53,9 @@ public class BlogController {
             postingService.deletePosting(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (PostingNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse("POSTING_NOT_FOUND"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse(ErrorCode.POSTING_NOT_FOUND));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMapper.toErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
         }
     }
 
@@ -64,7 +69,7 @@ public class BlogController {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.listStates()));
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMapper.toErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
         }
     }
 }
