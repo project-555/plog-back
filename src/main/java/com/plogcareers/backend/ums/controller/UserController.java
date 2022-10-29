@@ -3,6 +3,7 @@ package com.plogcareers.backend.ums.controller;
 import com.plogcareers.backend.common.domain.dto.SDataResponse;
 import com.plogcareers.backend.common.domain.dto.SErrorResponse;
 import com.plogcareers.backend.common.domain.dto.SResponse;
+import com.plogcareers.backend.common.error.ErrorCode;
 import com.plogcareers.backend.common.error.ErrorMapper;
 import com.plogcareers.backend.ums.domain.dto.UserJoinRequest;
 import com.plogcareers.backend.ums.domain.dto.UserLoginRequest;
@@ -10,14 +11,14 @@ import com.plogcareers.backend.ums.domain.dto.UserLoginResponse;
 import com.plogcareers.backend.ums.exception.EmailDuplicatedException;
 import com.plogcareers.backend.ums.exception.LoginFailException;
 import com.plogcareers.backend.ums.service.UserService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.lang.reflect.ParameterizedType;
 
 @RequiredArgsConstructor
 @RestController
@@ -38,7 +39,7 @@ public class UserController {
         try {
             userService.join(request);
         } catch (PSQLException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMapper.toErrorResponse("EMAIL_ALREADY_EXIST"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMapper.toErrorResponse(ErrorCode.EMAIL_ALREADY_EXIST));
         }
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -54,7 +55,7 @@ public class UserController {
         try {
             userService.emailCheck(email);
         } catch (EmailDuplicatedException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMapper.toErrorResponse("EMAIL_ALREADY_EXIST"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMapper.toErrorResponse(ErrorCode.EMAIL_ALREADY_EXIST));
         }
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -72,7 +73,7 @@ public class UserController {
             var user = userService.login(request);
             return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(user));
         } catch (LoginFailException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMapper.toErrorResponse("LOGIN_EMAIL_PW_UNMATCHED"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMapper.toErrorResponse(ErrorCode.LOGIN_EMAIL_PW_UNMATCHED));
         }
     }
 }

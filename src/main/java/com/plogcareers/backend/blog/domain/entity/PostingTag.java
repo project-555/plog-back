@@ -1,14 +1,12 @@
 package com.plogcareers.backend.blog.domain.entity;
 
 import com.plogcareers.backend.blog.domain.model.PostingTagDTO;
-import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
-@Builder
 @Table(name = "posting_tag", schema = "plog_blog")
 public class PostingTag {
     @Id
