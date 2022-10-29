@@ -17,7 +17,7 @@ public class ErrorMapper {
 
     Map<String, SErrorResponse> errors = new HashMap<>();
 
-    public SErrorResponse toErrorResponse(String errorName) {
-        return errors.get(errorName);
+    public SErrorResponse toErrorResponse(ErrorCode errorCode) {
+        return errors.get(errorCode.name());
     }
 }
