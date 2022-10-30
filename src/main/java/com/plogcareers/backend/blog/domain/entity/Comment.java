@@ -1,5 +1,7 @@
 package com.plogcareers.backend.blog.domain.entity;
 
+import com.plogcareers.backend.blog.domain.model.CommentDTO;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -43,4 +45,12 @@ public class Comment {
     @Column(name = "update_dt")
     private LocalDateTime updateDt;
 
+    public CommentDTO toCommentDTO() {
+        return CommentDTO.builder()
+                .commentContent(this.commentContent)
+                .updateDt(this.updateDt)
+                .createDt(this.createDt)
+                .children(children.stream().map(Comment::toCommentDTO).toList())
+                .build();
+    }
 }
