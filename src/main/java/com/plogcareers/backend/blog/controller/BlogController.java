@@ -19,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/blog")
@@ -36,7 +38,7 @@ public class BlogController {
     )
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/posting")
-    public ResponseEntity<SResponse> createPosting(@RequestBody CreatePostingRequest postingRequest) {
+    public ResponseEntity<SResponse> createPosting(@Valid @RequestBody CreatePostingRequest postingRequest) {
         try {
             Long postingId = postingService.createPosting(postingRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(new SDataResponse<>(postingId));
