@@ -3,28 +3,37 @@ package com.plogcareers.backend.blog.domain.dto;
 import com.plogcareers.backend.blog.domain.entity.Posting;
 import lombok.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
 @Builder
 @AllArgsConstructor
 public class CreatePostingRequest {
-
-    private Long id;
+    @NotNull
     private String title;
+    @NotNull
     private String htmlContent;
+    @NotNull
     private Long blogId;
+    @NotNull
     private Long stateId;
+    @NotNull
     private Long userId;
+    @Max(value = 0)
     private int hitCnt;
     private boolean isCommentAllowed;
     private boolean isStarAllowed;
     private String thumbnailImageUrl;
+    @NotNull
     private String mdContent;
+    private List<Long> tagIds;
 
     public Posting toEntity() {
         return Posting.builder()
-                .id(id)
                 .title(title)
                 .htmlContent(htmlContent)
                 .blogId(blogId)

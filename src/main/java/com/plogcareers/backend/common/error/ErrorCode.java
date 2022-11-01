@@ -7,6 +7,7 @@ public enum ErrorCode {
     USER_NOT_FOUND,
 
     POSTING_NOT_FOUND,
+    TAG_NOT_FOUND,
 
     INTERNAL_SERVER_ERROR,
 }
