@@ -15,9 +15,11 @@ import java.util.List;
 public class CreatePostingRequest {
     @NotNull
     private String title;
+    @NotNull
     private String htmlContent;
     @NotNull
     private Long blogId;
+    @NotNull
     private Long stateId;
     @NotNull
     private Long userId;
