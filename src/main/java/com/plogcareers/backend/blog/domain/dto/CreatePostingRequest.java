@@ -18,6 +18,8 @@ public class CreatePostingRequest {
     @NotNull
     private String htmlContent;
     @NotNull
+    private Long categoryId;
+    @NotNull
     private Long blogId;
     @NotNull
     private Long stateId;
@@ -38,6 +40,7 @@ public class CreatePostingRequest {
                 .htmlContent(htmlContent)
                 .blogId(blogId)
                 .userId(userId)
+                .categoryId(categoryId)
                 .stateId(stateId)
                 .hitCnt(hitCnt)
                 .isCommentAllowed(isCommentAllowed)
