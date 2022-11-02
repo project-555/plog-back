@@ -31,6 +31,9 @@ public class Posting {
     @Column(name = "user_id")
     private Long userId;
 
+    @Column(name = "category_id")
+    private Long categoryId;
+
     @Column(name = "blog_id", nullable = false)
     private Long blogId;
 

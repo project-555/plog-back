@@ -1,6 +1,6 @@
 package com.plogcareers.backend.blog.domain.entity;
 
-import com.plogcareers.backend.blog.domain.dto.GetCategoryResponse;
+import com.plogcareers.backend.blog.domain.model.CategoryDTO;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -22,13 +22,15 @@ public class Category {
     @Column(name = "sort", nullable = false)
     private int sort;
 
-    @Column(name = "blog_id")
-    private Long blogId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "blog_id")
+    private Blog blog;
 
-    public GetCategoryResponse toPostingDetailCategoryDto(){
-        return GetCategoryResponse.builder()
-                .categoryId(this.id)
-                .categoryName(this.categoryName)
+    public CategoryDTO toCategoryDto(){
+        return CategoryDTO.builder()
+                .categoryId(id)
+                .categoryName(categoryName)
+                .sort(sort)
                 .build();
     }
 }
