@@ -1,24 +1,22 @@
 package com.plogcareers.backend.blog.service;
 
-import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
-import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
-import com.plogcareers.backend.blog.domain.dto.ListCategoryResponse;
-import com.plogcareers.backend.blog.domain.dto.ListPostingTagResponse;
-import com.plogcareers.backend.blog.domain.entity.Category;
-import com.plogcareers.backend.blog.domain.entity.Posting;
-import com.plogcareers.backend.blog.domain.entity.PostingTag;
-import com.plogcareers.backend.blog.domain.entity.State;
+import com.plogcareers.backend.blog.domain.dto.*;
+import com.plogcareers.backend.blog.domain.entity.*;
 import com.plogcareers.backend.blog.domain.model.CategoryDTO;
+import com.plogcareers.backend.blog.domain.model.CommentDTO;
 import com.plogcareers.backend.blog.domain.model.PostingTagDTO;
 import com.plogcareers.backend.blog.domain.model.StateDTO;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.exception.PostingNotFoundException;
 import com.plogcareers.backend.blog.exception.TagNotFoundException;
 import com.plogcareers.backend.blog.repository.*;
-import com.plogcareers.backend.ums.domain.entity.User;
+import com.plogcareers.backend.common.domain.dto.OPagingRequest;
+import com.plogcareers.backend.common.domain.dto.SOPagingResponse;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -28,6 +26,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PostingService {
+
     private final BlogRepository blogRepository;
     private final PostingRepository postingRepository;
     private final CategoryRepository categoryRepository;
@@ -35,11 +34,13 @@ public class PostingService {
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
     private final StateRepository stateRepository;
+    private final CommentRepository commentRepository;
+
     // 글 저장
     @Transactional
     public Long createPosting(@NotNull CreatePostingRequest createPostingRequest) throws TagNotFoundException {
         Posting posting = postingRepository.save(createPostingRequest.toEntity());
-        for (Long tagId: createPostingRequest.getTagIds()) {
+        for (Long tagId : createPostingRequest.getTagIds()) {
             postingTagRepository.save(
                     PostingTag.builder()
                             .posting(posting)
@@ -54,7 +55,7 @@ public class PostingService {
     @Transactional
     public GetPostingResponse getPosting(Long postingId) throws PostingNotFoundException, UserNotFoundException {
         Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
-        User user = userRepository.findById(posting.getUserId()).orElseThrow(UserNotFoundException::new);
+        // TODO: User Vaildation 추가
         return GetPostingResponse.builder()
                 .id(posting.getId())
                 .title(posting.getTitle())
@@ -66,6 +67,7 @@ public class PostingService {
                 .mdContent(posting.getMdContent())
                 .build();
     }
+
     // 카테고리 가져오기
     @Transactional
     public ListCategoryResponse listCategory(Long blogId) throws BlogNotFoundException {
@@ -80,6 +82,7 @@ public class PostingService {
         }
         throw new BlogNotFoundException();
     }
+
     // 포스팅 태그 가져오기
     @Transactional
     public ListPostingTagResponse listPostingTag(Long postingId) throws PostingNotFoundException {
@@ -108,4 +111,15 @@ public class PostingService {
                 .map(state -> new StateDTO(state.getId(), state.getStateName()))
                 .toList();
     }
+
+
+    public SOPagingResponse<List<CommentDTO>> listComments(Long postingId, OPagingRequest request) throws PostingNotFoundException {
+        // TODO: User Vaildation 추가: Case 에 따른 Response 분화 추가
+        if (postingRepository.existsById(postingId)) {
+            Page<Comment> comments = commentRepository.findByPostingIdAndParentIsNullOrderByCreateDtDesc(postingId, PageRequest.of(request.getPage() - 1, request.getPageSize()));
+            return new ListCommentResponse(comments.stream().map(Comment::toCommentDTO).toList()).toOPagingResponse(request.getPage(), request.getPageSize(), comments.getTotalElements());
+        }
+        throw new PostingNotFoundException();
+    }
+
 }
