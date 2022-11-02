@@ -1,15 +1,17 @@
 package com.plogcareers.backend.blog.service;
 
 import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
-import com.plogcareers.backend.blog.domain.dto.GetCategoryResponse;
 import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
+import com.plogcareers.backend.blog.domain.dto.ListCategoryResponse;
 import com.plogcareers.backend.blog.domain.dto.ListPostingTagResponse;
 import com.plogcareers.backend.blog.domain.entity.Category;
 import com.plogcareers.backend.blog.domain.entity.Posting;
 import com.plogcareers.backend.blog.domain.entity.PostingTag;
 import com.plogcareers.backend.blog.domain.entity.State;
+import com.plogcareers.backend.blog.domain.model.CategoryDTO;
 import com.plogcareers.backend.blog.domain.model.PostingTagDTO;
 import com.plogcareers.backend.blog.domain.model.StateDTO;
+import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.exception.PostingNotFoundException;
 import com.plogcareers.backend.blog.exception.TagNotFoundException;
 import com.plogcareers.backend.blog.repository.*;
@@ -26,7 +28,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PostingService {
-
+    private final BlogRepository blogRepository;
     private final PostingRepository postingRepository;
     private final CategoryRepository categoryRepository;
     private final PostingTagRepository postingTagRepository;
@@ -66,23 +68,31 @@ public class PostingService {
     }
     // 카테고리 가져오기
     @Transactional
-    public GetCategoryResponse getCategory(Long postingId) {
-        Category category = categoryRepository.findById(postingId).orElseThrow(RuntimeException::new);
-        return GetCategoryResponse.builder()
-                .categoryId(category.getId())
-                .categoryName(category.getCategoryName())
-                .build();
+    public ListCategoryResponse listCategory(Long blogId) throws BlogNotFoundException {
+        if (blogRepository.existsById(blogId)) {
+            List<CategoryDTO> categoryList = categoryRepository.findCategoryByBlogIdOrderBySort(blogId)
+                    .stream()
+                    .map(Category::toCategoryDto)
+                    .toList();
+            return ListCategoryResponse.builder()
+                    .category(categoryList)
+                    .build();
+        }
+        throw new BlogNotFoundException();
     }
     // 포스팅 태그 가져오기
     @Transactional
     public ListPostingTagResponse listPostingTag(Long postingId) throws PostingNotFoundException {
-        List<PostingTagDTO> postingTagList = postingTagRepository.findPostingTagsByPostingId(postingId)
-                .stream()
-                .map(PostingTag::toPostingTagDto)
-                .toList();
-        return ListPostingTagResponse.builder()
-                .postingTags(postingTagList)
-                .build();
+        if (postingRepository.existsById(postingId)) {
+            List<PostingTagDTO> postingTagList = postingTagRepository.findPostingTagsByPostingId(postingId)
+                    .stream()
+                    .map(PostingTag::toPostingTagDto)
+                    .toList();
+            return ListPostingTagResponse.builder()
+                    .postingTags(postingTagList)
+                    .build();
+        }
+        throw new PostingNotFoundException();
     }
 
     // 글 삭제

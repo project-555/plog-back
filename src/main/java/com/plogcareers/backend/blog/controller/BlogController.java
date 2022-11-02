@@ -2,7 +2,9 @@ package com.plogcareers.backend.blog.controller;
 
 import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
 import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
+import com.plogcareers.backend.blog.domain.dto.ListCategoryResponse;
 import com.plogcareers.backend.blog.domain.dto.ListPostingTagResponse;
+import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.exception.PostingNotFoundException;
 import com.plogcareers.backend.blog.exception.TagNotFoundException;
 import com.plogcareers.backend.blog.service.PostingService;
@@ -119,6 +121,25 @@ public class BlogController {
             return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(listPostingTag));
         } catch (PostingNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse(ErrorCode.POSTING_NOT_FOUND));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMapper.toErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
+        }
+    }
+    @ApiOperation(value = "Category 리스트 조회")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "정상 조회(data)", response = ListCategoryResponse.class),
+            @ApiResponse(code = 299, message = "정상 조회(outer)", response = SDataResponse.class),
+            @ApiResponse(code = 404, message = "블로그 없음"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    }
+    )
+    @GetMapping("/{blogId}/categories")
+    public ResponseEntity<SResponse> GetCategory(@PathVariable Long blogId) {
+        try {
+            ListCategoryResponse listCategoryResponse = postingService.listCategory(blogId);
+            return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(listCategoryResponse));
+        } catch (BlogNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse(ErrorCode.BLOG_NOT_FOUND));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMapper.toErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
         }
