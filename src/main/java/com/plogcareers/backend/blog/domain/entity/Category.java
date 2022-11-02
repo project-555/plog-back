@@ -22,7 +22,7 @@ public class Category {
     @Column(name = "sort", nullable = false)
     private int sort;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "blog_id")
     private Blog blog;
 
