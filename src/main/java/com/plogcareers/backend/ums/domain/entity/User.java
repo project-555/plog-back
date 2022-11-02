@@ -1,11 +1,12 @@
 package com.plogcareers.backend.ums.domain.entity;
 
-import javax.persistence.*;
+import com.plogcareers.backend.blog.domain.model.CommentUserDTO;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -79,6 +80,10 @@ public class User implements UserDetails {
         return roleStrs.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
+    }
+
+    public CommentUserDTO toCommentUserDTO() {
+        return CommentUserDTO.builder().userId(this.id).nickname(this.nickname).build();
     }
 
     @Override

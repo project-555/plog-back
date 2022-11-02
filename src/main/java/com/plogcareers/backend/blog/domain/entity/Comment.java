@@ -1,6 +1,7 @@
 package com.plogcareers.backend.blog.domain.entity;
 
 import com.plogcareers.backend.blog.domain.model.CommentDTO;
+import com.plogcareers.backend.ums.domain.entity.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,8 +15,10 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "posting_id")
     private Long postingId;
@@ -45,12 +48,22 @@ public class Comment {
     @Column(name = "update_dt")
     private LocalDateTime updateDt;
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public CommentDTO toCommentDTO() {
         return CommentDTO.builder()
+                .id(this.id)
                 .commentContent(this.commentContent)
                 .updateDt(this.updateDt)
+                .user(this.user.toCommentUserDTO())
                 .createDt(this.createDt)
-                .children(children.stream().map(Comment::toCommentDTO).toList())
+                .children(this.children.stream().map(Comment::toCommentDTO).toList())
                 .build();
     }
 }

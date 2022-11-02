@@ -1,10 +1,10 @@
 package com.plogcareers.backend.blog.repository;
 
 import com.plogcareers.backend.blog.domain.entity.Comment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findByPostingIdAndParentIsNullOrderByCreateDtDesc(Long postingId);
+    Page<Comment> findByPostingIdAndParentIsNullOrderByCreateDtDesc(Long postingId, Pageable pageable);
 }
