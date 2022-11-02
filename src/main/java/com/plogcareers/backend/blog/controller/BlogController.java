@@ -3,29 +3,29 @@ package com.plogcareers.backend.blog.controller;
 import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
 import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
 import com.plogcareers.backend.blog.domain.dto.ListCategoryResponse;
+import com.plogcareers.backend.blog.domain.dto.ListCommentResponse;
 import com.plogcareers.backend.blog.domain.dto.ListPostingTagResponse;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.exception.PostingNotFoundException;
 import com.plogcareers.backend.blog.exception.TagNotFoundException;
 import com.plogcareers.backend.blog.service.PostingService;
-import com.plogcareers.backend.common.domain.dto.SDataResponse;
-import com.plogcareers.backend.common.domain.dto.SResponse;
+import com.plogcareers.backend.common.domain.dto.*;
 import com.plogcareers.backend.common.error.ErrorCode;
 import com.plogcareers.backend.common.error.ErrorMapper;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/blog")
+@Api(tags = "Blog Domain")
 public class BlogController {
 
     private final PostingService postingService;
@@ -140,6 +140,25 @@ public class BlogController {
             return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(listCategoryResponse));
         } catch (BlogNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse(ErrorCode.BLOG_NOT_FOUND));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMapper.toErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    @ApiOperation(value = "포스팅 ID로 덧글 조회")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "정상조회 (data)", response = ListCommentResponse.class),
+            @ApiResponse(code = 299, message = "정상조회 (outer)", response = SOPagingResponse.class),
+            @ApiResponse(code = 400, message = "잘못된 유저 요청", response = SErrorResponse.class),
+            @ApiResponse(code = 404, message = "해당하는 포스팅 ID를 가진 포스팅 없음", response = SErrorResponse.class),
+            @ApiResponse(code = 500, message = "서버 에러", response = SErrorResponse.class)}
+    )
+    @GetMapping("/posting/{postingId}/comments")
+    public ResponseEntity<SResponse> listComments(@PathVariable @Min(1) @ApiParam(value = "포스팅 ID", required = true, example = "1") Long postingId, OPagingRequest request) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(postingService.listComments(postingId, request));
+        } catch (PostingNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse(ErrorCode.POSTING_NOT_FOUND));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMapper.toErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
         }
