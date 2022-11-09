@@ -1,5 +1,6 @@
 package com.plogcareers.backend.blog.domain.entity;
 
+import com.plogcareers.backend.blog.domain.model.TagDTO;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -19,4 +20,10 @@ public class Tag {
     @Column(name = "tag_name")
     private String tagName;
 
+    public TagDTO toTagDto() {
+        return TagDTO.builder()
+                .tagId(id)
+                .tagName(tagName)
+                .build();
+    }
 }
