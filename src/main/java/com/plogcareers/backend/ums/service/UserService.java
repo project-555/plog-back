@@ -8,6 +8,7 @@ import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.domain.entity.UserRole;
 import com.plogcareers.backend.ums.exception.EmailDuplicatedException;
 import com.plogcareers.backend.ums.exception.LoginFailException;
+import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.repository.UserRepository;
 import com.plogcareers.backend.ums.repository.UserRoleRepository;
 import com.plogcareers.backend.ums.security.JwtTokenProvider;
@@ -38,6 +39,7 @@ public class UserService {
                         .build()
         );
     }
+
     // 이메일 중복확인
     public void emailCheck(String email) throws EmailDuplicatedException {
         Optional<User> opUser = userRepository.findByEmail(email);
@@ -57,7 +59,11 @@ public class UserService {
         return UserLoginResponse.builder()
                 .userId(user.getId())
                 .nickName(user.getNickname())
-                .token(new Token(jwtTokenProvider.createToken(user.getUsername(), user.getRoles())))
+                .token(new Token(jwtTokenProvider.createToken(user.getUsername(), user.getRoles(), user.getId())))
                 .build();
+    }
+
+    public Long getLoginedUserId(String token) throws UserNotFoundException {
+        return userRepository.findByEmail(jwtTokenProvider.getUserPk(token)).orElseThrow(UserNotFoundException::new).getId();
     }
 }
