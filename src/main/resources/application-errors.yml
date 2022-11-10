@@ -24,6 +24,9 @@ std-errors:
     BLOG_NOT_FOUND:
       code: 2003
       message: "블로그가 존재하지 않습니다."
+    CATEGORY_ALREADY_EXIST:
+      code: 2004
+      message: "해당 카테고리가 이미 존재합니다."
 
     # Common
     INTERNAL_SERVER_ERROR:
