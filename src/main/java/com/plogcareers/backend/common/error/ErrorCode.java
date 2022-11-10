@@ -9,6 +9,7 @@ public enum ErrorCode {
     POSTING_NOT_FOUND,
     TAG_NOT_FOUND,
     BLOG_NOT_FOUND,
+    CATEGORY_ALREADY_EXIST,
 
     INTERNAL_SERVER_ERROR,
 }

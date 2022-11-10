@@ -1,13 +1,11 @@
 package com.plogcareers.backend.blog.controller;
 
-import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
-import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
-import com.plogcareers.backend.blog.domain.dto.ListCategoryResponse;
-import com.plogcareers.backend.blog.domain.dto.ListCommentResponse;
-import com.plogcareers.backend.blog.domain.dto.ListPostingTagResponse;
+import com.plogcareers.backend.blog.domain.dto.*;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
+import com.plogcareers.backend.blog.exception.CategoryDuplicatedException;
 import com.plogcareers.backend.blog.exception.PostingNotFoundException;
 import com.plogcareers.backend.blog.exception.TagNotFoundException;
+import com.plogcareers.backend.blog.service.BlogService;
 import com.plogcareers.backend.blog.service.PostingService;
 import com.plogcareers.backend.common.domain.dto.*;
 import com.plogcareers.backend.common.error.ErrorCode;
@@ -28,6 +26,7 @@ import javax.validation.constraints.Min;
 @Api(tags = "Blog Domain")
 public class BlogController {
 
+    private final BlogService blogService;
     private final PostingService postingService;
     private final ErrorMapper errorMapper;
 
@@ -115,12 +114,33 @@ public class BlogController {
     }
     )
     @GetMapping("/posting/{postingId}/tag")
-    public ResponseEntity<SResponse> GetPostingTag(@PathVariable Long postingId) {
+    public ResponseEntity<SResponse> getPostingTag(@PathVariable Long postingId) {
         try {
             ListPostingTagResponse listPostingTag = postingService.listPostingTag(postingId);
             return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(listPostingTag));
         } catch (PostingNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse(ErrorCode.POSTING_NOT_FOUND));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMapper.toErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
+        }
+    }
+    @ApiOperation(value = "Category 생성")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "정삭 동작 시"),
+            @ApiResponse(code = 400, message = "중복된 카테고리가 존재함"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    }
+    )
+    @ResponseStatus(value = HttpStatus.CREATED)
+    @PostMapping("/category")
+    public ResponseEntity<SResponse> createCategory(@Valid @RequestBody CreateCategoryRequest categoryRequest) {
+        try {
+            blogService.createCategory(categoryRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (BlogNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse(ErrorCode.BLOG_NOT_FOUND));
+        } catch (CategoryDuplicatedException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMapper.toErrorResponse(ErrorCode.CATEGORY_ALREADY_EXIST));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMapper.toErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
         }
@@ -134,7 +154,7 @@ public class BlogController {
     }
     )
     @GetMapping("/{blogId}/categories")
-    public ResponseEntity<SResponse> GetCategory(@PathVariable Long blogId) {
+    public ResponseEntity<SResponse> getCategory(@PathVariable Long blogId) {
         try {
             ListCategoryResponse listCategoryResponse = postingService.listCategory(blogId);
             return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(listCategoryResponse));
