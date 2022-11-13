@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -74,7 +73,7 @@ public class PostingService {
                     .map(Category::toCategoryDto)
                     .toList();
             return ListCategoryResponse.builder()
-                    .category(categoryList)
+                    .categories(categoryList)
                     .build();
         }
         throw new BlogNotFoundException();
@@ -111,16 +110,9 @@ public class PostingService {
     public SOPagingResponse<List<CommentDTO>> listComments(Long loginedUserId, Long postingId, OPagingRequest request) throws PostingNotFoundException, UserNotFoundException {
         Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
         Page<Comment> comments;
-        if (Objects.equals(posting.getUserId(), loginedUserId)) {
-            comments = commentRepository.findByPostingIdAndParentIsNullOrderByUpdateDtDesc(
-                    postingId,
-                    PageRequest.of(request.getPage() - 1, request.getPageSize()));
-        } else {
-            comments = commentRepository.findByPostingIdAndParentIsNullAndUserAndIsSecretTrueOrIsSecretFalseOrderByUpdateDtDesc(
-                    postingId,
-                    userRepository.findById(loginedUserId).orElseThrow(UserNotFoundException::new),
-                    PageRequest.of(request.getPage() - 1, request.getPageSize()));
-        }
+        comments = commentRepository.findByPostingIdAndParentIsNullOrderByUpdateDtDesc(
+                postingId,
+                PageRequest.of(request.getPage() - 1, request.getPageSize()));
         return new ListCommentsResponse(comments.stream().map(Comment::toCommentDTO).toList())
                 .toOPagingResponse(
                         request.getPage(),

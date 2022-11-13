@@ -1,6 +1,7 @@
 package com.plogcareers.backend.blog.controller;
 
 import com.plogcareers.backend.blog.domain.dto.*;
+import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.exception.TagNotFoundException;
 import com.plogcareers.backend.blog.service.BlogService;
 import com.plogcareers.backend.blog.service.PostingService;
@@ -138,15 +139,12 @@ public class BlogController {
     }
     )
     @PutMapping("/{blogId}/categories")
-    public ResponseEntity<SResponse> putCategory(@Valid @RequestBody UpdateCategoriesRequest updateCategoryRequest) {
-        try {
-            blogService.setCategory(updateCategoryRequest);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (BlogNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse(ErrorCode.BLOG_NOT_FOUND));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMapper.toErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
+    public ResponseEntity<SResponse> putCategory(@PathVariable Long blogId, @Valid @RequestBody UpdateCategoriesRequest updateCategoryRequest, BindingResult result) throws BlogNotFoundException {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
         }
+        blogService.setCategory(blogId, updateCategoryRequest);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @ApiOperation(value = "포스팅 ID로 덧글 조회")

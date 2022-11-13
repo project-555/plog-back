@@ -30,9 +30,9 @@ public class BlogService {
     }
 
     @Transactional
-    public void setCategory(@NotNull UpdateCategoriesRequest request) throws BlogNotFoundException {
-        Blog blog = blogRepository.findById(request.getBlogId()).orElseThrow(BlogNotFoundException::new);
-        categoryRepository.deleteByBlogId(blog.getId());
+    public void setCategory(Long blogId, @NotNull UpdateCategoriesRequest request) throws BlogNotFoundException {
+        Blog blog = blogRepository.findById(blogId).orElseThrow(BlogNotFoundException::new);
+        categoryRepository.deleteCategoryByBlogId(blogId);
         for (CategoryUpdateDTO categoryUpdateDTO : request.getCategoriesUpdateDTO()) {
             categoryRepository.save(
                     Category.builder()
