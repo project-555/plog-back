@@ -1,7 +1,10 @@
 package com.plogcareers.backend.blog.service;
 
 import com.plogcareers.backend.blog.domain.dto.CreateCategoryRequest;
+import com.plogcareers.backend.blog.domain.dto.UpdateCategoryRequest;
 import com.plogcareers.backend.blog.domain.entity.Blog;
+import com.plogcareers.backend.blog.domain.entity.Category;
+import com.plogcareers.backend.blog.domain.model.CategoryUpdateDTO;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.exception.CategoryDuplicatedException;
 import com.plogcareers.backend.blog.repository.BlogRepository;
@@ -23,5 +26,21 @@ public class BlogService {
             throw new CategoryDuplicatedException();
         }
         categoryRepository.save(createCategoryRequest.toEntity(blog));
+    }
+
+    public void overwriteCategory(@NotNull UpdateCategoryRequest updateCategoryRequest) throws BlogNotFoundException {
+        Blog blog = blogRepository.findById(updateCategoryRequest.getBlogId()).orElseThrow(BlogNotFoundException::new);
+        Long blogId = blog.getId();
+        categoryRepository.deleteByBlogId(blogId);
+        for (CategoryUpdateDTO categoryUpdateDTO : updateCategoryRequest.getCategoryUpdateDTOList()) {
+            categoryRepository.save(
+                    Category.builder()
+                            .categoryName(categoryUpdateDTO.getCategoryName())
+                            .categoryDesc(categoryUpdateDTO.getCategoryDesc())
+                            .sort(categoryUpdateDTO.getSort())
+                            .blog(blog)
+                            .build()
+            );
+        }
     }
 }

@@ -129,6 +129,25 @@ public class BlogController {
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(listCategoryResponse));
 
     }
+    @ApiOperation(value = "Category 리스트 변경")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "정상 수정(data)", response = ListCategoryResponse.class),
+            @ApiResponse(code = 299, message = "정상 수정(outer)", response = SDataResponse.class),
+            @ApiResponse(code = 404, message = "블로그 없음"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    }
+    )
+    @PutMapping("/{blogId}/categories")
+    public ResponseEntity<SResponse> putCategory(@Valid @RequestBody UpdateCategoryRequest updateCategoryRequest) {
+        try {
+            blogService.overwriteCategory(updateCategoryRequest);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (BlogNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse(ErrorCode.BLOG_NOT_FOUND));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMapper.toErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
+        }
+    }
 
     @ApiOperation(value = "포스팅 ID로 덧글 조회")
     @ApiResponses(value = {
