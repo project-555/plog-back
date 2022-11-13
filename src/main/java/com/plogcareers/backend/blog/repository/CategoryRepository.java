@@ -9,5 +9,5 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findCategoryByBlogIdOrderBySort(Long blogId);
     Boolean existsByBlogAndCategoryName(Blog blog, String categoryName);
-    void deleteByBlogId(Long blogId);
+    void deleteCategoryByBlogId(Long blogId);
 }
