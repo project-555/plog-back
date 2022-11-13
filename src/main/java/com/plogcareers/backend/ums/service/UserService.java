@@ -39,7 +39,7 @@ public class UserService {
 
     // 이메일 중복확인
     public void emailCheck(String email) throws EmailDuplicatedException {
-        if (!userRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmail(email)) {
             throw new EmailDuplicatedException();
         }
     }

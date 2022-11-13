@@ -6,24 +6,23 @@ import com.plogcareers.backend.blog.service.BlogService;
 import com.plogcareers.backend.blog.service.PostingService;
 import com.plogcareers.backend.common.annotation.LogExecutionTime;
 import com.plogcareers.backend.common.domain.dto.*;
+import com.plogcareers.backend.common.exception.InvalidParamException;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.service.UserService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/blog")
 @Api(tags = "Blog Domain")
-@Validated
 public class BlogController {
 
     private final BlogService blogService;
@@ -39,7 +38,10 @@ public class BlogController {
     )
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/posting")
-    public ResponseEntity<SResponse> createPosting(@Valid @RequestBody CreatePostingRequest postingRequest) throws TagNotFoundException {
+    public ResponseEntity<SResponse> createPosting(@Valid @RequestBody CreatePostingRequest postingRequest, BindingResult result) throws TagNotFoundException {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
         Long postingId = postingService.createPosting(postingRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(new SDataResponse<>(postingId));
 
@@ -138,8 +140,13 @@ public class BlogController {
     )
     @GetMapping("/posting/{postingId}/comments")
     public ResponseEntity<SResponse> listComments(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
-                                                  @ApiParam(name = "postingId", value = "포스팅 ID", required = true) @Min(1) @PathVariable Long postingId,
-                                                  OPagingRequest request) throws UserNotFoundException {
+                                                  @ApiParam(name = "postingId", value = "포스팅 ID", required = true) @PathVariable Long postingId,
+                                                  @Valid
+                                                  OPagingRequest request,
+                                                  BindingResult result) throws UserNotFoundException {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
         Long loginedUserId = userService.getLoginedUserId(token);
         return ResponseEntity.status(HttpStatus.OK).body(postingService.listComments(loginedUserId, postingId, request));
     }
