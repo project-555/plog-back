@@ -1,8 +1,12 @@
 package com.plogcareers.backend.blog.exception;
 
 
-public class CategoryDuplicatedException extends RuntimeException {
+import com.plogcareers.backend.common.error.ErrorCode;
+import com.plogcareers.backend.common.exception.UserException;
+
+public class CategoryDuplicatedException extends UserException {
+
     public CategoryDuplicatedException() {
-        super("중복된 카테고리가 존재합니다.");
+        super(ErrorCode.ERR_CATEGORY_DUPLICATED);
     }
 }
