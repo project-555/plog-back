@@ -16,7 +16,8 @@ import javax.validation.constraints.NotNull;
 public class BlogService {
     private final BlogRepository blogRepository;
     private final CategoryRepository categoryRepository;
-    public void createCategory(@NotNull CreateCategoryRequest createCategoryRequest) throws CategoryDuplicatedException {
+
+    public void createCategory(@NotNull CreateCategoryRequest createCategoryRequest) throws BlogNotFoundException, CategoryDuplicatedException {
         Blog blog = blogRepository.findById(createCategoryRequest.getBlogId()).orElseThrow(BlogNotFoundException::new);
         if (categoryRepository.existsByBlogAndCategoryName(blog, createCategoryRequest.getCategoryName())) {
             throw new CategoryDuplicatedException();

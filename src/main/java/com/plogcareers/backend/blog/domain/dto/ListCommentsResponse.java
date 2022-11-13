@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class ListCommentResponse {
+public class ListCommentsResponse {
     List<CommentDTO> comments;
 
     public SOPagingResponse<List<CommentDTO>> toOPagingResponse(int page, int pageSize, Long tCnt) {
