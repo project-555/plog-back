@@ -1,8 +1,11 @@
 package com.plogcareers.backend.blog.exception;
 
 
-public class BlogNotFoundException extends RuntimeException {
-    public BlogNotFoundException(){
-        super("블로그가 존재하지 않습니다.");
+import com.plogcareers.backend.common.error.ErrorCode;
+import com.plogcareers.backend.common.exception.UserException;
+
+public class BlogNotFoundException extends UserException {
+    public BlogNotFoundException() {
+        super(ErrorCode.ERR_BLOG_NOT_FOUND);
     }
 }

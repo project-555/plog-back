@@ -1,7 +1,10 @@
 package com.plogcareers.backend.ums.exception;
 
-public class LoginFailException extends IllegalArgumentException{
-    public LoginFailException(){
-        super("존재하지 않는 이메일이거나, 비밀번호가 일치하지 않습니다.");
+import com.plogcareers.backend.common.error.ErrorCode;
+import com.plogcareers.backend.common.exception.UserException;
+
+public class LoginFailException extends UserException {
+    public LoginFailException() {
+        super(ErrorCode.ERR_LOGIN_FAILED);
     }
 }
