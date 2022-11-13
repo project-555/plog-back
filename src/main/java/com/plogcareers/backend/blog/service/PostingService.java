@@ -19,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
@@ -38,7 +37,6 @@ public class PostingService {
     private final UserRepository userRepository;
 
     // 글 저장
-    @Transactional
     public Long createPosting(@NotNull CreatePostingRequest createPostingRequest) throws TagNotFoundException {
         Posting posting = postingRepository.save(createPostingRequest.toEntity());
         for (Long tagId : createPostingRequest.getTagIds()) {
@@ -53,7 +51,6 @@ public class PostingService {
     }
 
     // 글 가져오기
-    @Transactional
     public GetPostingResponse getPosting(Long postingId) throws PostingNotFoundException, UserNotFoundException {
         Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
         // TODO: User Vaildation 추가
@@ -112,7 +109,6 @@ public class PostingService {
 
 
     public SOPagingResponse<List<CommentDTO>> listComments(Long loginedUserId, Long postingId, OPagingRequest request) throws PostingNotFoundException, UserNotFoundException {
-        // TODO: User Vaildation 추가: Case 에 따른 Response 분화 추가
         Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
         Page<Comment> comments;
         if (Objects.equals(posting.getUserId(), loginedUserId)) {
@@ -120,14 +116,18 @@ public class PostingService {
                     postingId,
                     PageRequest.of(request.getPage() - 1, request.getPageSize()));
         } else {
-            comments = commentRepository.findByPostingIdAndParentIsNullAndUserAndIsSecretOrIsSecretOrderByUpdateDtDesc(
+            comments = commentRepository.findByPostingIdAndParentIsNullAndUserAndIsSecretTrueOrIsSecretFalseOrderByUpdateDtDesc(
                     postingId,
                     userRepository.findById(loginedUserId).orElseThrow(UserNotFoundException::new),
-                    true,
-                    false,
                     PageRequest.of(request.getPage() - 1, request.getPageSize()));
         }
-        return new ListCommentResponse(comments.stream().map(Comment::toCommentDTO).toList()).toOPagingResponse(request.getPage(), request.getPageSize(), comments.getTotalElements());
+        return new ListCommentsResponse(comments.stream().map(Comment::toCommentDTO).toList())
+                .toOPagingResponse(
+                        request.getPage(),
+                        request.getPageSize(),
+                        comments.getTotalElements()
+                );
+
     }
 
 }
