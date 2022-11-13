@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 
 @Getter
 @Setter
@@ -14,10 +14,10 @@ import javax.validation.constraints.Min;
 @NoArgsConstructor
 public class OPagingRequest {
     @ApiParam(name = "page", value = "페이지 번호", required = true, example = "1")
-    @Min(1)
+    @Positive
     int page;
 
     @ApiParam(name = "pageSize", value = "페이지 크기", required = true, example = "10")
-    @Min(1)
+    @Positive
     int pageSize;
 }

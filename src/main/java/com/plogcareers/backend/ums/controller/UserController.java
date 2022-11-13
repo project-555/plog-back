@@ -3,22 +3,29 @@ package com.plogcareers.backend.ums.controller;
 import com.plogcareers.backend.common.domain.dto.ErrorResponse;
 import com.plogcareers.backend.common.domain.dto.SDataResponse;
 import com.plogcareers.backend.common.domain.dto.SResponse;
+import com.plogcareers.backend.common.exception.InvalidParamException;
+import com.plogcareers.backend.ums.domain.dto.EmailCheckRequest;
 import com.plogcareers.backend.ums.domain.dto.UserJoinRequest;
 import com.plogcareers.backend.ums.domain.dto.UserLoginRequest;
 import com.plogcareers.backend.ums.domain.dto.UserLoginResponse;
 import com.plogcareers.backend.ums.exception.EmailDuplicatedException;
 import com.plogcareers.backend.ums.service.UserService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
+@Api(tags = "UMS Domain")
 public class UserController {
 
     private final UserService userService;
@@ -30,7 +37,7 @@ public class UserController {
             @ApiResponse(code = 200, message = "회원가입 정상처리"),
             @ApiResponse(code = 400, message = "회원가입 실패", response = ErrorResponse.class)
     })
-    public ResponseEntity<SResponse> join(@RequestBody UserJoinRequest request) {
+    public ResponseEntity<SResponse> join(@RequestBody @Valid UserJoinRequest request) {
         userService.join(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -42,8 +49,11 @@ public class UserController {
             @ApiResponse(code = 200, message = "이메일 사용 가능", response = SResponse.class),
             @ApiResponse(code = 400, message = "이메일 중복", response = ErrorResponse.class)
     })
-    public ResponseEntity<SResponse> emailCheck(@RequestParam String email) throws EmailDuplicatedException {
-        userService.emailCheck(email);
+    public ResponseEntity<SResponse> emailCheck(@Valid EmailCheckRequest request, BindingResult result) throws InvalidParamException, EmailDuplicatedException {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
+        userService.emailCheck(request.getEmail());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
