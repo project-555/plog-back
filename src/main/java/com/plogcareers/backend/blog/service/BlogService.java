@@ -1,7 +1,7 @@
 package com.plogcareers.backend.blog.service;
 
 import com.plogcareers.backend.blog.domain.dto.CreateCategoryRequest;
-import com.plogcareers.backend.blog.domain.dto.UpdateCategoryRequest;
+import com.plogcareers.backend.blog.domain.dto.UpdateCategoriesRequest;
 import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.domain.entity.Category;
 import com.plogcareers.backend.blog.domain.model.CategoryUpdateDTO;
@@ -12,6 +12,7 @@ import com.plogcareers.backend.blog.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 
 @Service
@@ -28,11 +29,11 @@ public class BlogService {
         categoryRepository.save(createCategoryRequest.toEntity(blog));
     }
 
-    public void overwriteCategory(@NotNull UpdateCategoryRequest updateCategoryRequest) throws BlogNotFoundException {
-        Blog blog = blogRepository.findById(updateCategoryRequest.getBlogId()).orElseThrow(BlogNotFoundException::new);
-        Long blogId = blog.getId();
-        categoryRepository.deleteByBlogId(blogId);
-        for (CategoryUpdateDTO categoryUpdateDTO : updateCategoryRequest.getCategoryUpdateDTOList()) {
+    @Transactional
+    public void setCategory(@NotNull UpdateCategoriesRequest request) throws BlogNotFoundException {
+        Blog blog = blogRepository.findById(request.getBlogId()).orElseThrow(BlogNotFoundException::new);
+        categoryRepository.deleteByBlogId(blog.getId());
+        for (CategoryUpdateDTO categoryUpdateDTO : request.getCategoriesUpdateDTO()) {
             categoryRepository.save(
                     Category.builder()
                             .categoryName(categoryUpdateDTO.getCategoryName())
