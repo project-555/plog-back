@@ -138,9 +138,9 @@ public class BlogController {
     }
     )
     @PutMapping("/{blogId}/categories")
-    public ResponseEntity<SResponse> putCategory(@Valid @RequestBody UpdateCategoryRequest updateCategoryRequest) {
+    public ResponseEntity<SResponse> putCategory(@Valid @RequestBody UpdateCategoriesRequest updateCategoryRequest) {
         try {
-            blogService.overwriteCategory(updateCategoryRequest);
+            blogService.setCategory(updateCategoryRequest);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (BlogNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMapper.toErrorResponse(ErrorCode.BLOG_NOT_FOUND));
