@@ -132,7 +132,7 @@ public class BlogController {
 
     @ApiOperation(value = "포스팅 ID로 덧글 조회")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "정상조회 (data)", response = ListCommentResponse.class),
+            @ApiResponse(code = 200, message = "정상조회 (data)", response = ListCommentsResponse.class),
             @ApiResponse(code = 299, message = "정상조회 (outer)", response = SOPagingResponse.class),
             @ApiResponse(code = 400, message = "잘못된 유저 요청", response = ErrorResponse.class),
             @ApiResponse(code = 404, message = "해당하는 포스팅 ID를 가진 포스팅 없음", response = ErrorResponse.class),
@@ -141,8 +141,7 @@ public class BlogController {
     @GetMapping("/posting/{postingId}/comments")
     public ResponseEntity<SResponse> listComments(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
                                                   @ApiParam(name = "postingId", value = "포스팅 ID", required = true) @PathVariable Long postingId,
-                                                  @Valid
-                                                  OPagingRequest request,
+                                                  @Valid OPagingRequest request,
                                                   BindingResult result) throws UserNotFoundException {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
