@@ -13,12 +13,9 @@ import com.plogcareers.backend.ums.repository.UserRepository;
 import com.plogcareers.backend.ums.repository.UserRoleRepository;
 import com.plogcareers.backend.ums.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.postgresql.util.PSQLException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -30,7 +27,7 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
 
     // 회원가입
-    public void join(UserJoinRequest request) throws PSQLException {
+    public void join(UserJoinRequest request) {
         User user = userRepository.save(request.toEntity(passwordEncoder));
         userRoleRepository.save(
                 UserRole.builder()
@@ -42,16 +39,14 @@ public class UserService {
 
     // 이메일 중복확인
     public void emailCheck(String email) throws EmailDuplicatedException {
-        Optional<User> opUser = userRepository.findByEmail(email);
-        if (opUser.isPresent()) {
+        if (!userRepository.existsByEmail(email)) {
             throw new EmailDuplicatedException();
         }
     }
 
     // 로그인
     public UserLoginResponse login(@RequestBody UserLoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(LoginFailException::new);
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(LoginFailException::new);
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new LoginFailException();
         }

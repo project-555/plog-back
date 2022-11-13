@@ -1,7 +1,10 @@
 package com.plogcareers.backend.blog.exception;
 
-public class TagNotFoundException extends Exception {
-    public TagNotFoundException(){
-        super("태그가 존재하지 않습니다.");
+import com.plogcareers.backend.common.error.ErrorCode;
+import com.plogcareers.backend.common.exception.UserException;
+
+public class TagNotFoundException extends UserException {
+    public TagNotFoundException() {
+        super(ErrorCode.ERR_TAG_NOT_FOUND);
     }
 }

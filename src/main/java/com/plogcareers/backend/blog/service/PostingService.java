@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -32,9 +33,9 @@ public class PostingService {
     private final CategoryRepository categoryRepository;
     private final PostingTagRepository postingTagRepository;
     private final TagRepository tagRepository;
-    private final UserRepository userRepository;
     private final StateRepository stateRepository;
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
 
     // 글 저장
     @Transactional
@@ -69,7 +70,6 @@ public class PostingService {
     }
 
     // 카테고리 가져오기
-    @Transactional
     public ListCategoryResponse listCategory(Long blogId) throws BlogNotFoundException {
         if (blogRepository.existsById(blogId)) {
             List<CategoryDTO> categoryList = categoryRepository.findCategoryByBlogIdOrderBySort(blogId)
@@ -84,22 +84,20 @@ public class PostingService {
     }
 
     // 포스팅 태그 가져오기
-    @Transactional
     public ListPostingTagResponse listPostingTag(Long postingId) throws PostingNotFoundException {
-        if (postingRepository.existsById(postingId)) {
-            List<PostingTagDTO> postingTagList = postingTagRepository.findPostingTagsByPostingId(postingId)
-                    .stream()
-                    .map(PostingTag::toPostingTagDto)
-                    .toList();
-            return ListPostingTagResponse.builder()
-                    .postingTags(postingTagList)
-                    .build();
+        if (!postingRepository.existsById(postingId)) {
+            throw new PostingNotFoundException();
         }
-        throw new PostingNotFoundException();
+        List<PostingTagDTO> postingTagList = postingTagRepository.findPostingTagsByPostingId(postingId)
+                .stream()
+                .map(PostingTag::toPostingTagDto)
+                .toList();
+        return ListPostingTagResponse.builder()
+                .postingTags(postingTagList)
+                .build();
     }
 
     // 글 삭제
-    @Transactional
     public void deletePosting(@NotNull Long postingId) throws PostingNotFoundException {
         Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
         postingRepository.deleteById(posting.getId());
@@ -113,13 +111,23 @@ public class PostingService {
     }
 
 
-    public SOPagingResponse<List<CommentDTO>> listComments(Long postingId, OPagingRequest request) throws PostingNotFoundException {
+    public SOPagingResponse<List<CommentDTO>> listComments(Long loginedUserId, Long postingId, OPagingRequest request) throws PostingNotFoundException, UserNotFoundException {
         // TODO: User Vaildation 추가: Case 에 따른 Response 분화 추가
-        if (postingRepository.existsById(postingId)) {
-            Page<Comment> comments = commentRepository.findByPostingIdAndParentIsNullOrderByCreateDtDesc(postingId, PageRequest.of(request.getPage() - 1, request.getPageSize()));
-            return new ListCommentResponse(comments.stream().map(Comment::toCommentDTO).toList()).toOPagingResponse(request.getPage(), request.getPageSize(), comments.getTotalElements());
+        Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
+        Page<Comment> comments;
+        if (Objects.equals(posting.getUserId(), loginedUserId)) {
+            comments = commentRepository.findByPostingIdAndParentIsNullOrderByUpdateDtDesc(
+                    postingId,
+                    PageRequest.of(request.getPage() - 1, request.getPageSize()));
+        } else {
+            comments = commentRepository.findByPostingIdAndParentIsNullAndUserAndIsSecretOrIsSecretOrderByUpdateDtDesc(
+                    postingId,
+                    userRepository.findById(loginedUserId).orElseThrow(UserNotFoundException::new),
+                    true,
+                    false,
+                    PageRequest.of(request.getPage() - 1, request.getPageSize()));
         }
-        throw new PostingNotFoundException();
+        return new ListCommentResponse(comments.stream().map(Comment::toCommentDTO).toList()).toOPagingResponse(request.getPage(), request.getPageSize(), comments.getTotalElements());
     }
 
 }
