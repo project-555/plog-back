@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateCategoriesRequest {
-    private Long blogId;
     @JsonProperty("categories")
     private List<CategoryUpdateDTO> categoriesUpdateDTO;
 }

@@ -5,10 +5,10 @@ import com.plogcareers.backend.ums.domain.entity.UserRole;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
@@ -26,30 +26,24 @@ enum Sex {
 @NoArgsConstructor
 public class UserJoinRequest {
     @NotNull
-    @NotBlank
     @Email
     private String email;
     @NotNull
-    @NotBlank
     private String password;
     @NotNull
-    @NotBlank
     @Length(min = 1, max = 30)
     private String firstName;
     @NotNull
-    @NotBlank
     @Length(min = 1, max = 20)
     private String lastName;
     @NotNull
-    @NotBlank
     @Length(min = 1, max = 30)
     private String nickName;
     @NotNull
-    @NotBlank
     @Past
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birth;
     @NotNull
-    @NotBlank
     private Sex sex;
 
     public User toEntity(PasswordEncoder passwordEncoder) {
