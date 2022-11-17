@@ -126,7 +126,7 @@ public class BlogController {
     )
     @GetMapping("/{blogId}/categories")
     public ResponseEntity<SResponse> getCategory(@PathVariable Long blogId) {
-        ListCategoryResponse listCategoryResponse = postingService.listCategory(blogId);
+        ListCategoryResponse listCategoryResponse = blogService.listCategory(blogId);
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(listCategoryResponse));
 
     }
@@ -139,11 +139,11 @@ public class BlogController {
     }
     )
     @PutMapping("/{blogId}/categories")
-    public ResponseEntity<SResponse> putCategory(@PathVariable Long blogId, @Valid @RequestBody UpdateCategoriesRequest updateCategoryRequest, BindingResult result) throws BlogNotFoundException {
+    public ResponseEntity<SResponse> putCategory(@PathVariable Long blogId, @Valid @RequestBody SetCategoriesRequest request, BindingResult result) throws BlogNotFoundException {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        blogService.setCategory(blogId, updateCategoryRequest);
+        blogService.setCategories(blogId, request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
