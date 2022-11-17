@@ -1,12 +1,16 @@
 package com.plogcareers.backend.blog.service;
 
-import com.plogcareers.backend.blog.domain.dto.*;
-import com.plogcareers.backend.blog.domain.entity.*;
-import com.plogcareers.backend.blog.domain.model.CategoryDTO;
+import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
+import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
+import com.plogcareers.backend.blog.domain.dto.ListCommentsResponse;
+import com.plogcareers.backend.blog.domain.dto.ListPostingTagResponse;
+import com.plogcareers.backend.blog.domain.entity.Comment;
+import com.plogcareers.backend.blog.domain.entity.Posting;
+import com.plogcareers.backend.blog.domain.entity.PostingTag;
+import com.plogcareers.backend.blog.domain.entity.State;
 import com.plogcareers.backend.blog.domain.model.CommentDTO;
 import com.plogcareers.backend.blog.domain.model.PostingTagDTO;
 import com.plogcareers.backend.blog.domain.model.StateDTO;
-import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.exception.PostingNotFoundException;
 import com.plogcareers.backend.blog.exception.TagNotFoundException;
 import com.plogcareers.backend.blog.repository.*;
@@ -63,20 +67,6 @@ public class PostingService {
                 .thumbnailImageUrl(posting.getThumbnailImageUrl())
                 .mdContent(posting.getMdContent())
                 .build();
-    }
-
-    // 카테고리 가져오기
-    public ListCategoryResponse listCategory(Long blogId) throws BlogNotFoundException {
-        if (blogRepository.existsById(blogId)) {
-            List<CategoryDTO> categoryList = categoryRepository.findCategoryByBlogIdOrderBySort(blogId)
-                    .stream()
-                    .map(Category::toCategoryDto)
-                    .toList();
-            return ListCategoryResponse.builder()
-                    .categories(categoryList)
-                    .build();
-        }
-        throw new BlogNotFoundException();
     }
 
     // 포스팅 태그 가져오기
