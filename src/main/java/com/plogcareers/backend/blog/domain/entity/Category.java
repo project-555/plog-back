@@ -25,9 +25,6 @@ public class Category {
     @Column(name = "category_desc")
     private String categoryDesc;
 
-    @Column(name = "sort", nullable = false)
-    private int sort;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "blog_id")
     private Blog blog;
@@ -36,7 +33,6 @@ public class Category {
         return CategoryDTO.builder()
                 .categoryId(id)
                 .categoryName(categoryName)
-                .sort(sort)
                 .build();
     }
 }
