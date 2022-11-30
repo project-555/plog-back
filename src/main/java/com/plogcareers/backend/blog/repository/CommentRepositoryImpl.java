@@ -5,7 +5,6 @@ import com.plogcareers.backend.blog.domain.entity.Comment;
 import com.plogcareers.backend.blog.domain.entity.QComment;
 import com.plogcareers.backend.ums.domain.entity.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -22,7 +21,7 @@ public class CommentRepositoryImpl implements CommentRepository {
 
 
     @Override
-    public List<Comment> findByUserAndGuest(Long postingId, User user, Pageable pageable) {
+    public List<Comment> findByUserAndGuest(Long postingId, User user) {
         QComment comment = QComment.comment;
 
         return queryFactory
@@ -39,7 +38,7 @@ public class CommentRepositoryImpl implements CommentRepository {
 
 
     @Override
-    public List<Comment> findByBlogOwner(Long postingId, Pageable pageable) {
+    public List<Comment> findByBlogOwner(Long postingId) {
         QComment comment = QComment.comment;
 
         return queryFactory.selectFrom(comment)
