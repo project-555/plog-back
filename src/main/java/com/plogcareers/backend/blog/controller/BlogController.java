@@ -142,15 +142,30 @@ public class BlogController {
             @ApiResponse(code = 500, message = "서버 에러")
     }
     )
-    @PutMapping("/{blogId}/categories")
-    public ResponseEntity<SResponse> putCategory(@PathVariable Long blogId, @Valid @RequestBody SetCategoriesRequest request, BindingResult result) throws BlogNotFoundException {
+    @PutMapping("/{blogId}/category")
+    public ResponseEntity<SResponse> putCategory(@PathVariable Long blogId, @Valid @RequestBody UpdateCategoryRequest request, BindingResult result) throws BlogNotFoundException {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        blogService.setCategories(blogId, request);
+        blogService.updateCategory(blogId, request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @ApiOperation(value = "Category 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "정삭 삭제"),
+            @ApiResponse(code = 404, message = "블로그 없음"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    }
+    )
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{blogId}/category")
+    public ResponseEntity<SResponse> deleteCategory(@PathVariable Long blogId, Long categoryId) {
+        blogService.deleteCategory(blogId, categoryId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @ApiOperation(value = "포스팅 ID로 덧글 조회")
     @ApiOperation(value = "포스팅 ID로 덧글 리스트 조회")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "정상조회 (data)", response = ListCommentsResponse.class),
