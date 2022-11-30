@@ -3,19 +3,21 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+    # JPA
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        ddl_auto: none
+        format_sql: true
+        show_sql: true
 
 # springfox
 springfox:
   documentation:
     swagger:
       use-model-v3: false
-  # JPA
-  jpa:
-    hibernate:
-      dialect: org.hibernate.dialect.PostgreSQL10Dialect
-      ddl-auto: none
-      format_sql: true
-    show-sql: true
+
 #logging:
 #  level:
 #    root: debug

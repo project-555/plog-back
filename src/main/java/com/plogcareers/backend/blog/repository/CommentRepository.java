@@ -2,12 +2,14 @@ package com.plogcareers.backend.blog.repository;
 
 import com.plogcareers.backend.blog.domain.entity.Comment;
 import com.plogcareers.backend.ums.domain.entity.User;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface CommentRepository extends JpaRepository<Comment, Long> {
-    Page<Comment> findByPostingIdAndParentIsNullAndUserAndIsSecretOrIsSecretOrderByUpdateDtDesc(Long postingId, User user, boolean secret, boolean secret2, Pageable pageable);
+import java.util.List;
 
-    Page<Comment> findByPostingIdAndParentIsNullOrderByUpdateDtDesc(Long postingId, Pageable pageable);
+@Repository
+public interface CommentRepository {
+    List<Comment> findByUserAndGuest(Long postingId, User user, Pageable pageable);
+
+    List<Comment> findByBlogOwner(Long postingId, Pageable pageable);
 }

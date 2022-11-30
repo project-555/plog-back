@@ -7,6 +7,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Builder
 @Getter
@@ -71,5 +72,9 @@ public class Posting {
                 .updateDt(this.updateDt)
                 .createDt(this.createDt)
                 .build();
+    }
+
+    public boolean isOwner(Long loginedUserId) {
+        return Objects.equals(this.userId, loginedUserId);
     }
 }
