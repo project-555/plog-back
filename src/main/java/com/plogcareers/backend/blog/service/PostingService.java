@@ -1,5 +1,8 @@
 package com.plogcareers.backend.blog.service;
 
+import com.plogcareers.backend.blog.domain.dto.*;
+import com.plogcareers.backend.blog.domain.entity.*;
+import com.plogcareers.backend.blog.domain.model.CategoryDTO;
 import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
 import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
 import com.plogcareers.backend.blog.domain.dto.ListCommentsResponse;
@@ -15,11 +18,10 @@ import com.plogcareers.backend.blog.exception.PostingNotFoundException;
 import com.plogcareers.backend.blog.exception.TagNotFoundException;
 import com.plogcareers.backend.blog.repository.*;
 import com.plogcareers.backend.common.domain.dto.OPagingRequest;
-import com.plogcareers.backend.common.domain.dto.SOPagingResponse;
+import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -50,13 +52,13 @@ public class PostingService {
                             .build()
             );
         }
+
         return posting.getId();
     }
 
     // 글 가져오기
-    public GetPostingResponse getPosting(Long postingId) throws PostingNotFoundException, UserNotFoundException {
+    public GetPostingResponse getPosting(Long postingId) throws PostingNotFoundException {
         Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
-        // TODO: User Vaildation 추가
         return GetPostingResponse.builder()
                 .id(posting.getId())
                 .title(posting.getTitle())
@@ -97,19 +99,21 @@ public class PostingService {
     }
 
 
-    public SOPagingResponse<List<CommentDTO>> listComments(Long loginedUserId, Long postingId, OPagingRequest request) throws PostingNotFoundException, UserNotFoundException {
+    public ListCommentsResponse listComments(Long loginedUserId, Long postingId, OPagingRequest request) throws PostingNotFoundException, UserNotFoundException {
         Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
-        Page<Comment> comments;
-        comments = commentRepository.findByPostingIdAndParentIsNullOrderByUpdateDtDesc(
-                postingId,
-                PageRequest.of(request.getPage() - 1, request.getPageSize()));
-        return new ListCommentsResponse(comments.stream().map(Comment::toCommentDTO).toList())
-                .toOPagingResponse(
-                        request.getPage(),
-                        request.getPageSize(),
-                        comments.getTotalElements()
-                );
 
+        List<Comment> comments;
+        if (posting.isOwner(loginedUserId)) {
+            comments = commentRepository.findByBlogOwner(postingId, PageRequest.of(request.getPage() - 1, request.getPageSize()));
+        } else {
+            User user = userRepository.findById(loginedUserId).orElseThrow(UserNotFoundException::new);
+            comments = commentRepository.findByUserAndGuest(postingId, user, PageRequest.of(request.getPage() - 1, request.getPageSize()));
+        }
+
+        ListCommentsResponse response = new ListCommentsResponse();
+        response.SetComments(comments);
+
+        return response;
     }
 
 }

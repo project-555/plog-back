@@ -24,11 +24,34 @@ import java.util.stream.Collectors;
 @Table(schema = "plog_ums", name = "user")
 public class User implements UserDetails {
 
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "email", length = 50, nullable = false, updatable = false, unique = true)
+    private String email;
+    @Column(name = "password", length = 512, nullable = false)
+    private String password;
+    @Column(name = "first_name", length = 20, nullable = false)
+    private String firstName;
+    @Column(name = "last_name", length = 20, nullable = false)
+    private String lastName;
+    @Column(name = "join_dt")
+    private LocalDateTime joinDt;
+    @Column(name = "birth")
+    private LocalDate birth;
+    @Column(name = "sex")
+    private String sex;
+    @Column(name = "nickname")
+    private String nickname;
+    @Builder.Default
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    private List<UserRole> roles = new ArrayList<>();
+
     @Override
     public String getPassword() {
         return password;
     }
-
 
     public List<String> getRoles() {
         List<String> roleStrs = new ArrayList<>();
@@ -37,39 +60,6 @@ public class User implements UserDetails {
         });
         return roleStrs;
     }
-
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "email", length = 50, nullable = false, updatable = false, unique = true)
-    private String email;
-
-    @Column(name = "password", length = 512, nullable = false)
-    private String password;
-
-    @Column(name = "first_name", length = 20, nullable = false)
-    private String firstName;
-
-    @Column(name = "last_name", length = 20, nullable = false)
-    private String lastName;
-
-    @Column(name = "join_dt")
-    private LocalDateTime joinDt;
-
-    @Column(name = "birth")
-    private LocalDate birth;
-
-    @Column(name = "sex")
-    private String sex;
-
-    @Column(name = "nickname")
-    private String nickname;
-
-    @Builder.Default
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
-    private List<UserRole> roles = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

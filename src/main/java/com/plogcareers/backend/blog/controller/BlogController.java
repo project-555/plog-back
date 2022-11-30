@@ -164,6 +164,6 @@ public class BlogController {
             throw new InvalidParamException(result);
         }
         Long loginedUserId = userService.getLoginedUserId(token);
-        return ResponseEntity.status(HttpStatus.OK).body(postingService.listComments(loginedUserId, postingId, request));
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.listComments(loginedUserId, postingId, request)));
     }
 }
