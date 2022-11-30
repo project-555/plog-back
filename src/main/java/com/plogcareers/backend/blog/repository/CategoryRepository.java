@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    List<Category> findCategoryByBlogIdOrderBySort(Long blogId);
+    List<Category> findCategoryByBlogIdOrderByCategoryName(Long blogId);
     Boolean existsByBlogAndCategoryName(Blog blog, String categoryName);
-    void deleteCategoryByBlogId(Long blogId);
+    void deleteCategoryById(Long categoryId);
 }
