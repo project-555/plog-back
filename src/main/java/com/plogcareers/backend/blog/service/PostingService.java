@@ -1,8 +1,5 @@
 package com.plogcareers.backend.blog.service;
 
-import com.plogcareers.backend.blog.domain.dto.*;
-import com.plogcareers.backend.blog.domain.entity.*;
-import com.plogcareers.backend.blog.domain.model.CategoryDTO;
 import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
 import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
 import com.plogcareers.backend.blog.domain.dto.ListCommentsResponse;
@@ -11,18 +8,15 @@ import com.plogcareers.backend.blog.domain.entity.Comment;
 import com.plogcareers.backend.blog.domain.entity.Posting;
 import com.plogcareers.backend.blog.domain.entity.PostingTag;
 import com.plogcareers.backend.blog.domain.entity.State;
-import com.plogcareers.backend.blog.domain.model.CommentDTO;
 import com.plogcareers.backend.blog.domain.model.PostingTagDTO;
 import com.plogcareers.backend.blog.domain.model.StateDTO;
 import com.plogcareers.backend.blog.exception.PostingNotFoundException;
 import com.plogcareers.backend.blog.exception.TagNotFoundException;
 import com.plogcareers.backend.blog.repository.*;
-import com.plogcareers.backend.common.domain.dto.OPagingRequest;
 import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
@@ -99,21 +93,18 @@ public class PostingService {
     }
 
 
-    public ListCommentsResponse listComments(Long loginedUserId, Long postingId, OPagingRequest request) throws PostingNotFoundException, UserNotFoundException {
+    public ListCommentsResponse listComments(Long loginedUserId, Long postingId) throws PostingNotFoundException, UserNotFoundException {
         Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
 
         List<Comment> comments;
         if (posting.isOwner(loginedUserId)) {
-            comments = commentRepository.findByBlogOwner(postingId, PageRequest.of(request.getPage() - 1, request.getPageSize()));
+            comments = commentRepository.findByBlogOwner(postingId);
         } else {
             User user = userRepository.findById(loginedUserId).orElseThrow(UserNotFoundException::new);
-            comments = commentRepository.findByUserAndGuest(postingId, user, PageRequest.of(request.getPage() - 1, request.getPageSize()));
+            comments = commentRepository.findByUserAndGuest(postingId, user);
         }
 
-        ListCommentsResponse response = new ListCommentsResponse();
-        response.SetComments(comments);
-
-        return response;
+        return new ListCommentsResponse(comments);
     }
 
 }

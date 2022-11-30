@@ -6,7 +6,9 @@ import com.plogcareers.backend.blog.exception.TagNotFoundException;
 import com.plogcareers.backend.blog.service.BlogService;
 import com.plogcareers.backend.blog.service.PostingService;
 import com.plogcareers.backend.common.annotation.LogExecutionTime;
-import com.plogcareers.backend.common.domain.dto.*;
+import com.plogcareers.backend.common.domain.dto.ErrorResponse;
+import com.plogcareers.backend.common.domain.dto.SDataResponse;
+import com.plogcareers.backend.common.domain.dto.SResponse;
 import com.plogcareers.backend.common.exception.InvalidParamException;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.service.UserService;
@@ -130,6 +132,7 @@ public class BlogController {
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(listCategoryResponse));
 
     }
+
     @ApiOperation(value = "Category 리스트 변경")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "정상 수정(data)", response = ListCategoryResponse.class),
@@ -150,20 +153,15 @@ public class BlogController {
     @ApiOperation(value = "포스팅 ID로 덧글 조회")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "정상조회 (data)", response = ListCommentsResponse.class),
-            @ApiResponse(code = 299, message = "정상조회 (outer)", response = SOPagingResponse.class),
+            @ApiResponse(code = 299, message = "정상조회 (outer)", response = SDataResponse.class),
             @ApiResponse(code = 400, message = "잘못된 유저 요청", response = ErrorResponse.class),
             @ApiResponse(code = 404, message = "해당하는 포스팅 ID를 가진 포스팅 없음", response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)}
     )
     @GetMapping("/posting/{postingId}/comments")
     public ResponseEntity<SResponse> listComments(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
-                                                  @ApiParam(name = "postingId", value = "포스팅 ID", required = true) @PathVariable Long postingId,
-                                                  @Valid OPagingRequest request,
-                                                  BindingResult result) throws UserNotFoundException {
-        if (result.hasErrors()) {
-            throw new InvalidParamException(result);
-        }
+                                                  @ApiParam(name = "postingId", value = "포스팅 ID", required = true) @PathVariable Long postingId) throws UserNotFoundException {
         Long loginedUserId = userService.getLoginedUserId(token);
-        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.listComments(loginedUserId, postingId, request)));
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.listComments(loginedUserId, postingId)));
     }
 }
