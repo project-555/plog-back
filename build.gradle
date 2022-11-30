@@ -1,6 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '2.7.4-SNAPSHOT'
     id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id 'java'
 }
 
@@ -12,6 +13,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    querydsl.extendsFrom compileClasspath
 }
 
 repositories {
@@ -19,6 +21,7 @@ repositories {
     maven { url 'https://repo.spring.io/milestone' }
     maven { url 'https://repo.spring.io/snapshot' }
 }
+
 
 dependencies {
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
@@ -52,8 +55,27 @@ dependencies {
 
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
+    // https://mvnrepository.com/artifact/com.querydsl/querydsl-jpa
+    implementation 'com.querydsl:querydsl-jpa:5.0.0'
+    // https://mvnrepository.com/artifact/com.querydsl/querydsl-apt
+    implementation 'com.querydsl:querydsl-apt:5.0.0'
+
+
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// -- Query DSL
+def queryDSLDir = "$buildDir/generated/querydsl"
+querydsl {
+    jpa = true
+    querydslSourcesDir = queryDSLDir
+}
+sourceSets {
+    main.java.srcDir queryDSLDir
+}
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
 }

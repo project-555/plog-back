@@ -2,21 +2,22 @@ package com.plogcareers.backend.blog.domain.entity;
 
 import com.plogcareers.backend.blog.domain.model.CommentDTO;
 import com.plogcareers.backend.ums.domain.entity.User;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "comment", schema = "plog_blog")
+@Getter
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -25,13 +26,6 @@ public class Comment {
 
     @Column(name = "parent_comment_id")
     private Long parentCommentId;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "parent_comment_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private Comment parent;
-
-    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
-    private List<Comment> children = new ArrayList<>();
 
     @Column(name = "depth")
     private Long depth;
@@ -63,7 +57,7 @@ public class Comment {
                 .updateDt(this.updateDt)
                 .user(this.user.toCommentUserDTO())
                 .createDt(this.createDt)
-                .children(this.children.stream().map(Comment::toCommentDTO).toList())
+                .children(new ArrayList<>())
                 .build();
     }
 }

@@ -1,7 +1,10 @@
 package com.plogcareers.backend.blog.domain.dto;
 
 import com.plogcareers.backend.blog.domain.model.PostingTagDTO;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
