@@ -2,20 +2,19 @@ package com.plogcareers.backend.blog.domain.dto;
 
 import com.plogcareers.backend.blog.domain.entity.Comment;
 import com.plogcareers.backend.blog.domain.model.CommentDTO;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
+
 @NoArgsConstructor
 @Getter
 public class ListCommentsResponse {
     List<CommentDTO> comments = new ArrayList<>();
 
-    public void SetComments(List<Comment> comments) {
+    public ListCommentsResponse(List<Comment> comments) {
         List<Comment> children = new ArrayList<>();
         for (var comment : comments) {
             if (comment.getParentCommentId() == null) {
@@ -33,4 +32,5 @@ public class ListCommentsResponse {
             }
         }
     }
+
 }
