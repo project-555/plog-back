@@ -14,11 +14,11 @@ import java.util.List;
 public class ListCommentsResponse {
     List<CommentDTO> comments = new ArrayList<>();
 
-    public ListCommentsResponse(List<Comment> comments) {
+    public ListCommentsResponse(List<Comment> comments, Boolean isPostingOwner, Long loginedUserId) {
         List<Comment> children = new ArrayList<>();
         for (var comment : comments) {
             if (comment.getParentCommentId() == null) {
-                this.comments.add(comment.toCommentDTO());
+                this.comments.add(comment.toCommentDTO(isPostingOwner, loginedUserId));
                 continue;
             }
             children.add(comment);
@@ -27,7 +27,7 @@ public class ListCommentsResponse {
         for (var commentDto : this.comments) {
             for (var comment : children) {
                 if (commentDto.isChildren(comment)) {
-                    commentDto.getChildren().add(comment.toCommentDTO());
+                    commentDto.getChildren().add(comment.toCommentDTO(isPostingOwner, loginedUserId));
                 }
             }
         }
