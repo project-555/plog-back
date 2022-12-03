@@ -1,10 +1,12 @@
 package com.plogcareers.backend.ums.exception;
 
+import com.plogcareers.backend.common.error.ErrorCode;
+import com.plogcareers.backend.common.exception.UserException;
 import lombok.Getter;
 
 @Getter
-public class UserNotFoundException extends Exception {
+public class UserNotFoundException extends UserException {
     public UserNotFoundException() {
-        super("정보가 일치하는 유저가 없습니다.");
+        super(ErrorCode.ERR_USER_NOT_FOUND);
     }
 }

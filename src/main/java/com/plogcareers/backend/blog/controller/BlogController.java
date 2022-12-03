@@ -2,6 +2,7 @@ package com.plogcareers.backend.blog.controller;
 
 import com.plogcareers.backend.blog.domain.dto.*;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
+import com.plogcareers.backend.blog.exception.PostingNotFoundException;
 import com.plogcareers.backend.blog.exception.TagNotFoundException;
 import com.plogcareers.backend.blog.service.BlogService;
 import com.plogcareers.backend.blog.service.PostingService;
@@ -150,7 +151,7 @@ public class BlogController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @ApiOperation(value = "포스팅 ID로 덧글 조회")
+    @ApiOperation(value = "포스팅 ID로 덧글 리스트 조회")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "정상조회 (data)", response = ListCommentsResponse.class),
             @ApiResponse(code = 299, message = "정상조회 (outer)", response = SDataResponse.class),
@@ -163,5 +164,64 @@ public class BlogController {
                                                   @ApiParam(name = "postingId", value = "포스팅 ID", required = true) @PathVariable Long postingId) throws UserNotFoundException {
         Long loginedUserId = userService.getLoginedUserId(token);
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.listComments(loginedUserId, postingId)));
+    }
+
+    @ApiOperation(value = "포스팅에 덧글 생성")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 201, message = "정상 등록"),
+                    @ApiResponse(code = 404, message = "포스팅이 없거나, 로그인한 유저 정보가 없음.", response = ErrorResponse.class),
+                    @ApiResponse(code = 400, message = "잘못된 파라미터 요청", response = ErrorResponse.class)
+            }
+    )
+    @PostMapping("/posting/{postingId}/comment")
+    public ResponseEntity<SResponse> createComment(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
+                                                   @ApiParam @PathVariable Long postingId,
+                                                   @Valid @RequestBody CreateCommentRequest request,
+                                                   BindingResult result) throws PostingNotFoundException, UserNotFoundException {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
+        Long loginedUserId = userService.getLoginedUserId(token);
+        postingService.createComment(request, postingId, loginedUserId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @ApiOperation(value = "포스팅 덧글 수정")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 204, message = "정상 수정"),
+                    @ApiResponse(code = 400, message = "잘못된 파라미터 요청", response = ErrorResponse.class),
+                    @ApiResponse(code = 401, message = "수정할 권한이 없음", response = ErrorResponse.class),
+                    @ApiResponse(code = 404, message = "포스팅이 없거나, 덧글이 없거나, 유저 정보가 없음", response = ErrorResponse.class),
+            }
+    )
+    @PutMapping("/posting/{postingId}/comment/{commentId}")
+    public ResponseEntity<SResponse> updateComment(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
+                                                   @ApiParam(name = "postingId", value = "포스팅 ID", required = true) @PathVariable Long postingId,
+                                                   @ApiParam(name = "commentId", value = "덧글 ID", required = true) @PathVariable Long commentId,
+                                                   @Valid @RequestBody UpdateCommentRequest request,
+                                                   BindingResult result) {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
+        Long loginedUserId = userService.getLoginedUserId(token);
+        postingService.updateComment(request, postingId, commentId, loginedUserId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation(value = "포스팅 덧글 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "정상 삭제"),
+            @ApiResponse(code = 401, message = "삭제할 권한이 없음 (덧글 작성자거나, 포스팅 작성자가 아님)", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "포스팅이 없거나, 덧글이 없거나, 유저장보가 없음", response = ErrorResponse.class),
+    })
+    @DeleteMapping("/posting/{postingId}/comment/{commentId}")
+    public ResponseEntity<SResponse> deleteComment(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
+                                                   @ApiParam(name = "postingId", value = "포스팅 ID", required = true) @PathVariable Long postingId,
+                                                   @ApiParam(name = "commentId", value = "덧글 ID", required = true) @PathVariable Long commentId) {
+        Long loginedUserId = userService.getLoginedUserId(token);
+        postingService.deleteComment(postingId, commentId, loginedUserId);
+        return ResponseEntity.noContent().build();
     }
 }
