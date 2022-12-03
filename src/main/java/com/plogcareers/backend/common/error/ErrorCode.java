@@ -12,10 +12,13 @@ public enum ErrorCode {
     ERR_CATEGORY_DUPLICATED(HttpStatus.BAD_REQUEST, "중복되는 카테고리가 이미 존재합니다."),
     ERR_BLOG_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."),
     ERR_TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 태그입니다"),
-
+    ERR_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 덧글입니다."),
+    ERR_PARENT_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "답글을 남길 덧글이 존재하지 않습니다."),
+    ERR_COMMENT_POSTING_MISMATCHED(HttpStatus.BAD_REQUEST, "덧글과 포스팅이 일치하지 않습니다."),
+    ERR_INVALID_PARENT_EXIST(HttpStatus.BAD_REQUEST, "답글을 남기지 못하는 덧글입니다."),
+    ERR_NO_PROPER_AUTHORITY(HttpStatus.UNAUTHORIZED, "적절한 권한이 없습니다."),
     // Parameter Validation
     ERR_INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "파라미터가 유효하지 않습니다."),
-
     // UMS Domain
     ERR_LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "이메일이나, 비밀번호가 일치하지 않습니다."),
     ERR_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "유저가 존재하지 않습니다."),

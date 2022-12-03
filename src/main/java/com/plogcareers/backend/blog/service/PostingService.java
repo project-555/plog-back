@@ -1,19 +1,14 @@
 package com.plogcareers.backend.blog.service;
 
-import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
-import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
-import com.plogcareers.backend.blog.domain.dto.ListCommentsResponse;
-import com.plogcareers.backend.blog.domain.dto.ListPostingTagResponse;
+import com.plogcareers.backend.blog.domain.dto.*;
 import com.plogcareers.backend.blog.domain.entity.Comment;
 import com.plogcareers.backend.blog.domain.entity.Posting;
 import com.plogcareers.backend.blog.domain.entity.PostingTag;
 import com.plogcareers.backend.blog.domain.entity.State;
 import com.plogcareers.backend.blog.domain.model.PostingTagDTO;
 import com.plogcareers.backend.blog.domain.model.StateDTO;
-import com.plogcareers.backend.blog.exception.PostingNotFoundException;
-import com.plogcareers.backend.blog.exception.TagNotFoundException;
+import com.plogcareers.backend.blog.exception.*;
 import com.plogcareers.backend.blog.repository.*;
-import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +28,7 @@ public class PostingService {
     private final TagRepository tagRepository;
     private final StateRepository stateRepository;
     private final CommentRepository commentRepository;
+    private final CommentRepositorySupport commentRepositorySupport;
     private final UserRepository userRepository;
 
     // 글 저장
@@ -93,18 +89,50 @@ public class PostingService {
     }
 
 
-    public ListCommentsResponse listComments(Long loginedUserId, Long postingId) throws PostingNotFoundException, UserNotFoundException {
-        Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
-
-        List<Comment> comments;
-        if (posting.isOwner(loginedUserId)) {
-            comments = commentRepository.findByBlogOwner(postingId);
-        } else {
-            User user = userRepository.findById(loginedUserId).orElseThrow(UserNotFoundException::new);
-            comments = commentRepository.findByUserAndGuest(postingId, user);
+    public void createComment(CreateCommentRequest request, Long postingId, Long loginedUserID) throws UserNotFoundException, PostingNotFoundException, InvalidParentExistException {
+        if (!postingRepository.existsById(postingId)) {
+            throw new PostingNotFoundException();
+        }
+        if (request.getParentCommentId() != null) {
+            Comment parentComment = commentRepository.findById(request.getParentCommentId()).orElseThrow(ParentCommentNotFoundException::new);
+            if (parentComment.getParentCommentId() != null) {
+                throw new InvalidParentExistException();
+            }
         }
 
-        return new ListCommentsResponse(comments);
+        commentRepository.save(request.toCommentEntity(
+                postingId,
+                userRepository.findById(loginedUserID).orElseThrow(UserNotFoundException::new)
+        ));
     }
 
+    public void updateComment(UpdateCommentRequest request, Long postingId, Long commentId, Long loginedUserId) throws NotProperAuthorityException, PostingNotFoundException, CommentNotFoundException {
+        Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
+        Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
+        if (!comment.getUser().getId().equals(loginedUserId)) {
+            throw new NotProperAuthorityException();
+        }
+        if (!comment.getPostingId().equals(posting.getId())) {
+            throw new CommentPostingMismatchedException();
+        }
+        commentRepository.save(request.toCommentEntity(comment));
+    }
+
+    public void deleteComment(Long postingId, Long commentId, Long loginedUserId) throws PostingNotFoundException, CommentNotFoundException, NotProperAuthorityException {
+        Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
+        Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
+        if (!posting.isOwner(loginedUserId) && !comment.isOwner(loginedUserId)) {
+            throw new NotProperAuthorityException();
+        }
+        if (!comment.getPostingId().equals(posting.getId())) {
+            throw new CommentPostingMismatchedException();
+        }
+        commentRepository.delete(comment);
+    }
+
+
+    public ListCommentsResponse listComments(Long loginedUserId, Long postingId) throws PostingNotFoundException, UserNotFoundException {
+        Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
+        return new ListCommentsResponse(commentRepositorySupport.ListComments(postingId), posting.isOwner(loginedUserId), loginedUserId);
+    }
 }

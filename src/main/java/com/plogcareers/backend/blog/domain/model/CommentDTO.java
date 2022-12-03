@@ -21,6 +21,7 @@ public class CommentDTO {
     Long id;
     CommentUserDTO user;
     String commentContent;
+    Boolean isSecret;
     LocalDateTime createDt;
     LocalDateTime updateDt;
     List<CommentDTO> children = new ArrayList<>();
