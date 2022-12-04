@@ -143,11 +143,15 @@ public class BlogController {
     }
     )
     @PutMapping("/{blogId}/category")
-    public ResponseEntity<SResponse> putCategory(@PathVariable Long blogId, @Valid @RequestBody UpdateCategoryRequest request, BindingResult result) throws BlogNotFoundException {
+    public ResponseEntity<SResponse> putCategory(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
+                                                 @PathVariable Long blogId,
+                                                 @Valid @RequestBody UpdateCategoryRequest request,
+                                                 BindingResult result) throws BlogNotFoundException, UserNotFoundException {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        blogService.updateCategory(blogId, request);
+        Long loginedUserId = userService.getLoginedUserId(token);
+        blogService.updateCategory(blogId, loginedUserId, request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -160,8 +164,10 @@ public class BlogController {
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/{blogId}/category")
-    public ResponseEntity<SResponse> deleteCategory(@PathVariable Long blogId, Long categoryId) {
-        blogService.deleteCategory(blogId, categoryId);
+    public ResponseEntity<SResponse> deleteCategory(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
+                                                    @PathVariable Long blogId, Long categoryId) throws UserNotFoundException {
+        Long loginedUserId = userService.getLoginedUserId(token);
+        blogService.deleteCategory(blogId, categoryId, loginedUserId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
