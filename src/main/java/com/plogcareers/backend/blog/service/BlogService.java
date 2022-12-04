@@ -5,10 +5,7 @@ import com.plogcareers.backend.blog.domain.dto.ListCategoryResponse;
 import com.plogcareers.backend.blog.domain.dto.UpdateCategoryRequest;
 import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.domain.entity.Category;
-import com.plogcareers.backend.blog.domain.model.CategoryDTO;
-import com.plogcareers.backend.blog.exception.BlogNotFoundException;
-import com.plogcareers.backend.blog.exception.CategoryDuplicatedException;
-import com.plogcareers.backend.blog.exception.CategoryNotFoundException;
+import com.plogcareers.backend.blog.exception.*;
 import com.plogcareers.backend.blog.repository.BlogRepository;
 import com.plogcareers.backend.blog.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,12 +32,11 @@ public class BlogService {
     // 카테고리 가져오기
     public ListCategoryResponse listCategory(Long blogId) throws BlogNotFoundException {
         if (blogRepository.existsById(blogId)) {
-            List<CategoryDTO> categoryList = categoryRepository.findCategoryByBlogIdOrderByCategoryName(blogId)
-                    .stream()
-                    .map(Category::toCategoryDto)
-                    .toList();
             return ListCategoryResponse.builder()
-                    .categories(categoryList)
+                    .categories(categoryRepository.findCategoryByBlogIdOrderByCategoryName(blogId)
+                            .stream()
+                            .map(Category::toCategoryDto)
+                            .toList())
                     .build();
         }
         throw new BlogNotFoundException();
@@ -49,9 +44,12 @@ public class BlogService {
 
     // 카테고리 수정하기
     @Transactional
-    public void updateCategory(Long blogId, @NotNull UpdateCategoryRequest request) throws BlogNotFoundException, CategoryNotFoundException {
+    public void updateCategory(Long blogId, Long loginedUserId, @NotNull UpdateCategoryRequest request) throws BlogNotFoundException, CategoryNotFoundException, NotProperAuthorityException {
         Blog blog = blogRepository.findById(blogId).orElseThrow(BlogNotFoundException::new);
-        categoryRepository.findById(request.getId()).orElseThrow(CategoryNotFoundException::new);
+        Category category = categoryRepository.findById(request.getId()).orElseThrow(CategoryNotFoundException::new);
+        if (!category.isOwner(loginedUserId)) {
+            throw new NotProperAuthorityException();
+        }
         if (categoryRepository.existsByBlogAndCategoryName(blog, request.getCategoryName())) {
             throw new CategoryDuplicatedException();
         }
@@ -60,9 +58,12 @@ public class BlogService {
 
     // 카테고리 삭제하기
     @Transactional
-    public void deleteCategory(Long blogId, Long categoryId) throws BlogNotFoundException, CategoryNotFoundException {
+    public void deleteCategory(Long blogId, Long categoryId, Long loginedUserId) throws BlogNotFoundException, CategoryNotFoundException {
         blogRepository.findById(blogId).orElseThrow(BlogNotFoundException::new);
-        categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
+        Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
+        if (!category.isOwner(loginedUserId)) {
+            throw new NotProperAuthorityException();
+        }
         categoryRepository.deleteCategoryById(categoryId);
     }
 }
