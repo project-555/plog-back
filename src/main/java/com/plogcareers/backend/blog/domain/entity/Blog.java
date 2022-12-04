@@ -39,4 +39,8 @@ public class Blog {
     @Column(name = "update_dt")
     private LocalDateTime updateDt;
 
+    public Boolean isOwner(Long userId) {
+        return this.getUser().getId().equals(userId);
+    }
+
 }
