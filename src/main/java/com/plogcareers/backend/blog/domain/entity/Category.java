@@ -35,4 +35,8 @@ public class Category {
                 .categoryName(categoryName)
                 .build();
     }
+
+    public Boolean isOwner(Long userId) {
+        return this.blog.getUser().getId().equals(userId);
+    }
 }
