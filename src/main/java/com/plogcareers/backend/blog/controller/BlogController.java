@@ -114,8 +114,10 @@ public class BlogController {
     )
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/category")
-    public ResponseEntity<SResponse> createCategory(@Valid @RequestBody CreateCategoryRequest categoryRequest) {
-        blogService.createCategory(categoryRequest);
+    public ResponseEntity<SResponse> createCategory(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
+                                                    @Valid @RequestBody CreateCategoryRequest categoryRequest) throws UserNotFoundException {
+        Long loginedUserId = userService.getLoginedUserId(token);
+        blogService.createCategory(loginedUserId, categoryRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
