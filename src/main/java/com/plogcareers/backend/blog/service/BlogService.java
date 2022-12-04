@@ -21,8 +21,11 @@ public class BlogService {
     private final CategoryRepository categoryRepository;
 
     // 카테고리 생성하기
-    public void createCategory(@NotNull CreateCategoryRequest createCategoryRequest) throws BlogNotFoundException, CategoryDuplicatedException {
+    public void createCategory(Long loginedUserId, @NotNull CreateCategoryRequest createCategoryRequest) throws BlogNotFoundException, CategoryDuplicatedException {
         Blog blog = blogRepository.findById(createCategoryRequest.getBlogId()).orElseThrow(BlogNotFoundException::new);
+        if (!blog.isOwner(loginedUserId)) {
+            throw new NotProperAuthorityException();
+        }
         if (categoryRepository.existsByBlogAndCategoryName(blog, createCategoryRequest.getCategoryName())) {
             throw new CategoryDuplicatedException();
         }
@@ -47,6 +50,9 @@ public class BlogService {
     public void updateCategory(Long blogId, Long loginedUserId, @NotNull UpdateCategoryRequest request) throws BlogNotFoundException, CategoryNotFoundException, NotProperAuthorityException {
         Blog blog = blogRepository.findById(blogId).orElseThrow(BlogNotFoundException::new);
         Category category = categoryRepository.findById(request.getId()).orElseThrow(CategoryNotFoundException::new);
+        if (!blog.isOwner(loginedUserId)) {
+            throw new NotProperAuthorityException();
+        }
         if (!category.isOwner(loginedUserId)) {
             throw new NotProperAuthorityException();
         }
@@ -59,8 +65,11 @@ public class BlogService {
     // 카테고리 삭제하기
     @Transactional
     public void deleteCategory(Long blogId, Long categoryId, Long loginedUserId) throws BlogNotFoundException, CategoryNotFoundException {
-        blogRepository.findById(blogId).orElseThrow(BlogNotFoundException::new);
+        Blog blog = blogRepository.findById(blogId).orElseThrow(BlogNotFoundException::new);
         Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
+        if (!blog.isOwner(loginedUserId)) {
+            throw new NotProperAuthorityException();
+        }
         if (!category.isOwner(loginedUserId)) {
             throw new NotProperAuthorityException();
         }
