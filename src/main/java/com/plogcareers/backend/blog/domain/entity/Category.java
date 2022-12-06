@@ -1,16 +1,14 @@
 package com.plogcareers.backend.blog.domain.entity;
 
 import com.plogcareers.backend.blog.domain.model.CategoryDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Builder
 @Entity
 @Getter
+@Setter
 @Table(name = "category", schema = "plog_blog")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,6 +31,7 @@ public class Category {
         return CategoryDTO.builder()
                 .categoryId(id)
                 .categoryName(categoryName)
+                .categoryDesc(categoryDesc)
                 .build();
     }
 

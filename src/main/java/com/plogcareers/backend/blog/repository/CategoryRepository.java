@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findCategoryByBlogIdOrderByCategoryName(Long blogId);
+    Category findByBlogAndCategoryName(Blog blog, String categoryName);
     Boolean existsByBlogAndCategoryName(Blog blog, String categoryName);
     void deleteCategoryById(Long categoryId);
 }
