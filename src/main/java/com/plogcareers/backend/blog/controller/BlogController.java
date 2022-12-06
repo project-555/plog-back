@@ -173,7 +173,7 @@ public class BlogController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @ApiOperation(value = "포스팅 ID로 덧글 조회")
+
     @ApiOperation(value = "포스팅 ID로 덧글 리스트 조회")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "정상조회 (data)", response = ListCommentsResponse.class),
