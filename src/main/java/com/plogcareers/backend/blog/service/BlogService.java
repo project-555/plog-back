@@ -57,9 +57,11 @@ public class BlogService {
             throw new NotProperAuthorityException();
         }
         if (categoryRepository.existsByBlogAndCategoryName(blog, request.getCategoryName())) {
-            throw new CategoryDuplicatedException();
+            if (!categoryRepository.findByBlogAndCategoryName(blog, request.getCategoryName()).getId().equals(request.getId())) {
+                throw new CategoryDuplicatedException();
+            }
         }
-        categoryRepository.save(request.toEntity(blog));
+        categoryRepository.save(request.toCategoryEntity(category, blog));
     }
 
     // 카테고리 삭제하기
