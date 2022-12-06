@@ -24,12 +24,10 @@ public class UpdateCategoryRequest {
     @ApiParam(value = "카테고리 설명")
     private String categoryDesc;
 
-    public Category toEntity(Blog blog) {
-        return Category.builder()
-                .id(id)
-                .categoryName(categoryName)
-                .categoryDesc(categoryDesc)
-                .blog(blog)
-                .build();
+    public Category toCategoryEntity(Category category, Blog blog) {
+        category.setCategoryName(this.categoryName);
+        category.setCategoryDesc(this.categoryDesc);
+        category.setBlog(blog);
+        return category;
     }
 }
