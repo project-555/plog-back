@@ -10,6 +10,7 @@ public enum ErrorCode {
     ERR_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "포스트를 찾을 수 없습니다."),
     ERR_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "카테고리를 찾을 수 없습니다."),
     ERR_CATEGORY_DUPLICATED(HttpStatus.BAD_REQUEST, "중복되는 카테고리가 이미 존재합니다."),
+    ERR_CATEGORY_BLOG_MISMATCHED(HttpStatus.BAD_REQUEST, "카테고리와 블로그가 일치하지 않습니다."),
     ERR_BLOG_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."),
     ERR_TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 태그입니다"),
     ERR_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 덧글입니다."),

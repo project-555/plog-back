@@ -7,6 +7,7 @@ import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.domain.entity.Category;
 import com.plogcareers.backend.blog.exception.*;
 import com.plogcareers.backend.blog.repository.BlogRepository;
+import com.plogcareers.backend.blog.repository.CategoryRepositortySupport;
 import com.plogcareers.backend.blog.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import javax.validation.constraints.NotNull;
 public class BlogService {
     private final BlogRepository blogRepository;
     private final CategoryRepository categoryRepository;
+    private final CategoryRepositortySupport categoryRepositortySupport;
 
     // 카테고리 생성하기
     public void createCategory(Long loginedUserId, @NotNull CreateCategoryRequest createCategoryRequest) throws BlogNotFoundException, CategoryDuplicatedException {
@@ -54,12 +56,10 @@ public class BlogService {
             throw new NotProperAuthorityException();
         }
         if (!category.isOwner(loginedUserId)) {
-            throw new NotProperAuthorityException();
+            throw new CategoryBlogMismatchedException();
         }
-        if (categoryRepository.existsByBlogAndCategoryName(blog, request.getCategoryName())) {
-            if (!categoryRepository.findByBlogAndCategoryName(blog, request.getCategoryName()).getId().equals(request.getId())) {
-                throw new CategoryDuplicatedException();
-            }
+        if (categoryRepositortySupport.isDuplicated(blogId, request.getId(), request.getCategoryName())){
+            throw new CategoryDuplicatedException();
         }
         categoryRepository.save(request.toCategoryEntity(category, blog));
     }
