@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class UpdateCategoryRequest {
     @NotNull
-    @ApiParam(value = "카테고리 이름")
+    @ApiParam(value = "카테고리 ID")
     private Long id;
     @NotNull
     @ApiParam(value = "카테고리 이름")
