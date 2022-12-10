@@ -7,7 +7,6 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Builder
 @Getter
@@ -30,16 +29,16 @@ public class Posting {
     private String htmlContent;
 
     @Column(name = "user_id")
-    private Long userId;
+    private Long userID;
 
     @Column(name = "category_id")
-    private Long categoryId;
+    private Long categoryID;
 
     @Column(name = "blog_id", nullable = false)
-    private Long blogId;
+    private Long blogID;
 
     @Column(name = "state_id")
-    private Long stateId;
+    private Long stateID;
 
     @Column(name = "hit_cnt", columnDefinition = "0")
     private int hitCnt;
@@ -62,19 +61,25 @@ public class Posting {
     @Column(name = "md_content", nullable = false)
     private String mdContent;
 
-    public GetPostingResponse toPostingDetailResponse() {
+    public GetPostingResponse toGetPostingResponse() {
         return GetPostingResponse.builder()
                 .id(this.id)
+                .title(this.title)
                 .htmlContent(this.htmlContent)
-                .mdContent(this.mdContent)
-                .isStarAllowed(this.isStarAllowed)
-                .isCommentAllowed(this.isCommentAllowed)
+                .stateID(this.stateID)
                 .updateDt(this.updateDt)
-                .createDt(this.createDt)
+                .isCommentAllowed(this.isCommentAllowed)
+                .thumbnailImageUrl(this.thumbnailImageUrl)
+                .mdContent(this.mdContent)
                 .build();
     }
 
-    public boolean isOwner(Long loginedUserId) {
-        return Objects.equals(this.userId, loginedUserId);
+
+    public Boolean hasComment(Comment comment) {
+        return comment.getPostingID().equals(this.id);
+    }
+
+    public Boolean isOwner(Long loginedUserID) {
+        return this.userID.equals(loginedUserID);
     }
 }

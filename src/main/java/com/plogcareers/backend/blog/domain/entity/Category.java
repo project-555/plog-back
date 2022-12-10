@@ -27,7 +27,7 @@ public class Category {
     @JoinColumn(name = "blog_id")
     private Blog blog;
 
-    public CategoryDTO toCategoryDto(){
+    public CategoryDTO toCategoryDto() {
         return CategoryDTO.builder()
                 .categoryId(id)
                 .categoryName(categoryName)
@@ -35,7 +35,7 @@ public class Category {
                 .build();
     }
 
-    public Boolean isOwner(Long userId) {
-        return this.blog.getUser().getId().equals(userId);
+    public Boolean isOwner(Long userID) {
+        return this.blog.getUser().getId().equals(userID);
     }
 }

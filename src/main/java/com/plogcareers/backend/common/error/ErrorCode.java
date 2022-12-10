@@ -15,9 +15,11 @@ public enum ErrorCode {
     ERR_TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 태그입니다"),
     ERR_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 덧글입니다."),
     ERR_PARENT_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "답글을 남길 덧글이 존재하지 않습니다."),
-    ERR_COMMENT_POSTING_MISMATCHED(HttpStatus.BAD_REQUEST, "덧글과 포스팅이 일치하지 않습니다."),
+    ERR_POSTING_COMMENT_UNMATCHED(HttpStatus.BAD_REQUEST, "덧글과 포스팅이 일치하지 않습니다."),
     ERR_INVALID_PARENT_EXIST(HttpStatus.BAD_REQUEST, "답글을 남기지 못하는 덧글입니다."),
     ERR_NO_PROPER_AUTHORITY(HttpStatus.UNAUTHORIZED, "적절한 권한이 없습니다."),
+
+    ERR_BLOG_POSTING_UNMATCHED(HttpStatus.BAD_REQUEST, "블로그에 해당 포스팅이 속하지 않습니다."),
     // Parameter Validation
     ERR_INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "파라미터가 유효하지 않습니다."),
     // UMS Domain

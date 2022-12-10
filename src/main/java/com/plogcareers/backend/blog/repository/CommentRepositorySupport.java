@@ -24,8 +24,8 @@ public class CommentRepositorySupport extends QuerydslRepositorySupport {
         QComment comment = QComment.comment;
 
         return queryFactory.selectFrom(comment)
-                .where(comment.postingId.eq(postingId))
-                .orderBy(comment.parentCommentId.asc().nullsFirst())
+                .where(comment.postingID.eq(postingId))
+                .orderBy(comment.parentCommentID.asc().nullsFirst())
                 .fetch();
     }
 }

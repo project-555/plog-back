@@ -11,6 +11,7 @@ import com.plogcareers.backend.common.domain.dto.ErrorResponse;
 import com.plogcareers.backend.common.domain.dto.SDataResponse;
 import com.plogcareers.backend.common.domain.dto.SResponse;
 import com.plogcareers.backend.common.exception.InvalidParamException;
+import com.plogcareers.backend.ums.constant.Auth;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.service.UserService;
 import io.swagger.annotations.*;
@@ -25,7 +26,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/blog")
+@RequestMapping("/blogs")
 @Api(tags = "Blog Domain")
 public class BlogController {
 
@@ -41,14 +42,17 @@ public class BlogController {
     }
     )
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping("/posting")
-    public ResponseEntity<SResponse> createPosting(@Valid @RequestBody CreatePostingRequest postingRequest, BindingResult result) throws TagNotFoundException {
+    @PostMapping("/{blogID}/posting")
+    public ResponseEntity<SResponse> createPosting(@ApiParam(name = "blogID", value = "블로그 ID", required = true) @PathVariable Long blogID,
+                                                   @ApiIgnore @RequestHeader(name = Auth.token) String token,
+                                                   @Valid @RequestBody CreatePostingRequest request,
+                                                   BindingResult result) throws TagNotFoundException {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        Long postingId = postingService.createPosting(postingRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new SDataResponse<>(postingId));
-
+        Long loginedUserID = userService.getLoginedUserID(token);
+        Long postingID = postingService.createPosting(blogID, loginedUserID, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new SDataResponse<>(postingID));
     }
 
     @ApiOperation(value = "Posting 단건 조회")
@@ -59,11 +63,11 @@ public class BlogController {
             @ApiResponse(code = 500, message = "서버 에러")
     }
     )
-    @GetMapping("/posting/{id}")
+    @GetMapping("/{blogID}/postings/{postingID}")
     @LogExecutionTime
-    public ResponseEntity<SResponse> getPosting(@PathVariable Long id) throws UserNotFoundException {
-        GetPostingResponse posting = postingService.getPosting(id);
-        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(posting));
+    public ResponseEntity<SResponse> getPosting(@ApiParam(name = "blogID", value = "블로그 ID") @PathVariable Long blogID,
+                                                @ApiParam(name = "postingID", value = "포스팅 ID") @PathVariable Long postingID) throws UserNotFoundException {
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.getPosting(blogID, postingID)));
 
     }
 
@@ -75,9 +79,10 @@ public class BlogController {
     }
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping("/posting/{id}")
-    public ResponseEntity<SResponse> deletePosting(@PathVariable Long id) {
-        postingService.deletePosting(id);
+    @DeleteMapping("/{blogID}/postings/{postingID}")
+    public ResponseEntity<SResponse> deletePosting(@PathVariable Long blogID, @PathVariable Long postingID, @RequestHeader(name = Auth.token) String token) {
+        Long userID = userService.getLoginedUserID(token);
+        postingService.deletePosting(blogID, postingID, userID);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
     }
@@ -86,7 +91,7 @@ public class BlogController {
     @ApiResponses(
             @ApiResponse(code = 200, message = "정삭 동작 시")
     )
-    @GetMapping("/posting/states")
+    @GetMapping("/states")
     public ResponseEntity<SResponse> listStates() {
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.listStates()));
     }
@@ -99,9 +104,9 @@ public class BlogController {
             @ApiResponse(code = 500, message = "서버 에러")
     }
     )
-    @GetMapping("/posting/{postingId}/tag")
-    public ResponseEntity<SResponse> getPostingTag(@PathVariable Long postingId) {
-        ListPostingTagResponse listPostingTag = postingService.listPostingTag(postingId);
+    @GetMapping("/{blogID}/postings/{postingID}/tags")
+    public ResponseEntity<SResponse> listPostingTags(@PathVariable Long blogID, @PathVariable Long postingID) {
+        ListPostingTagResponse listPostingTag = postingService.listPostingTags(blogID, postingID);
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(listPostingTag));
     }
 
@@ -113,47 +118,47 @@ public class BlogController {
     }
     )
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping("/category")
-    public ResponseEntity<SResponse> createCategory(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
+    @PostMapping("/{blogID}/category")
+    public ResponseEntity<SResponse> createCategory(@PathVariable Long blogID, @ApiIgnore @RequestHeader(name = Auth.token) String token,
                                                     @Valid @RequestBody CreateCategoryRequest categoryRequest) throws UserNotFoundException {
-        Long loginedUserId = userService.getLoginedUserId(token);
-        blogService.createCategory(loginedUserId, categoryRequest);
+        Long loginedUserID = userService.getLoginedUserID(token);
+        blogService.createCategory(blogID, loginedUserID, categoryRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @ApiOperation(value = "Category 리스트 조회")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "정상 조회(data)", response = ListCategoryResponse.class),
+            @ApiResponse(code = 200, message = "정상 조회(data)", response = ListCategoriesResponse.class),
             @ApiResponse(code = 299, message = "정상 조회(outer)", response = SDataResponse.class),
             @ApiResponse(code = 404, message = "블로그 없음"),
             @ApiResponse(code = 500, message = "서버 에러")
     }
     )
-    @GetMapping("/{blogId}/categories")
-    public ResponseEntity<SResponse> getCategory(@PathVariable Long blogId) {
-        ListCategoryResponse listCategoryResponse = blogService.listCategory(blogId);
-        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(listCategoryResponse));
+    @GetMapping("/{blogID}/categories")
+    public ResponseEntity<SResponse> listCategories(@ApiParam(name = "blogID", value = "블로그 ID") @PathVariable Long blogID) {
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(blogService.listCategories(blogID)));
 
     }
 
     @ApiOperation(value = "Category 리스트 변경")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "정상 수정(data)", response = ListCategoryResponse.class),
+            @ApiResponse(code = 200, message = "정상 수정(data)", response = ListCategoriesResponse.class),
             @ApiResponse(code = 299, message = "정상 수정(outer)", response = SDataResponse.class),
             @ApiResponse(code = 404, message = "블로그 없음"),
             @ApiResponse(code = 500, message = "서버 에러")
     }
     )
-    @PutMapping("/{blogId}/category")
-    public ResponseEntity<SResponse> putCategory(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
-                                                 @PathVariable Long blogId,
-                                                 @Valid @RequestBody UpdateCategoryRequest request,
-                                                 BindingResult result) throws BlogNotFoundException, UserNotFoundException {
+    @PutMapping("/{blogID}/categories/{categoryID}")
+    public ResponseEntity<SResponse> updateCategory(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+                                                    @ApiParam(name = "blogID", value = "블로그 ID") @PathVariable Long blogID,
+                                                    @ApiParam(name = "categoryID", value = "카테고리 ID") @PathVariable Long categoryID,
+                                                    @Valid @RequestBody UpdateCategoryRequest request,
+                                                    BindingResult result) throws BlogNotFoundException, UserNotFoundException {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        Long loginedUserId = userService.getLoginedUserId(token);
-        blogService.updateCategory(blogId, loginedUserId, request);
+        Long loginedUserID = userService.getLoginedUserID(token);
+        blogService.updateCategory(blogID, loginedUserID, request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -165,11 +170,12 @@ public class BlogController {
     }
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{blogId}/category")
-    public ResponseEntity<SResponse> deleteCategory(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
-                                                    @PathVariable Long blogId, Long categoryId) throws UserNotFoundException {
-        Long loginedUserId = userService.getLoginedUserId(token);
-        blogService.deleteCategory(blogId, categoryId, loginedUserId);
+    @DeleteMapping("/{blogID}/categories/{categoryID}")
+    public ResponseEntity<SResponse> deleteCategory(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+                                                    @ApiParam(name = "blogID", value = "블로그 ID") @PathVariable Long blogID,
+                                                    @ApiParam(name = "categoryID", value = "카테고리 ID") @PathVariable Long categoryID) throws UserNotFoundException {
+        Long loginedUserID = userService.getLoginedUserID(token);
+        blogService.deleteCategory(blogID, categoryID, loginedUserID);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -182,11 +188,12 @@ public class BlogController {
             @ApiResponse(code = 404, message = "해당하는 포스팅 ID를 가진 포스팅 없음", response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)}
     )
-    @GetMapping("/posting/{postingId}/comments")
-    public ResponseEntity<SResponse> listComments(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
-                                                  @ApiParam(name = "postingId", value = "포스팅 ID", required = true) @PathVariable Long postingId) throws UserNotFoundException {
-        Long loginedUserId = userService.getLoginedUserId(token);
-        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.listComments(loginedUserId, postingId)));
+    @GetMapping("/{blogID}/postings/{postingID}/comments")
+    public ResponseEntity<SResponse> listComments(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+                                                  @ApiParam(name = "blogID", value = "블로그 ID", required = true) @PathVariable Long blogID,
+                                                  @ApiParam(name = "postingID", value = "포스팅 ID", required = true) @PathVariable Long postingID) throws UserNotFoundException {
+        Long loginedUserID = userService.getLoginedUserID(token);
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.listComments(blogID, postingID, loginedUserID)));
     }
 
     @ApiOperation(value = "포스팅에 덧글 생성")
@@ -197,16 +204,17 @@ public class BlogController {
                     @ApiResponse(code = 400, message = "잘못된 파라미터 요청", response = ErrorResponse.class)
             }
     )
-    @PostMapping("/posting/{postingId}/comment")
-    public ResponseEntity<SResponse> createComment(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
-                                                   @ApiParam @PathVariable Long postingId,
+    @PostMapping("/{blogID}/postings/{postingID}/comment")
+    public ResponseEntity<SResponse> createComment(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+                                                   @ApiParam(name = "blogID", value = "블로그 ID") @PathVariable Long blogID,
+                                                   @ApiParam(name = "postingID", value = "포스팅 ID") @PathVariable Long postingID,
                                                    @Valid @RequestBody CreateCommentRequest request,
                                                    BindingResult result) throws PostingNotFoundException, UserNotFoundException {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        Long loginedUserId = userService.getLoginedUserId(token);
-        postingService.createComment(request, postingId, loginedUserId);
+        Long loginedUserID = userService.getLoginedUserID(token);
+        postingService.createComment(blogID, postingID, loginedUserID, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -219,17 +227,18 @@ public class BlogController {
                     @ApiResponse(code = 404, message = "포스팅이 없거나, 덧글이 없거나, 유저 정보가 없음", response = ErrorResponse.class),
             }
     )
-    @PutMapping("/posting/{postingId}/comment/{commentId}")
-    public ResponseEntity<SResponse> updateComment(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
-                                                   @ApiParam(name = "postingId", value = "포스팅 ID", required = true) @PathVariable Long postingId,
-                                                   @ApiParam(name = "commentId", value = "덧글 ID", required = true) @PathVariable Long commentId,
+    @PutMapping("/{blogID}/postings/{postingID}/comments/{commentID}")
+    public ResponseEntity<SResponse> updateComment(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+                                                   @ApiParam(name = "blogID", value = "블로그 ID", required = true) @PathVariable Long blogID,
+                                                   @ApiParam(name = "postingID", value = "포스팅 ID", required = true) @PathVariable Long postingID,
+                                                   @ApiParam(name = "commentID", value = "덧글 ID", required = true) @PathVariable Long commentID,
                                                    @Valid @RequestBody UpdateCommentRequest request,
                                                    BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        Long loginedUserId = userService.getLoginedUserId(token);
-        postingService.updateComment(request, postingId, commentId, loginedUserId);
+        Long loginedUserID = userService.getLoginedUserID(token);
+        postingService.updateComment(blogID, postingID, commentID, loginedUserID, request);
         return ResponseEntity.noContent().build();
     }
 
@@ -239,12 +248,13 @@ public class BlogController {
             @ApiResponse(code = 401, message = "삭제할 권한이 없음 (덧글 작성자거나, 포스팅 작성자가 아님)", response = ErrorResponse.class),
             @ApiResponse(code = 404, message = "포스팅이 없거나, 덧글이 없거나, 유저장보가 없음", response = ErrorResponse.class),
     })
-    @DeleteMapping("/posting/{postingId}/comment/{commentId}")
-    public ResponseEntity<SResponse> deleteComment(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
-                                                   @ApiParam(name = "postingId", value = "포스팅 ID", required = true) @PathVariable Long postingId,
-                                                   @ApiParam(name = "commentId", value = "덧글 ID", required = true) @PathVariable Long commentId) {
-        Long loginedUserId = userService.getLoginedUserId(token);
-        postingService.deleteComment(postingId, commentId, loginedUserId);
+    @DeleteMapping("/{blogID}/postings/{postingID}/comments/{commentID}")
+    public ResponseEntity<SResponse> deleteComment(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+                                                   @ApiParam(name = "blogID", value = "블로그 ID", required = true) @PathVariable Long blogID,
+                                                   @ApiParam(name = "postingID", value = "포스팅 ID", required = true) @PathVariable Long postingID,
+                                                   @ApiParam(name = "commentID", value = "덧글 ID", required = true) @PathVariable Long commentID) {
+        Long loginedUserID = userService.getLoginedUserID(token);
+        postingService.deleteComment(blogID, postingID, commentID, loginedUserID);
         return ResponseEntity.noContent().build();
     }
 }

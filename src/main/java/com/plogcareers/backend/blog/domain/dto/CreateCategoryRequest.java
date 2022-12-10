@@ -16,8 +16,6 @@ public class CreateCategoryRequest {
     private String categoryName;
     @ApiParam(value = "카테고리 설명")
     private String categoryDesc;
-    @NotNull
-    private Long blogId;
 
     public Category toEntity(Blog blog) {
         return Category.builder()

@@ -15,7 +15,7 @@ public class Tag {
     private Long id;
 
     @Column(name = "blog_id")
-    private Long blogId;
+    private Long blogID;
 
     @Column(name = "tag_name")
     private String tagName;
@@ -24,6 +24,13 @@ public class Tag {
         return TagDTO.builder()
                 .tagId(id)
                 .tagName(tagName)
+                .build();
+    }
+
+    public PostingTag toPostingTag(Posting posting) {
+        return PostingTag.builder()
+                .tag(this)
+                .posting(posting)
                 .build();
     }
 }

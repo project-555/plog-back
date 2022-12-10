@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 public class CreateCommentRequest {
 
-    Long parentCommentId;
+    Long parentCommentID;
 
     @NotNull
     @Length(min = 1, max = 300)
@@ -29,9 +29,9 @@ public class CreateCommentRequest {
                 .user(user)
                 .createDt(LocalDateTime.now())
                 .updateDt(LocalDateTime.now())
-                .postingId(postingId)
+                .postingID(postingId)
                 .isSecret(this.isSecret)
-                .parentCommentId(this.parentCommentId)
+                .parentCommentID(this.parentCommentID)
                 .build();
     }
 }
