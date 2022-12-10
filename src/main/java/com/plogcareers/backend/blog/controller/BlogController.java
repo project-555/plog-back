@@ -73,6 +73,13 @@ public class BlogController {
 
     }
 
+    @ApiOperation(value = "Posting 리스트 조회")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "정상 조회(data)", response = ListPostingsResponse.class),
+            @ApiResponse(code = 299, message = "정상 조회(outer)", response = SDataResponse.class),
+            @ApiResponse(code = 400, message = "잘못된 요청", response = ErrorResponse.class),
+            @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
+    })
     @GetMapping("/{blogID}/postings")
     public ResponseEntity<SResponse> listPostings(@ApiParam(name = "blogID", value = "블로그 ID") @PathVariable Long blogID,
                                                   @ApiIgnore @RequestHeader(name = Auth.token, required = false) String token, ListPostingsRequest request) {
