@@ -1,9 +1,7 @@
 package com.plogcareers.backend.blog.domain.entity;
 
-import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
+import com.plogcareers.backend.blog.domain.dto.PostingDTO;
 import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,12 +10,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "posting", schema = "plog_blog")
+@Table(name = "v_posting", schema = "plog_blog")
 @NoArgsConstructor
 @AllArgsConstructor
-@DynamicInsert
-@DynamicUpdate
-public class Posting {
+public class VPosting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -61,25 +57,24 @@ public class Posting {
     @Column(name = "md_content", nullable = false)
     private String mdContent;
 
-    public GetPostingResponse toGetPostingResponse() {
-        return GetPostingResponse.builder()
+    @Column(name = "posting_star_count")
+    private Long postingStarCount;
+
+    public PostingDTO toPostingDTO() {
+        return PostingDTO.builder()
                 .id(this.id)
                 .title(this.title)
+                .mdContent(this.mdContent)
                 .htmlContent(this.htmlContent)
                 .stateID(this.stateID)
-                .updateDt(this.updateDt)
+                .categoryID(this.categoryID)
+                .isStarAllowed(this.isStarAllowed)
                 .isCommentAllowed(this.isCommentAllowed)
+                .hitCnt(this.hitCnt)
                 .thumbnailImageUrl(this.thumbnailImageUrl)
-                .mdContent(this.mdContent)
+                .createDt(this.createDt)
+                .updateDt(this.updateDt)
+                .postingStarCount(this.postingStarCount)
                 .build();
-    }
-
-
-    public Boolean hasComment(Comment comment) {
-        return comment.getPostingID().equals(this.id);
-    }
-
-    public Boolean isOwner(Long loginedUserID) {
-        return this.userID.equals(loginedUserID);
     }
 }
