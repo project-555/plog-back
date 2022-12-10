@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface PostingTagRepository extends JpaRepository<PostingTag, Long> {
     List<PostingTag> findByPostingId(Long postingId);
+
+    List<PostingTag> findByTag_IdIn(List<Long> tagIDs);
 }

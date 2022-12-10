@@ -66,9 +66,18 @@ public class BlogController {
     @GetMapping("/{blogID}/postings/{postingID}")
     @LogExecutionTime
     public ResponseEntity<SResponse> getPosting(@ApiParam(name = "blogID", value = "블로그 ID") @PathVariable Long blogID,
-                                                @ApiParam(name = "postingID", value = "포스팅 ID") @PathVariable Long postingID) throws UserNotFoundException {
-        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.getPosting(blogID, postingID)));
+                                                @ApiParam(name = "postingID", value = "포스팅 ID") @PathVariable Long postingID,
+                                                @ApiIgnore @RequestHeader(name = Auth.token) String token) throws UserNotFoundException {
+        Long loginedUserID = userService.getLoginedUserID(token);
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.getPosting(blogID, postingID, loginedUserID)));
 
+    }
+
+    @GetMapping("/{blogID}/postings")
+    public ResponseEntity<SResponse> listPostings(@ApiParam(name = "blogID", value = "블로그 ID") @PathVariable Long blogID,
+                                                  @ApiIgnore @RequestHeader(name = Auth.token, required = false) String token, ListPostingsRequest request) {
+        Long loginedUserID = userService.getLoginedUserID(token);
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.listPostings(blogID, loginedUserID, request)));
     }
 
     @ApiOperation(value = "Posting 삭제")
@@ -80,7 +89,8 @@ public class BlogController {
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/{blogID}/postings/{postingID}")
-    public ResponseEntity<SResponse> deletePosting(@PathVariable Long blogID, @PathVariable Long postingID, @RequestHeader(name = Auth.token) String token) {
+    public ResponseEntity<SResponse> deletePosting(@PathVariable Long blogID, @PathVariable Long postingID,
+                                                   @ApiIgnore @RequestHeader(name = Auth.token) String token) {
         Long userID = userService.getLoginedUserID(token);
         postingService.deletePosting(blogID, postingID, userID);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
