@@ -29,7 +29,7 @@ public class PostingService {
     // 글 저장
     public Long createPosting(Long blogID, Long userID, CreatePostingRequest request) throws TagNotFoundException {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
-        if (blog.isOwner(userID)) {
+        if (!blog.isOwner(userID)) {
             throw new NotProperAuthorityException();
         }
 
