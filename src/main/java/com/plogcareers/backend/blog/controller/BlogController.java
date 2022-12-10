@@ -274,4 +274,49 @@ public class BlogController {
         postingService.deleteComment(blogID, postingID, commentID, loginedUserID);
         return ResponseEntity.noContent().build();
     }
+
+    @ApiOperation(value = "특정 포스팅 스타 리스트 조회")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "정상 조회(data)", response = ListPostingStarsResponse.class),
+            @ApiResponse(code = 299, message = "정상 조회(outer)", response = SDataResponse.class),
+            @ApiResponse(code = 400, message = "잘못된 사용자 요청", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "블로그가 없거나, 포스팅이 존재하지 않음", response = ErrorResponse.class)
+    })
+    @GetMapping("/{blogID}/postings/{postingID}/stars")
+    public ResponseEntity<SResponse> listPostingStars(@ApiParam(name = "blogID", value = "블로그 ID") @PathVariable Long blogID,
+                                                      @ApiParam(name = "postingID", value = "포스팅 ID") @PathVariable Long postingID) {
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.listPostingStars(blogID, postingID)));
+    }
+
+    @ApiOperation(value = "특정 포스팅에 스타 생성")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "정상 생성"),
+            @ApiResponse(code = 400, message = "잘못된 사용자 요청", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "자원 없음", response = ErrorResponse.class)
+    })
+    @PostMapping("/{blogID}/postings/{postingID}/star")
+    public ResponseEntity<SResponse> createPostingStar(@ApiParam(name = "blogID", value = "블로그 ID") @PathVariable Long blogID,
+                                                       @ApiParam(name = "postingID", value = "포스팅 ID") @PathVariable Long postingID,
+                                                       @ApiIgnore @RequestHeader(name = Auth.token) String token) {
+        Long loginedUserID = userService.getLoginedUserID(token);
+        postingService.createPostingStar(blogID, postingID, loginedUserID);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @ApiOperation(value = "특정 포스팅에 스타 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "정상 삭제"),
+            @ApiResponse(code = 400, message = "잘못된 사용자 요청"),
+            @ApiResponse(code = 404, message = "자원 없음")
+    })
+    @DeleteMapping("/{blogID}/postings/{postingID}/star")
+    public ResponseEntity<SResponse> deletePostingStar(@ApiParam(name = "blogID", value = "블로그 ID") @PathVariable Long blogID,
+                                                       @ApiParam(name = "postingID", value = "포스팅 ID") @PathVariable Long postingID,
+                                                       @ApiIgnore @RequestHeader(name = Auth.token) String token) {
+
+        Long loginedUserID = userService.getLoginedUserID(token);
+        postingService.deletePostingStar(blogID, postingID, loginedUserID);
+        return ResponseEntity.noContent().build();
+    }
+
 }

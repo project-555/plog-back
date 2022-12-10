@@ -4,6 +4,7 @@ import com.plogcareers.backend.blog.domain.dto.*;
 import com.plogcareers.backend.blog.domain.entity.*;
 import com.plogcareers.backend.blog.exception.*;
 import com.plogcareers.backend.blog.repository.*;
+import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class PostingService {
     private final CommentRepository commentRepository;
     private final CommentRepositorySupport commentRepositorySupport;
     private final UserRepository userRepository;
+    private final PostingStarRepository postingStarRepository;
 
     // 글 저장
     public Long createPosting(Long blogID, Long userID, CreatePostingRequest request) throws TagNotFoundException {
@@ -178,4 +180,40 @@ public class PostingService {
         }
         return new ListCommentsResponse(commentRepositorySupport.ListComments(postingID), posting.isOwner(loginedUserID), loginedUserID);
     }
+
+    public ListPostingStarsResponse listPostingStars(Long blogID, Long postingID) {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
+        if (!blog.hasPosting(posting)) {
+            throw new BlogPostingUnmatchedException();
+        }
+        List<PostingStar> postingStars = postingStarRepository.findByPostingID(postingID);
+        return new ListPostingStarsResponse(postingStars.stream().map(PostingStar::toPostingStarDTO).toList());
+    }
+
+    public void createPostingStar(Long blogID, Long postingID, Long loginedUserID) {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
+        User user = userRepository.findById(loginedUserID).orElseThrow(UserNotFoundException::new);
+        if (!blog.hasPosting(posting)) {
+            throw new BlogPostingUnmatchedException();
+        }
+        if (postingStarRepository.existsByPostingIDAndUserId(postingID, loginedUserID)) {
+            throw new PostingStarDuplicatedException();
+        }
+
+        postingStarRepository.save(PostingStar.builder().user(user).postingID(postingID).build());
+    }
+
+    public void deletePostingStar(Long blogID, Long postingID, Long loginedUserID) {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
+        if (!blog.hasPosting(posting)) {
+            throw new BlogPostingUnmatchedException();
+        }
+        PostingStar postingStar = postingStarRepository.findFirstByPostingIDAndUserId(postingID, loginedUserID).orElseThrow(PostingStarNotFoundException::new);
+
+        postingStarRepository.delete(postingStar);
+    }
 }
+
