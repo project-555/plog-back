@@ -67,7 +67,7 @@ public class BlogController {
     @LogExecutionTime
     public ResponseEntity<SResponse> getPosting(@ApiParam(name = "blogID", value = "블로그 ID") @PathVariable Long blogID,
                                                 @ApiParam(name = "postingID", value = "포스팅 ID") @PathVariable Long postingID,
-                                                @ApiIgnore @RequestHeader(name = Auth.token) String token) throws UserNotFoundException {
+                                                @ApiIgnore @RequestHeader(name = Auth.token, required = false) String token) throws UserNotFoundException {
         Long loginedUserID = userService.getLoginedUserID(token);
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.getPosting(blogID, postingID, loginedUserID)));
 
@@ -206,7 +206,7 @@ public class BlogController {
             @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)}
     )
     @GetMapping("/{blogID}/postings/{postingID}/comments")
-    public ResponseEntity<SResponse> listComments(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+    public ResponseEntity<SResponse> listComments(@ApiIgnore @RequestHeader(name = Auth.token, required = false) String token,
                                                   @ApiParam(name = "blogID", value = "블로그 ID", required = true) @PathVariable Long blogID,
                                                   @ApiParam(name = "postingID", value = "포스팅 ID", required = true) @PathVariable Long postingID) throws UserNotFoundException {
         Long loginedUserID = userService.getLoginedUserID(token);
