@@ -28,10 +28,10 @@ public class Comment {
     private User user;
 
     @Column(name = "posting_id")
-    private Long postingId;
+    private Long postingID;
 
     @Column(name = "parent_comment_id")
-    private Long parentCommentId;
+    private Long parentCommentID;
 
     @Column(name = "depth")
     private Long depth;
@@ -64,7 +64,7 @@ public class Comment {
                 .build();
     }
 
-    public Boolean isOwner(Long userId) {
-        return this.user.getId().equals(userId);
+    public Boolean isOwner(Long userID) {
+        return this.user.getId().equals(userID);
     }
 }

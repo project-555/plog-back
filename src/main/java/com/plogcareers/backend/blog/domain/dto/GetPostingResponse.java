@@ -15,8 +15,8 @@ public class GetPostingResponse {
     private Long id;
     private String title;
     private String htmlContent;
-    private Long categoryId;
-    private Long stateId;
+    private Long categoryID;
+    private Long stateID;
     private int hitCnt;
     private LocalDateTime createDt;
     private LocalDateTime updateDt;

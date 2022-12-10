@@ -17,7 +17,7 @@ public class ListCommentsResponse {
     public ListCommentsResponse(List<Comment> comments, Boolean isPostingOwner, Long loginedUserId) {
         List<Comment> children = new ArrayList<>();
         for (var comment : comments) {
-            if (comment.getParentCommentId() == null) {
+            if (comment.getParentCommentID() == null) {
                 this.comments.add(comment.toCommentDTO(isPostingOwner, loginedUserId));
                 continue;
             }

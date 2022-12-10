@@ -27,6 +27,6 @@ public class CommentDTO {
     List<CommentDTO> children = new ArrayList<>();
 
     public Boolean isChildren(Comment comment) {
-        return Objects.equals(this.id, comment.getParentCommentId());
+        return Objects.equals(this.id, comment.getParentCommentID());
     }
 }

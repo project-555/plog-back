@@ -58,7 +58,7 @@ public class UserService {
                 .build();
     }
 
-    public Long getLoginedUserId(String token) throws UserNotFoundException {
+    public Long getLoginedUserID(String token) throws UserNotFoundException {
         return userRepository.findByEmail(jwtTokenProvider.getUserPk(token)).orElseThrow(UserNotFoundException::new).getId();
     }
 }
