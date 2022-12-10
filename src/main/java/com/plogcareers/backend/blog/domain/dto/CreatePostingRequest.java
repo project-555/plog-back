@@ -18,13 +18,13 @@ public class CreatePostingRequest {
     @NotNull
     private String htmlContent;
     @NotNull
-    private Long categoryId;
+    private Long categoryID;
     @NotNull
-    private Long blogId;
+    private Long blogID;
     @NotNull
-    private Long stateId;
+    private Long stateID;
     @NotNull
-    private Long userId;
+    private Long userID;
     @Max(value = 0)
     private int hitCnt;
     private boolean isCommentAllowed;
@@ -32,16 +32,16 @@ public class CreatePostingRequest {
     private String thumbnailImageUrl;
     @NotNull
     private String mdContent;
-    private List<Long> tagIds;
+    private List<Long> tagIDs;
 
     public Posting toEntity() {
         return Posting.builder()
                 .title(title)
                 .htmlContent(htmlContent)
-                .blogId(blogId)
-                .userId(userId)
-                .categoryId(categoryId)
-                .stateId(stateId)
+                .blogID(blogID)
+                .userID(userID)
+                .categoryID(categoryID)
+                .stateID(stateID)
                 .hitCnt(hitCnt)
                 .isCommentAllowed(isCommentAllowed)
                 .isStarAllowed(isStarAllowed)

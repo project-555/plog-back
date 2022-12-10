@@ -1,12 +1,7 @@
 package com.plogcareers.backend.blog.service;
 
 import com.plogcareers.backend.blog.domain.dto.*;
-import com.plogcareers.backend.blog.domain.entity.Comment;
-import com.plogcareers.backend.blog.domain.entity.Posting;
-import com.plogcareers.backend.blog.domain.entity.PostingTag;
-import com.plogcareers.backend.blog.domain.entity.State;
-import com.plogcareers.backend.blog.domain.model.PostingTagDTO;
-import com.plogcareers.backend.blog.domain.model.StateDTO;
+import com.plogcareers.backend.blog.domain.entity.*;
 import com.plogcareers.backend.blog.exception.*;
 import com.plogcareers.backend.blog.repository.*;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
@@ -14,7 +9,6 @@ import com.plogcareers.backend.ums.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
@@ -32,107 +26,137 @@ public class PostingService {
     private final UserRepository userRepository;
 
     // 글 저장
-    public Long createPosting(@NotNull CreatePostingRequest createPostingRequest) throws TagNotFoundException {
-        Posting posting = postingRepository.save(createPostingRequest.toEntity());
-        for (Long tagId : createPostingRequest.getTagIds()) {
-            postingTagRepository.save(
-                    PostingTag.builder()
-                            .posting(posting)
-                            .tag(tagRepository.findById(tagId).orElseThrow(TagNotFoundException::new))
-                            .build()
-            );
+    public Long createPosting(Long blogID, Long userID, CreatePostingRequest request) throws TagNotFoundException {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        if (blog.isOwner(userID)) {
+            throw new NotProperAuthorityException();
+        }
+
+        Posting posting = postingRepository.save(request.toEntity());
+        
+        List<Tag> tags = tagRepository.findByIdIn(request.getTagIDs());
+        if (!tags.isEmpty()) {
+            postingTagRepository.saveAll(tags.stream().map(tag -> tag.toPostingTag(posting)).toList());
         }
 
         return posting.getId();
     }
 
     // 글 가져오기
-    public GetPostingResponse getPosting(Long postingId) throws PostingNotFoundException {
-        Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
-        return GetPostingResponse.builder()
-                .id(posting.getId())
-                .title(posting.getTitle())
-                .htmlContent(posting.getHtmlContent())
-                .stateId(posting.getStateId())
-                .updateDt(posting.getUpdateDt())
-                .isCommentAllowed(posting.isCommentAllowed())
-                .thumbnailImageUrl(posting.getThumbnailImageUrl())
-                .mdContent(posting.getMdContent())
-                .build();
+    public GetPostingResponse getPosting(Long blogID, Long postingID) throws PostingNotFoundException {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
+
+        if (!blog.hasPosting(posting)) {
+            throw new BlogPostingUnmatchedException();
+        }
+        return posting.toGetPostingResponse();
     }
 
     // 포스팅 태그 가져오기
-    public ListPostingTagResponse listPostingTag(Long postingId) throws PostingNotFoundException {
-        if (!postingRepository.existsById(postingId)) {
-            throw new PostingNotFoundException();
+    public ListPostingTagResponse listPostingTags(Long blogID, Long postingID) throws PostingNotFoundException {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
+        if (!blog.hasPosting(posting)) {
+            throw new BlogPostingUnmatchedException();
         }
-        List<PostingTagDTO> postingTagList = postingTagRepository.findPostingTagsByPostingId(postingId)
-                .stream()
-                .map(PostingTag::toPostingTagDto)
-                .toList();
-        return ListPostingTagResponse.builder()
-                .postingTags(postingTagList)
-                .build();
+
+        List<PostingTag> postingTags = postingTagRepository.findByPostingId(posting.getId());
+
+        return new ListPostingTagResponse(postingTags.stream().map(PostingTag::toPostingTagDto).toList());
     }
 
     // 글 삭제
-    public void deletePosting(@NotNull Long postingId) throws PostingNotFoundException {
-        Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
+    public void deletePosting(Long blogID, Long postingID, Long userID) throws PostingNotFoundException {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        if (!blog.isOwner(userID)) {
+            throw new NotProperAuthorityException();
+        }
+        Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
+        if (!blog.hasPosting(posting)) {
+            throw new BlogPostingUnmatchedException();
+        }
+
         postingRepository.deleteById(posting.getId());
     }
 
-    public List<StateDTO> listStates() {
+    public ListStateResponse listStates() {
         List<State> states = stateRepository.findAll();
-        return states.stream()
-                .map(state -> new StateDTO(state.getId(), state.getStateName()))
-                .toList();
+        return new ListStateResponse(states.stream().map(State::toStateDTO).toList());
     }
 
 
-    public void createComment(CreateCommentRequest request, Long postingId, Long loginedUserID) throws UserNotFoundException, PostingNotFoundException, InvalidParentExistException {
-        if (!postingRepository.existsById(postingId)) {
-            throw new PostingNotFoundException();
+    public void createComment(Long blogID, Long postingID, Long loginedUserID, CreateCommentRequest request) throws UserNotFoundException, PostingNotFoundException, InvalidParentExistException {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
+
+        if (!blog.isOwner(loginedUserID)) {
+            throw new NotProperAuthorityException();
         }
-        if (request.getParentCommentId() != null) {
-            Comment parentComment = commentRepository.findById(request.getParentCommentId()).orElseThrow(ParentCommentNotFoundException::new);
-            if (parentComment.getParentCommentId() != null) {
+        if (!blog.hasPosting(posting)) {
+            throw new BlogPostingUnmatchedException();
+        }
+
+        if (request.getParentCommentID() != null) {
+            Comment parentComment = commentRepository.findById(request.getParentCommentID()).orElseThrow(ParentCommentNotFoundException::new);
+            if (parentComment.getParentCommentID() != null) {
                 throw new InvalidParentExistException();
             }
         }
 
         commentRepository.save(request.toCommentEntity(
-                postingId,
+                postingID,
                 userRepository.findById(loginedUserID).orElseThrow(UserNotFoundException::new)
         ));
     }
 
-    public void updateComment(UpdateCommentRequest request, Long postingId, Long commentId, Long loginedUserId) throws NotProperAuthorityException, PostingNotFoundException, CommentNotFoundException {
-        Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
-        Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
-        if (!comment.getUser().getId().equals(loginedUserId)) {
+    public void updateComment(Long blogID, Long postingID, Long commentID, Long loginedUserID, UpdateCommentRequest request) throws NotProperAuthorityException, PostingNotFoundException, CommentNotFoundException {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        if (!blog.isOwner(loginedUserID)) {
             throw new NotProperAuthorityException();
         }
-        if (!comment.getPostingId().equals(posting.getId())) {
-            throw new CommentPostingMismatchedException();
+
+        Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
+        if (!blog.hasPosting(posting)) {
+            throw new BlogPostingUnmatchedException();
         }
+
+        Comment comment = commentRepository.findById(commentID).orElseThrow(CommentNotFoundException::new);
+        if (!posting.hasComment(comment)) {
+            throw new PostingCommentUnmatchedException();
+        }
+
         commentRepository.save(request.toCommentEntity(comment));
     }
 
-    public void deleteComment(Long postingId, Long commentId, Long loginedUserId) throws PostingNotFoundException, CommentNotFoundException, NotProperAuthorityException {
-        Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
-        Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
-        if (!posting.isOwner(loginedUserId) && !comment.isOwner(loginedUserId)) {
+    public void deleteComment(Long blogID, Long postingID, Long commentID, Long loginedUserID) throws PostingNotFoundException, CommentNotFoundException, NotProperAuthorityException {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
+        if (!blog.hasPosting(posting)) {
+            throw new BlogPostingUnmatchedException();
+        }
+        Comment comment = commentRepository.findById(commentID).orElseThrow(CommentNotFoundException::new);
+        if (!posting.hasComment(comment)) {
+            throw new PostingCommentUnmatchedException();
+        }
+
+        if (!posting.isOwner(loginedUserID) && !comment.isOwner(loginedUserID)) {
             throw new NotProperAuthorityException();
         }
-        if (!comment.getPostingId().equals(posting.getId())) {
-            throw new CommentPostingMismatchedException();
-        }
+
         commentRepository.delete(comment);
     }
 
 
-    public ListCommentsResponse listComments(Long loginedUserId, Long postingId) throws PostingNotFoundException, UserNotFoundException {
-        Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotFoundException::new);
-        return new ListCommentsResponse(commentRepositorySupport.ListComments(postingId), posting.isOwner(loginedUserId), loginedUserId);
+    public ListCommentsResponse listComments(Long blogID, Long postingID, Long loginedUserID) throws PostingNotFoundException, UserNotFoundException {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        if (!blog.isOwner(loginedUserID)) {
+            throw new NotProperAuthorityException();
+        }
+        Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
+        if (!blog.hasPosting(posting)) {
+            throw new BlogPostingUnmatchedException();
+        }
+        return new ListCommentsResponse(commentRepositorySupport.ListComments(postingID), posting.isOwner(loginedUserID), loginedUserID);
     }
 }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="blog", schema = "plog_blog")
+@Table(name = "blog", schema = "plog_blog")
 public class Blog {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,8 +39,11 @@ public class Blog {
     @Column(name = "update_dt")
     private LocalDateTime updateDt;
 
-    public Boolean isOwner(Long userId) {
-        return this.getUser().getId().equals(userId);
+    public Boolean isOwner(Long userID) {
+        return this.getUser().getId().equals(userID);
     }
 
+    public Boolean hasPosting(Posting posting) {
+        return posting.getBlogID().equals(this.id);
+    }
 }

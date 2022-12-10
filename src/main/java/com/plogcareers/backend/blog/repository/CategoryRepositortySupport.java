@@ -18,7 +18,7 @@ public class CategoryRepositortySupport extends QuerydslRepositorySupport {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public Boolean isDuplicated(Long blogID, Long categoryID, String categoryName) {
+    public Boolean existsDuplicatedCategory(Long blogID, Long categoryID, String categoryName) {
         Category dupCategory = queryFactory.selectFrom(qCategory)
                 .where(qCategory.blog.id.eq(blogID).and(qCategory.categoryName.eq(categoryName)))
                 .fetchFirst();

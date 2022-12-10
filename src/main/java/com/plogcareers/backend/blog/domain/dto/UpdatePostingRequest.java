@@ -2,7 +2,10 @@ package com.plogcareers.backend.blog.domain.dto;
 
 import com.plogcareers.backend.blog.domain.entity.Category;
 import com.plogcareers.backend.blog.domain.entity.Posting;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +18,7 @@ public class UpdatePostingRequest {
     private String title;
     private String htmlContent;
     private Category category;
-    private Long stateId;
+    private Long stateID;
     private LocalDateTime updateDt;
     private boolean isCommentAllowed;
     private boolean isStarAllowed;
@@ -27,7 +30,7 @@ public class UpdatePostingRequest {
                 .id(id)
                 .title(title)
                 .htmlContent(htmlContent)
-                .stateId(stateId)
+                .stateID(stateID)
                 .updateDt(updateDt)
                 .isCommentAllowed(isCommentAllowed)
                 .isStarAllowed(isStarAllowed)
