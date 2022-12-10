@@ -1,6 +1,7 @@
 package com.plogcareers.backend.blog.domain.entity;
 
 import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
+import com.plogcareers.backend.blog.domain.dto.PostingDTO;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -81,5 +82,22 @@ public class Posting {
 
     public Boolean isOwner(Long loginedUserID) {
         return this.userID.equals(loginedUserID);
+    }
+
+    public PostingDTO toPostingDTO() {
+        return PostingDTO.builder()
+                .id(this.id)
+                .title(this.title)
+                .mdContent(this.mdContent)
+                .htmlContent(this.htmlContent)
+                .stateID(this.stateID)
+                .categoryID(this.categoryID)
+                .isStarAllowed(this.isStarAllowed)
+                .isCommentAllowed(this.isCommentAllowed)
+                .hitCnt(this.hitCnt)
+                .thumbnailImageUrl(this.thumbnailImageUrl)
+                .createDt(this.createDt)
+                .updateDt(this.updateDt)
+                .build();
     }
 }

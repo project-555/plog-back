@@ -15,6 +15,15 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class State {
+    @Transient
+    public final static Long PUBLIC = 1L;
+
+    @Transient
+    public final static Long PRIVATE = 2L;
+    
+    @Transient
+    public final static Long KEEP = 3L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

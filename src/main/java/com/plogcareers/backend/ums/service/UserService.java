@@ -15,6 +15,7 @@ import com.plogcareers.backend.ums.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RequiredArgsConstructor
@@ -59,6 +60,9 @@ public class UserService {
     }
 
     public Long getLoginedUserID(String token) throws UserNotFoundException {
+        if (!StringUtils.hasText(token)) {
+            return 0L;
+        }
         return userRepository.findByEmail(jwtTokenProvider.getUserPk(token)).orElseThrow(UserNotFoundException::new).getId();
     }
 }
