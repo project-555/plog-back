@@ -17,7 +17,7 @@ public class PostingService {
 
     private final BlogRepository blogRepository;
     private final PostingRepository postingRepository;
-    private final PostingRepositorySupport postingRepositorySupport;
+    private final VPostingRepositorySupport postingRepositorySupport;
     private final CategoryRepository categoryRepository;
     private final PostingTagRepository postingTagRepository;
     private final TagRepository tagRepository;
@@ -54,7 +54,7 @@ public class PostingService {
         if (!blog.isOwner(loginedUserID) && !posting.getStateID().equals(State.PUBLIC)) {
             throw new BlogNotFoundException();
         }
-        
+
         return posting.toGetPostingResponse();
     }
 
@@ -64,13 +64,13 @@ public class PostingService {
         if (request.getTagIDs() != null && !request.getTagIDs().isEmpty()) {
             postingTags = postingTagRepository.findByTag_IdIn(request.getTagIDs());
         }
-        List<Posting> postings;
+        List<VPosting> postings;
         if (blog.isOwner(loginedUserID)) {
             postings = postingRepositorySupport.listPostingsByOwner(blogID, request.getSearch(), request.getCategoryID(), postingTags);
         } else {
             postings = postingRepositorySupport.listPostingsByUserAndGuest(blogID, request.getSearch(), request.getCategoryID(), postingTags);
         }
-        return new ListPostingsResponse(postings.stream().map(Posting::toPostingDTO).toList());
+        return new ListPostingsResponse(postings.stream().map(VPosting::toPostingDTO).toList());
     }
 
     // 포스팅 태그 가져오기

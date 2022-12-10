@@ -24,4 +24,5 @@ public class PostingDTO {
     private boolean isCommentAllowed;
     private boolean isStarAllowed;
     private String thumbnailImageUrl;
+    private Long postingStarCount;
 }
