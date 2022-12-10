@@ -1,9 +1,6 @@
 package com.plogcareers.backend.blog.repository;
 
-import com.plogcareers.backend.blog.domain.entity.Posting;
-import com.plogcareers.backend.blog.domain.entity.PostingTag;
-import com.plogcareers.backend.blog.domain.entity.QPosting;
-import com.plogcareers.backend.blog.domain.entity.State;
+import com.plogcareers.backend.blog.domain.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -13,17 +10,17 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @Repository
-public class PostingRepositorySupport extends QuerydslRepositorySupport {
+public class VPostingRepositorySupport extends QuerydslRepositorySupport {
 
     private final JPAQueryFactory queryFactory;
-    private final QPosting qPosting = QPosting.posting;
+    private final QVPosting qPosting = QVPosting.vPosting;
 
-    public PostingRepositorySupport(EntityManager entityManager) {
+    public VPostingRepositorySupport(EntityManager entityManager) {
         super(Posting.class);
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public List<Posting> listPostingsByOwner(Long blogID, String search, Long categoryID, List<PostingTag> postingTags) {
+    public List<VPosting> listPostingsByOwner(Long blogID, String search, Long categoryID, List<PostingTag> postingTags) {
         return queryFactory.selectFrom(qPosting).where(
                 qPosting.blogID.eq(blogID),
                 titleContains(search),
@@ -33,7 +30,7 @@ public class PostingRepositorySupport extends QuerydslRepositorySupport {
         ).fetch();
     }
 
-    public List<Posting> listPostingsByUserAndGuest(Long blogID, String search, Long categoryID, List<PostingTag> postingTags) {
+    public List<VPosting> listPostingsByUserAndGuest(Long blogID, String search, Long categoryID, List<PostingTag> postingTags) {
         return queryFactory.selectFrom(qPosting)
                 .where(
                         qPosting.blogID.eq(blogID),
