@@ -1,6 +1,7 @@
 package com.plogcareers.backend.ums.domain.entity;
 
 import com.plogcareers.backend.blog.domain.model.CommentUserDTO;
+import com.plogcareers.backend.blog.domain.model.PostingStarUserDTO;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -74,6 +75,13 @@ public class User implements UserDetails {
 
     public CommentUserDTO toCommentUserDTO() {
         return CommentUserDTO.builder().userId(this.id).nickname(this.nickname).build();
+    }
+
+    public PostingStarUserDTO toPostingStarUserDTO() {
+        return PostingStarUserDTO.builder()
+                .id(this.id)
+                .nickname(this.nickname)
+                .build();
     }
 
     @Override
