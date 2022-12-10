@@ -17,6 +17,7 @@ public class PostingService {
 
     private final BlogRepository blogRepository;
     private final PostingRepository postingRepository;
+    private final PostingRepositorySupport postingRepositorySupport;
     private final CategoryRepository categoryRepository;
     private final PostingTagRepository postingTagRepository;
     private final TagRepository tagRepository;
@@ -33,9 +34,10 @@ public class PostingService {
         }
 
         Posting posting = postingRepository.save(request.toEntity());
-        
-        List<Tag> tags = tagRepository.findByIdIn(request.getTagIDs());
-        if (!tags.isEmpty()) {
+
+
+        if (request.getTagIDs() != null && !request.getTagIDs().isEmpty()) {
+            List<Tag> tags = tagRepository.findByIdIn(request.getTagIDs());
             postingTagRepository.saveAll(tags.stream().map(tag -> tag.toPostingTag(posting)).toList());
         }
 
@@ -43,14 +45,32 @@ public class PostingService {
     }
 
     // 글 가져오기
-    public GetPostingResponse getPosting(Long blogID, Long postingID) throws PostingNotFoundException {
+    public GetPostingResponse getPosting(Long blogID, Long postingID, Long loginedUserID) throws PostingNotFoundException {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
         Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
-
         if (!blog.hasPosting(posting)) {
             throw new BlogPostingUnmatchedException();
         }
+        if (!blog.isOwner(loginedUserID) && !posting.getStateID().equals(State.PUBLIC)) {
+            throw new BlogNotFoundException();
+        }
+        
         return posting.toGetPostingResponse();
+    }
+
+    public ListPostingsResponse listPostings(Long blogID, Long loginedUserID, ListPostingsRequest request) {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        List<PostingTag> postingTags = null;
+        if (request.getTagIDs() != null && !request.getTagIDs().isEmpty()) {
+            postingTags = postingTagRepository.findByTag_IdIn(request.getTagIDs());
+        }
+        List<Posting> postings;
+        if (blog.isOwner(loginedUserID)) {
+            postings = postingRepositorySupport.listPostingsByOwner(blogID, request.getSearch(), request.getCategoryID(), postingTags);
+        } else {
+            postings = postingRepositorySupport.listPostingsByUserAndGuest(blogID, request.getSearch(), request.getCategoryID(), postingTags);
+        }
+        return new ListPostingsResponse(postings.stream().map(Posting::toPostingDTO).toList());
     }
 
     // 포스팅 태그 가져오기

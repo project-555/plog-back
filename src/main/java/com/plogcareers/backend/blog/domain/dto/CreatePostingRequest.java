@@ -2,8 +2,8 @@ package com.plogcareers.backend.blog.domain.dto;
 
 import com.plogcareers.backend.blog.domain.entity.Posting;
 import lombok.*;
+import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -22,11 +22,10 @@ public class CreatePostingRequest {
     @NotNull
     private Long blogID;
     @NotNull
+    @Range(min = 1, max = 3)
     private Long stateID;
     @NotNull
     private Long userID;
-    @Max(value = 0)
-    private int hitCnt;
     private boolean isCommentAllowed;
     private boolean isStarAllowed;
     private String thumbnailImageUrl;
@@ -42,7 +41,7 @@ public class CreatePostingRequest {
                 .userID(userID)
                 .categoryID(categoryID)
                 .stateID(stateID)
-                .hitCnt(hitCnt)
+                .hitCnt(0)
                 .isCommentAllowed(isCommentAllowed)
                 .isStarAllowed(isStarAllowed)
                 .thumbnailImageUrl(thumbnailImageUrl)
