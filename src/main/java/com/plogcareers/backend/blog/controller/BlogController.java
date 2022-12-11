@@ -11,7 +11,6 @@ import com.plogcareers.backend.common.domain.dto.ErrorResponse;
 import com.plogcareers.backend.common.domain.dto.SDataResponse;
 import com.plogcareers.backend.common.domain.dto.SResponse;
 import com.plogcareers.backend.common.exception.InvalidParamException;
-import com.plogcareers.backend.ums.constant.Auth;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.service.UserService;
 import io.swagger.annotations.*;
@@ -36,7 +35,7 @@ public class BlogController {
 
     @ApiOperation(value = "Posting 생성")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "정삭 동작 시"),
+            @ApiResponse(code = 201, message = "정상 동작 시"),
             @ApiResponse(code = 404, message = "태그 없음"),
             @ApiResponse(code = 500, message = "서버 에러")
     }
@@ -85,6 +84,29 @@ public class BlogController {
                                                   @ApiIgnore @RequestHeader(name = Auth.token, required = false) String token, ListPostingsRequest request) {
         Long loginedUserID = userService.getLoginedUserID(token);
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.listPostings(blogID, loginedUserID, request)));
+    }
+
+    @ApiOperation(value = "Posting 수정")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "정상 수정"),
+            @ApiResponse(code = 400, message = "잘못된 파라미터 요청", response = ErrorResponse.class),
+            @ApiResponse(code = 401, message = "수정할 권한이 없음", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "포스팅이 없거나, 블로그가 없거나, 유저 정보가 없음", response = ErrorResponse.class),
+            @ApiResponse(code = 500, message = "서버 에러")
+    }
+    )
+    @PutMapping("/{blogID}/posting/{postingID}")
+    public ResponseEntity<SResponse> updatePosting(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
+                                                   @PathVariable Long blogID,
+                                                   @PathVariable Long postingID,
+                                                   @Valid @RequestBody UpdatePostingRequest request,
+                                                   BindingResult result) throws BlogNotFoundException, UserNotFoundException {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
+        Long loginedUserID = userService.getLoginedUserId(token);
+        postingService.updatePosting(loginedUserID, postingID, request);
+        return ResponseEntity.noContent().build();
     }
 
     @ApiOperation(value = "Posting 삭제")
