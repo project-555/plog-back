@@ -10,6 +10,7 @@ import com.plogcareers.backend.ums.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
@@ -93,7 +94,7 @@ public class PostingService {
     // 글 수정하기
     public void updatePosting(Long loginedUserID, Long postingID, @NotNull UpdatePostingRequest request) throws PostingNotFoundException, NotProperAuthorityException {
         Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
-        Blog blog = blogRepository.findById(posting.getBlogId()).orElseThrow(BlogNotFoundException::new);
+        Blog blog = blogRepository.findById(posting.getBlogID()).orElseThrow(BlogNotFoundException::new);
         if (!blog.isOwner(loginedUserID)) {
             throw new NotProperAuthorityException();
         }

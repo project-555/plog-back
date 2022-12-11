@@ -11,6 +11,7 @@ import com.plogcareers.backend.common.domain.dto.ErrorResponse;
 import com.plogcareers.backend.common.domain.dto.SDataResponse;
 import com.plogcareers.backend.common.domain.dto.SResponse;
 import com.plogcareers.backend.common.exception.InvalidParamException;
+import com.plogcareers.backend.ums.constant.Auth;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.service.UserService;
 import io.swagger.annotations.*;
@@ -104,7 +105,7 @@ public class BlogController {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        Long loginedUserID = userService.getLoginedUserId(token);
+        Long loginedUserID = userService.getLoginedUserID(token);
         postingService.updatePosting(loginedUserID, postingID, request);
         return ResponseEntity.noContent().build();
     }
