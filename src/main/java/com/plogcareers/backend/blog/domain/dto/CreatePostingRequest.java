@@ -41,7 +41,6 @@ public class CreatePostingRequest {
                 .userID(userID)
                 .categoryID(categoryID)
                 .stateID(stateID)
-                .hitCnt(0)
                 .isCommentAllowed(isCommentAllowed)
                 .isStarAllowed(isStarAllowed)
                 .thumbnailImageUrl(thumbnailImageUrl)
