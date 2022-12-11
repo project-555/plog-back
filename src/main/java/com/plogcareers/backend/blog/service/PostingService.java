@@ -90,6 +90,16 @@ public class PostingService {
         return new ListPostingTagResponse(postingTags.stream().map(PostingTag::toPostingTagDto).toList());
     }
 
+    // 글 수정하기
+    public void updatePosting(Long loginedUserID, Long postingID, @NotNull UpdatePostingRequest request) throws PostingNotFoundException, NotProperAuthorityException {
+        Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
+        Blog blog = blogRepository.findById(posting.getBlogId()).orElseThrow(BlogNotFoundException::new);
+        if (!blog.isOwner(loginedUserID)) {
+            throw new NotProperAuthorityException();
+        }
+        postingRepository.save(request.toPostingEntity(posting));
+    }
+
     // 글 삭제
     public void deletePosting(Long blogID, Long postingID, Long userID) throws PostingNotFoundException {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
