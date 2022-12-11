@@ -46,4 +46,8 @@ public class Blog {
     public Boolean hasPosting(Posting posting) {
         return posting.getBlogID().equals(this.id);
     }
+
+    public Boolean hasTag(Tag tag) {
+        return tag.getBlogID().equals(this.id);
+    }
 }

@@ -1,14 +1,14 @@
 package com.plogcareers.backend.blog.service;
 
-import com.plogcareers.backend.blog.domain.dto.CreateCategoryRequest;
-import com.plogcareers.backend.blog.domain.dto.ListCategoriesResponse;
-import com.plogcareers.backend.blog.domain.dto.UpdateCategoryRequest;
+import com.plogcareers.backend.blog.domain.dto.*;
 import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.domain.entity.Category;
+import com.plogcareers.backend.blog.domain.entity.Tag;
 import com.plogcareers.backend.blog.exception.*;
 import com.plogcareers.backend.blog.repository.BlogRepository;
 import com.plogcareers.backend.blog.repository.CategoryRepositortySupport;
 import com.plogcareers.backend.blog.repository.CategoryRepository;
+import com.plogcareers.backend.blog.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +22,7 @@ public class BlogService {
     private final BlogRepository blogRepository;
     private final CategoryRepository categoryRepository;
     private final CategoryRepositortySupport categoryRepositortySupport;
+    private final TagRepository tagRepository;
 
     // 카테고리 생성하기
     public void createCategory(Long blogID, Long loginedUserID, @NotNull CreateCategoryRequest createCategoryRequest) throws BlogNotFoundException, CategoryDuplicatedException {
@@ -77,6 +78,46 @@ public class BlogService {
             throw new NotProperAuthorityException();
         }
         categoryRepository.deleteCategoryById(categoryID);
+    }
+
+    public ListTagsResponse listTags(Long blogID) {
+        if (!blogRepository.existsById(blogID)) {
+            throw new BlogNotFoundException();
+        }
+        List<Tag> tags = tagRepository.findTagsByBlogID(blogID);
+        return new ListTagsResponse(tags.stream().map(Tag::toTagDTO).toList());
+    }
+
+    public void createTag(Long blogID, Long loginedUserID, CreateTagRequest request) {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        if (!blog.isOwner(loginedUserID)) {
+            throw new NotProperAuthorityException();
+        }
+        tagRepository.save(request.toTagEntity(blogID));
+    }
+
+    public void updateTag(Long blogID, Long tagID, Long loginedUserID, UpdateTagRequest request) {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        if (!blog.isOwner(loginedUserID)) {
+            throw new NotProperAuthorityException();
+        }
+        Tag tag = tagRepository.findById(tagID).orElseThrow(TagNotFoundException::new);
+        if (!blog.hasTag(tag)) {
+            throw new BlogTagUnmatchedException();
+        }
+        tagRepository.save(request.toTagEntity(tag));
+    }
+
+    public void deleteTag(Long blogID, Long tagID, Long loginedUserID) {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        if (!blog.isOwner(loginedUserID)) {
+            throw new NotProperAuthorityException();
+        }
+        Tag tag = tagRepository.findById(tagID).orElseThrow(TagNotFoundException::new);
+        if (!blog.hasTag(tag)) {
+            throw new BlogTagUnmatchedException();
+        }
+        tagRepository.delete(tag);
     }
 }
 

@@ -319,4 +319,69 @@ public class BlogController {
         return ResponseEntity.noContent().build();
     }
 
+    @ApiOperation(value = "태그 리스트 조회")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "정상 조회", response = ListTagsResponse.class),
+            @ApiResponse(code = 400, message = "잘못된 사용자 요청", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "자원 없음", response = ErrorResponse.class)
+    })
+    @GetMapping("/{blogID}/tags")
+    public ResponseEntity<SResponse> listTags(@PathVariable Long blogID) {
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(blogService.listTags(blogID)));
+    }
+
+    @ApiOperation(value = "태그 생성")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "정상 생성"),
+            @ApiResponse(code = 400, message = "잘못된 사용자 요청", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "자원 없음", response = ErrorResponse.class)
+    })
+    @PostMapping("/{blogID}/tag")
+    public ResponseEntity<SResponse> createTag(@PathVariable Long blogID,
+                                               @RequestHeader(name = Auth.token) String token,
+                                               @Valid @RequestBody CreateTagRequest request,
+                                               BindingResult result) {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
+        Long loginedUserID = userService.getLoginedUserID(token);
+        blogService.createTag(blogID, loginedUserID, request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @ApiOperation(value = "태그 수정")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "정상 수정"),
+            @ApiResponse(code = 400, message = "잘못된 사용자 요청", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "자원 없음", response = ErrorResponse.class)
+    })
+    @PutMapping("/{blogID}/tags/{tagID}")
+    public ResponseEntity<SResponse> updateTag(@PathVariable Long blogID,
+                                               @PathVariable Long tagID,
+                                               @RequestHeader(name = Auth.token) String token,
+                                               @Valid @RequestBody UpdateTagRequest request,
+                                               BindingResult result) {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
+        Long loginedUserID = userService.getLoginedUserID(token);
+        blogService.updateTag(blogID, tagID, loginedUserID, request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation(value = "태그 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "정상 삭제"),
+            @ApiResponse(code = 400, message = "잘못된 사용자 요청", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "자원 없음", response = ErrorResponse.class)
+    })
+    @DeleteMapping("/{blogID}/tags/{tagID}")
+    public ResponseEntity<SResponse> deleteTag(@PathVariable Long blogID,
+                                               @PathVariable Long tagID,
+                                               @RequestHeader(name = Auth.token) String token) {
+        Long loginedUserID = userService.getLoginedUserID(token);
+        blogService.deleteTag(blogID, tagID, loginedUserID);
+        return ResponseEntity.noContent().build();
+    }
 }
