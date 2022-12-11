@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -17,15 +19,18 @@ import java.time.LocalDateTime;
 public class UpdatePostingRequest {
     @NotNull
     @ApiParam(value = "포스팅 제목")
+    @Length(min = 1, max = 200)
     private String title;
     @NotNull
     @ApiParam(value = "포스팅본문")
+    @Length(min = 1)
     private String htmlContent;
     @NotNull
     @ApiParam(value = "포스팅 카테고리")
     private Long categoryID;
     @NotNull
     @ApiParam(value = "포스팅 상태")
+    @Range(min = 1, max = 2)
     private Long stateID;
     @NotNull
     @ApiParam(value = "댓글 허용 여부")
