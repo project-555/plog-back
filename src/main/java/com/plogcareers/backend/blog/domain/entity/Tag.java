@@ -1,12 +1,17 @@
 package com.plogcareers.backend.blog.domain.entity;
 
-import lombok.Getter;
+import com.plogcareers.backend.blog.domain.model.TagDTO;
+import lombok.*;
 
 import javax.persistence.*;
 
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Getter
+@Setter
 @Table(name = "tag", schema = "plog_blog")
 public class Tag {
     @Id
@@ -18,6 +23,13 @@ public class Tag {
 
     @Column(name = "tag_name")
     private String tagName;
+
+    public TagDTO toTagDTO() {
+        return TagDTO.builder()
+                .tagId(this.id)
+                .tagName(this.tagName)
+                .build();
+    }
 
     public PostingTag toPostingTag(Posting posting) {
         return PostingTag.builder()
