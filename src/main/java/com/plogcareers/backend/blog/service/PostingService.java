@@ -26,6 +26,7 @@ public class PostingService {
     private final CommentRepositorySupport commentRepositorySupport;
     private final UserRepository userRepository;
     private final PostingStarRepository postingStarRepository;
+    private final CategoryRepository categoryRepository;
 
     // 글 저장
     public Long createPosting(Long blogID, Long userID, CreatePostingRequest request) throws TagNotFoundException {
@@ -33,9 +34,11 @@ public class PostingService {
         if (!blog.isOwner(userID)) {
             throw new NotProperAuthorityException();
         }
+        if (!categoryRepository.existsById(request.getCategoryID())) {
+            throw new CategoryNotFoundException();
+        }
 
         Posting posting = postingRepository.save(request.toEntity());
-
 
         if (request.getTagIDs() != null && !request.getTagIDs().isEmpty()) {
             List<Tag> tags = tagRepository.findByIdIn(request.getTagIDs());
