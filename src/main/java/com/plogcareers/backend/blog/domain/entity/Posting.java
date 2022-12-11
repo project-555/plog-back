@@ -50,10 +50,10 @@ public class Posting {
     private LocalDateTime updateDt;
 
     @Column(name = "is_comment_allowed", columnDefinition = "true")
-    private boolean isCommentAllowed;
+    private Boolean isCommentAllowed;
 
     @Column(name = "is_star_allowed", columnDefinition = "true")
-    private boolean isStarAllowed;
+    private Boolean isStarAllowed;
 
     @Column(name = "thumbnail_image_url")
     private String thumbnailImageUrl;
