@@ -18,11 +18,11 @@ public class PostingDTO {
     private String mdContent;
     private Long categoryID;
     private Long stateID;
-    private int hitCnt;
+    private Long hitCnt;
     private LocalDateTime createDt;
     private LocalDateTime updateDt;
-    private boolean isCommentAllowed;
-    private boolean isStarAllowed;
+    private Boolean isCommentAllowed;
+    private Boolean isStarAllowed;
     private String thumbnailImageUrl;
     private Long postingStarCount;
 }
