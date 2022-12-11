@@ -37,7 +37,7 @@ public class VPosting {
     private Long stateID;
 
     @Column(name = "hit_cnt", columnDefinition = "0")
-    private int hitCnt;
+    private Long hitCnt;
 
     @Column(name = "create_dt")
     private LocalDateTime createDt;
@@ -46,10 +46,10 @@ public class VPosting {
     private LocalDateTime updateDt;
 
     @Column(name = "is_comment_allowed", columnDefinition = "true")
-    private boolean isCommentAllowed;
+    private Boolean isCommentAllowed;
 
     @Column(name = "is_star_allowed", columnDefinition = "true")
-    private boolean isStarAllowed;
+    private Boolean isStarAllowed;
 
     @Column(name = "thumbnail_image_url")
     private String thumbnailImageUrl;
