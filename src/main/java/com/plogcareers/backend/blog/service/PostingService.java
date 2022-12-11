@@ -18,7 +18,6 @@ public class PostingService {
     private final BlogRepository blogRepository;
     private final PostingRepository postingRepository;
     private final VPostingRepositorySupport postingRepositorySupport;
-    private final CategoryRepository categoryRepository;
     private final PostingTagRepository postingTagRepository;
     private final TagRepository tagRepository;
     private final StateRepository stateRepository;
@@ -52,7 +51,7 @@ public class PostingService {
             throw new BlogPostingUnmatchedException();
         }
         if (!blog.isOwner(loginedUserID) && !posting.getStateID().equals(State.PUBLIC)) {
-            throw new BlogNotFoundException();
+            throw new PostingNotFoundException();
         }
 
         return posting.toGetPostingResponse();

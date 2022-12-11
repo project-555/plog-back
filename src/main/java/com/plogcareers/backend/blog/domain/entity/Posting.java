@@ -41,7 +41,7 @@ public class Posting {
     private Long stateID;
 
     @Column(name = "hit_cnt", columnDefinition = "0")
-    private int hitCnt;
+    private Long hitCnt;
 
     @Column(name = "create_dt")
     private LocalDateTime createDt;
