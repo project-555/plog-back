@@ -41,8 +41,8 @@ public class UpdatePostingRequest {
         posting.setTitle(this.title);
         posting.setHtmlContent(this.htmlContent);
         posting.setMdContent(this.mdContent);
-        posting.setCategoryId(this.categoryID);
-        posting.setStateId(this.stateID);
+        posting.setCategoryID(this.categoryID);
+        posting.setStateID(this.stateID);
         posting.setThumbnailImageUrl(this.thumbnailImageUrl);
         posting.setIsStarAllowed(this.isStarAllowed);
         posting.setIsCommentAllowed(this.isCommentAllowed);
