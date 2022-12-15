@@ -11,6 +11,7 @@ import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,7 +24,7 @@ public class UpdatePostingRequest {
     private String title;
     @NotNull
     @ApiParam(value = "포스팅본문")
-    @Length(min = 1)
+    @Length(min = 1, max = 10000)
     private String htmlContent;
     @NotNull
     @ApiParam(value = "포스팅 카테고리")
@@ -41,6 +42,7 @@ public class UpdatePostingRequest {
     @ApiParam(value = "포스팅 썸네일")
     private String thumbnailImageUrl;
     private String mdContent;
+    private List<Long> tagIDs;
 
     public Posting toPostingEntity(Posting posting) {
         posting.setTitle(this.title);
