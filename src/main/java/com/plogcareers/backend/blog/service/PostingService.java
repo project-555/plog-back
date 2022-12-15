@@ -10,6 +10,7 @@ import com.plogcareers.backend.ums.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -92,10 +93,10 @@ public class PostingService {
     }
 
     // 글 수정하기
+    @Transactional
     public void updatePosting(Long loginedUserID, Long blogID, Long postingID, @NotNull UpdatePostingRequest request) throws PostingNotFoundException, CategoryNotFoundException, NotProperAuthorityException {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
         Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
-        List<PostingTag> postingTags = postingTagRepository.findByPostingId(postingID);
         if (!blog.hasPosting(posting)) {
             throw new BlogPostingUnmatchedException();
         }
@@ -106,7 +107,7 @@ public class PostingService {
             throw new CategoryNotFoundException();
         }
 
-        postingTagRepository.deleteAll(postingTags);
+        postingTagRepository.deleteAllByPosting(posting);
 
         postingRepository.save(request.toPostingEntity(posting));
 
