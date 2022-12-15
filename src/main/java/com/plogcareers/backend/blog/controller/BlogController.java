@@ -96,7 +96,7 @@ public class BlogController {
             @ApiResponse(code = 500, message = "서버 에러")
     }
     )
-    @PutMapping("/{blogID}/posting/{postingID}")
+    @PutMapping("/{blogID}/postings/{postingID}")
     public ResponseEntity<SResponse> updatePosting(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
                                                    @PathVariable Long blogID,
                                                    @PathVariable Long postingID,
@@ -106,7 +106,7 @@ public class BlogController {
             throw new InvalidParamException(result);
         }
         Long loginedUserID = userService.getLoginedUserID(token);
-        postingService.updatePosting(loginedUserID, postingID, request);
+        postingService.updatePosting(loginedUserID, blogID, postingID, request);
         return ResponseEntity.noContent().build();
     }
 
