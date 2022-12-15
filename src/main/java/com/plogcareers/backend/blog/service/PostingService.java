@@ -92,13 +92,28 @@ public class PostingService {
     }
 
     // 글 수정하기
-    public void updatePosting(Long loginedUserID, Long postingID, @NotNull UpdatePostingRequest request) throws PostingNotFoundException, NotProperAuthorityException {
+    public void updatePosting(Long loginedUserID, Long blogID, Long postingID, @NotNull UpdatePostingRequest request) throws PostingNotFoundException, CategoryNotFoundException, NotProperAuthorityException {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
         Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
-        Blog blog = blogRepository.findById(posting.getBlogID()).orElseThrow(BlogNotFoundException::new);
+        List<PostingTag> postingTags = postingTagRepository.findByPostingId(postingID);
+        if (!blog.hasPosting(posting)) {
+            throw new BlogPostingUnmatchedException();
+        }
         if (!blog.isOwner(loginedUserID)) {
             throw new NotProperAuthorityException();
         }
+        if (!categoryRepository.existsById(request.getCategoryID())) {
+            throw new CategoryNotFoundException();
+        }
+
+        postingTagRepository.deleteAll(postingTags);
+
         postingRepository.save(request.toPostingEntity(posting));
+
+        if (request.getTagIDs() != null && !request.getTagIDs().isEmpty()) {
+            List<Tag> tags = tagRepository.findByIdIn(request.getTagIDs());
+            postingTagRepository.saveAll(tags.stream().map(tag -> tag.toPostingTag(posting)).toList());
+        }
     }
 
     // 글 삭제
