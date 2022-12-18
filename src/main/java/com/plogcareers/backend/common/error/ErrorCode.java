@@ -27,6 +27,9 @@ public enum ErrorCode {
     // UMS Domain
     ERR_LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "이메일이나, 비밀번호가 일치하지 않습니다."),
     ERR_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "유저가 존재하지 않습니다."),
+    // Home Domain
+    ERR_SELF_SUBSCRIBE(HttpStatus.FORBIDDEN, "본인의 블로그는 구독할 수 없습니다."),
+    ERR_SUBSCRIBE_NOT_FOUND(HttpStatus.NOT_FOUND, "구독정보를 찾을 수 없습니다."),
 
     // COMMON
     ERR_INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류입니다.");
