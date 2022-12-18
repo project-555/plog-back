@@ -50,4 +50,8 @@ public class Blog {
     public Boolean hasTag(Tag tag) {
         return tag.getBlogID().equals(this.id);
     }
+
+    public Boolean isSelfSubscribe(User user) {
+        return user.getId().equals(this.user.getId());
+    }
 }
