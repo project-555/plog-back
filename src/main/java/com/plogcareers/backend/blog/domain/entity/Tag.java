@@ -4,6 +4,7 @@ import com.plogcareers.backend.blog.domain.model.TagDTO;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 
 @Entity
@@ -36,5 +37,17 @@ public class Tag {
                 .tag(this)
                 .posting(posting)
                 .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tag tag)) return false;
+        return Objects.equals(id, tag.id) && Objects.equals(blogID, tag.blogID) && Objects.equals(tagName, tag.tagName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, blogID, tagName);
     }
 }
