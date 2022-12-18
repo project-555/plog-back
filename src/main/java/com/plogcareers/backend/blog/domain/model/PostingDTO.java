@@ -1,4 +1,4 @@
-package com.plogcareers.backend.blog.domain.dto;
+package com.plogcareers.backend.blog.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,6 +1,6 @@
 package com.plogcareers.backend.blog.domain.entity;
 
-import com.plogcareers.backend.blog.domain.dto.PostingDTO;
+import com.plogcareers.backend.blog.domain.model.PostingDTO;
 import lombok.*;
 
 import javax.persistence.*;
