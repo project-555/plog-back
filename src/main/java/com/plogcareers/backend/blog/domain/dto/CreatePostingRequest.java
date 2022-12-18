@@ -12,6 +12,7 @@ import java.util.List;
 @ToString
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class CreatePostingRequest {
     @NotNull
     private String title;
