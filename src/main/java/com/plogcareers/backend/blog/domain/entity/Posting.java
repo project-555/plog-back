@@ -69,6 +69,7 @@ public class Posting {
                 .htmlContent(this.htmlContent)
                 .stateID(this.stateID)
                 .updateDt(this.updateDt)
+                .isStarAllowed(this.isStarAllowed)
                 .isCommentAllowed(this.isCommentAllowed)
                 .thumbnailImageUrl(this.thumbnailImageUrl)
                 .mdContent(this.mdContent)
