@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Getter
 @Entity
@@ -33,5 +34,18 @@ public class PostingTag {
                 .tagId(tag.getId())
                 .tagName(tag.getTagName())
                 .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PostingTag that = (PostingTag) o;
+        return Objects.equals(id, that.id) && Objects.equals(tag, that.tag) && Objects.equals(posting, that.posting);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, tag, posting);
     }
 }

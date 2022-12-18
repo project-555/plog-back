@@ -7,6 +7,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Builder
 @Getter
@@ -81,5 +82,30 @@ public class Posting {
 
     public Boolean isOwner(Long loginedUserID) {
         return this.userID.equals(loginedUserID);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Posting posting)) return false;
+        return Objects.equals(id, posting.id) &&
+                Objects.equals(title, posting.title) &&
+                Objects.equals(htmlContent, posting.htmlContent) &&
+                Objects.equals(userID, posting.userID) &&
+                Objects.equals(categoryID, posting.categoryID) &&
+                Objects.equals(blogID, posting.blogID) &&
+                Objects.equals(stateID, posting.stateID) &&
+                Objects.equals(hitCnt, posting.hitCnt) &&
+                Objects.equals(createDt, posting.createDt) &&
+                Objects.equals(updateDt, posting.updateDt) &&
+                Objects.equals(isCommentAllowed, posting.isCommentAllowed) &&
+                Objects.equals(isStarAllowed, posting.isStarAllowed) &&
+                Objects.equals(thumbnailImageUrl, posting.thumbnailImageUrl) &&
+                Objects.equals(mdContent, posting.mdContent);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, htmlContent, userID, categoryID, blogID, stateID, hitCnt, createDt, updateDt, isCommentAllowed, isStarAllowed, thumbnailImageUrl, mdContent);
     }
 }
