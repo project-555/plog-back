@@ -3,10 +3,7 @@ package com.plogcareers.backend.blog.service;
 import com.plogcareers.backend.blog.domain.dto.CreateSubscribeRequest;
 import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.domain.entity.Subscribe;
-import com.plogcareers.backend.blog.exception.BlogNotFoundException;
-import com.plogcareers.backend.blog.exception.NotProperAuthorityException;
-import com.plogcareers.backend.blog.exception.SelfSubscribeException;
-import com.plogcareers.backend.blog.exception.SubscribeNotFoundException;
+import com.plogcareers.backend.blog.exception.*;
 import com.plogcareers.backend.blog.repository.BlogRepository;
 import com.plogcareers.backend.blog.repository.SubscribeRepository;
 import com.plogcareers.backend.ums.domain.entity.User;
@@ -32,17 +29,19 @@ public class HomeService {
         if (!user.getId().equals(loginedUserID)) {
             throw new NotProperAuthorityException();
         }
-        if (user.getId().equals(blog.getUser().getId())) {
+        if (blog.isSelfSubscribe(user)) {
             throw new SelfSubscribeException();
+        }
+        if (subscribeRepository.existsByUserIdAndBlogId(user.getId(), blog.getId())) {
+            throw new SubscribeDuplicatedException();
         }
         subscribeRepository.save(request.toEntity());
     }
 
     @Transactional
-    public void deleteSubscribe(Long blogID, Long loginedUserID) throws BlogNotFoundException {
-        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+    public void deleteSubscribe(Long subscribeID, Long loginedUserID) throws BlogNotFoundException {
         User user = userRepository.findById(loginedUserID).orElseThrow(UserNotFoundException::new);
-        Subscribe subscribe = subscribeRepository.findFirstByUserIdAndBlogId(loginedUserID, blogID).orElseThrow(SubscribeNotFoundException::new);
-        subscribeRepository.deleteById(subscribe.getId());
+        Subscribe subscribe = subscribeRepository.findById(subscribeID).orElseThrow(SubscribeNotFoundException::new);
+        subscribeRepository.delete(subscribe);
     }
 }

@@ -29,14 +29,14 @@ public class HomeController {
     @ApiOperation(value = "블로그 구독")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "정상 동작 시"),
+            @ApiResponse(code = 400, message = "이미 구독한 블로그"),
             @ApiResponse(code = 404, message = "블로그 혹은 유저 없음"),
             @ApiResponse(code = 500, message = "서버 에러")
     }
     )
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping("/subscribe/{userID}/{blogID}")
-    public ResponseEntity<SResponse> createSubscribe(@PathVariable Long userID, @PathVariable Long blogID,
-                                                     @ApiIgnore @RequestHeader(name = Auth.token) String token,
+    @PostMapping("/subscribes")
+    public ResponseEntity<SResponse> createSubscribe(@ApiIgnore @RequestHeader(name = Auth.token) String token,
                                                      @Valid @RequestBody CreateSubscribeRequest request,
                                                      BindingResult result) throws BlogNotFoundException {
         if (result.hasErrors()) {
@@ -50,18 +50,18 @@ public class HomeController {
     @ApiOperation(value = "블로그 구독 취소")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "정상 동작 시"),
-            @ApiResponse(code = 403, message = "본인 블로그 구독 불가"),
+            @ApiResponse(code = 400, message = "본인 블로그 구독 불가"),
             @ApiResponse(code = 404, message = "블로그 혹은 유저 없음"),
             @ApiResponse(code = 500, message = "서버 에러")
     }
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping("/subscribe/{blogID}")
-    public ResponseEntity<SResponse> deleteSubscribe(@PathVariable Long blogID,
+    @DeleteMapping("/subscribe/{subscribeID}")
+    public ResponseEntity<SResponse> deleteSubscribe(@PathVariable Long subscribeID,
                                                      @ApiIgnore @RequestHeader(name = Auth.token) String token
                                                      ) throws BlogNotFoundException {
         Long loginedUserID = userService.getLoginedUserID(token);
-        homeService.deleteSubscribe(blogID, loginedUserID);
+        homeService.deleteSubscribe(subscribeID, loginedUserID);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
