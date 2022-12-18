@@ -1,13 +1,9 @@
 package com.plogcareers.backend.blog.service;
 
 import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
-import com.plogcareers.backend.blog.domain.entity.Blog;
-import com.plogcareers.backend.blog.domain.entity.Posting;
-import com.plogcareers.backend.blog.domain.entity.PostingTag;
-import com.plogcareers.backend.blog.domain.entity.Tag;
-import com.plogcareers.backend.blog.exception.BlogNotFoundException;
-import com.plogcareers.backend.blog.exception.CategoryNotFoundException;
-import com.plogcareers.backend.blog.exception.NotProperAuthorityException;
+import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
+import com.plogcareers.backend.blog.domain.entity.*;
+import com.plogcareers.backend.blog.exception.*;
 import com.plogcareers.backend.blog.repository.*;
 import com.plogcareers.backend.ums.domain.entity.User;
 import org.junit.jupiter.api.Assertions;
@@ -34,7 +30,6 @@ class PostingServiceTest {
     CategoryRepository categoryRepository;
     @Mock
     TagRepository tagRepository;
-
     @Mock
     PostingTagRepository postingTagRepository;
 
@@ -156,5 +151,100 @@ class PostingServiceTest {
         verify(tagRepository, times(1)).findByIdIn(List.of(1L, 2L, 3L));
         verify(postingTagRepository, times(1)).saveAll(any());
         Assertions.assertEquals(1L, got);
+    }
+
+    @Test
+    @DisplayName("getPosting - 블로그가 없는 경우 테스트")
+    void getPosting_1() {
+        // given
+        when(blogRepository.findById(-1L)).thenReturn(Optional.empty());
+
+        // when + then
+        Assertions.assertThrows(
+                BlogNotFoundException.class,
+                () -> {
+                    postingService.getPosting(-1L, 1L, 1L);
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("getPosting - 조회할 포스팅이 없는 경우 테스트")
+    void getPosting_2() {
+        // given
+        when(blogRepository.findById(1L)).thenReturn(Optional.of(
+                Blog.builder().id(1L).build()
+        ));
+        when(postingRepository.findById(-1L)).thenReturn(Optional.empty());
+        // when + then
+        Assertions.assertThrows(
+                PostingNotFoundException.class,
+                () -> {
+                    postingService.getPosting(1L, -1L, 1L);
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("getPosting - 블로그 하위에 해당 포스팅이 속하지 않는 경우 테스트")
+    void getPosting_3() {
+        // given
+        when(blogRepository.findById(1L)).thenReturn(Optional.of(
+                Blog.builder().id(1L).build()
+        ));
+        when(postingRepository.findById(1L)).thenReturn(Optional.of(
+                Posting.builder().id(1L).blogID(2L).build()
+        ));
+        // when + then
+        Assertions.assertThrows(
+                BlogPostingUnmatchedException.class,
+                () -> {
+                    postingService.getPosting(1L, 1L, 1L);
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("getPosting - 블로그 주인이 아니면서 공개 상태가 아닌 글을 조회 요청할 경우 테스트")
+    void getPosting_4() {
+        // given
+        when(
+                blogRepository.findById(1L)
+        ).thenReturn(
+                Optional.of(
+                        Blog.builder().id(1L).user(User.builder().id(1L).build()).build()
+                )
+        );
+        when(postingRepository.findById(1L)).thenReturn(Optional.of(
+                Posting.builder().id(1L).blogID(1L).stateID(State.PRIVATE).build()
+        ));
+        // when + then
+        Assertions.assertThrows(PostingNotFoundException.class,
+                () -> {
+                    postingService.getPosting(1L, 1L, 2L);
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("getPosting - 정상동작 시")
+    void getPosting_5() {
+        // given
+        when(blogRepository.findById(1L)).thenReturn(Optional.of(
+                Blog.builder().id(1L).user(User.builder().id(1L).build()).build()
+        ));
+        when(postingRepository.findById(1L)).thenReturn(Optional.of(
+                Posting.builder()
+                        .id(1L)
+                        .blogID(1L)
+                        .userID(1L)
+                        .stateID(State.PUBLIC)
+                        .build()
+        ));
+        // when
+        GetPostingResponse got = postingService.getPosting(1L, 1L, 1L);
+
+        // then
+        Assertions.assertEquals(got, GetPostingResponse.builder().id(1L).stateID(State.PUBLIC).build());
     }
 }

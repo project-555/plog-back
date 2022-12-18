@@ -40,7 +40,7 @@ public class PostingService {
             throw new CategoryNotFoundException();
         }
 
-        Posting posting = postingRepository.save(request.toEntity());
+        Posting posting = postingRepository.save(request.toEntity(blogID, userID));
 
         if (request.getTagIDs() != null && !request.getTagIDs().isEmpty()) {
             List<Tag> tags = tagRepository.findByIdIn(request.getTagIDs());
@@ -127,7 +127,6 @@ public class PostingService {
         if (!blog.hasPosting(posting)) {
             throw new BlogPostingUnmatchedException();
         }
-
         postingRepository.deleteById(posting.getId());
     }
 
