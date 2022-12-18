@@ -3,6 +3,7 @@ package com.plogcareers.backend.blog.service;
 import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
 import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.domain.entity.Posting;
+import com.plogcareers.backend.blog.domain.entity.PostingTag;
 import com.plogcareers.backend.blog.domain.entity.Tag;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.exception.CategoryNotFoundException;
@@ -121,14 +122,33 @@ class PostingServiceTest {
                 .thenReturn(true);
         when(tagRepository.findByIdIn(List.of(1L, 2L, 3L))).thenReturn(
                 List.of(
-                        Tag.builder().id(1L).build(),
-                        Tag.builder().id(2L).build(),
-                        Tag.builder().id(3L).build()
+                        Tag.builder().id(1L).blogID(1L).build(),
+                        Tag.builder().id(2L).blogID(1L).build(),
+                        Tag.builder().id(3L).blogID(1L).build()
                 )
         );
-        when(postingRepository.save(any())).thenReturn(Posting.builder().id(1L).categoryID(1L).userID(1L).build());
-        when(postingTagRepository.saveAll(any())).thenReturn(null);
 
+        when(postingRepository.save(any())).thenReturn(Posting.builder().blogID(1L).id(1L).categoryID(1L).userID(1L).build());
+        when(
+                postingTagRepository.saveAll(
+                        eq(
+                                List.of(
+                                        PostingTag.builder()
+                                                .tag(Tag.builder().id(1L).blogID(1L).build())
+                                                .posting(Posting.builder().blogID(1L).id(1L).categoryID(1L).userID(1L).build())
+                                                .build(),
+                                        PostingTag.builder()
+                                                .tag(Tag.builder().id(2L).blogID(1L).build())
+                                                .posting(Posting.builder().blogID(1L).id(1L).categoryID(1L).userID(1L).build())
+                                                .build(),
+                                        PostingTag.builder()
+                                                .tag(Tag.builder().id(3L).blogID(1L).build())
+                                                .posting(Posting.builder().blogID(1L).id(1L).categoryID(1L).userID(1L).build())
+                                                .build()
+                                )
+                        )
+                )
+        ).thenReturn(null);
         // when
         Long got = postingService.createPosting(1L, 1L, CreatePostingRequest.builder().tagIDs(List.of(1L, 2L, 3L)).categoryID(1L).build());
 
