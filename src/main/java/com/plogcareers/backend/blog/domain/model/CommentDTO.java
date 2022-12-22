@@ -24,6 +24,8 @@ public class CommentDTO {
     Boolean isSecret;
     LocalDateTime createDt;
     LocalDateTime updateDt;
+    
+    @Builder.Default
     List<CommentDTO> children = new ArrayList<>();
 
     public Boolean isChildren(Comment comment) {
