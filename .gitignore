@@ -157,3 +157,4 @@ gradle-app.setting
 
 # VS Code
 /.vscode/**
+.DS_Store

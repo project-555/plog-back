@@ -1,0 +1,53 @@
+name: Deploy Development
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install OVPN
+        run: |
+          sudo apt update
+          sudo apt install -y openvpn openvpn-systemd-resolved
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '18'
+          cache: 'gradle'
+
+      - name: Build Gradle
+        run: |
+          ./gradlew build --stacktrace -x test
+
+      - name: Connect to VPN
+        uses: "kota65535/github-openvpn-connect-action@v2"
+        with:
+          config_file: ./config/vpn-config.ovpn
+
+      - name: SCP Action
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./build/libs/backend-0.0.1-SNAPSHOT.jar"
+          target: "snapshots"
+
+      - name: SSH Action
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            fuser -k -n tcp 8080
+            nohup java -jar ./snapshots/build/libs/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev 1>/dev/null 2>&1 &
+            sudo service nginx restart
