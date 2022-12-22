@@ -56,7 +56,7 @@ public class HomeController {
     }
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping("/subscribe/{subscribeID}")
+    @DeleteMapping("/subscribes/{subscribeID}")
     public ResponseEntity<SResponse> deleteSubscribe(@PathVariable Long subscribeID,
                                                      @ApiIgnore @RequestHeader(name = Auth.token) String token
                                                      ) throws BlogNotFoundException {

@@ -42,6 +42,9 @@ public class HomeService {
     public void deleteSubscribe(Long subscribeID, Long loginedUserID) throws BlogNotFoundException {
         User user = userRepository.findById(loginedUserID).orElseThrow(UserNotFoundException::new);
         Subscribe subscribe = subscribeRepository.findById(subscribeID).orElseThrow(SubscribeNotFoundException::new);
+        if (!subscribe.isOwner(user)) {
+            throw new NotProperAuthorityException();
+        }
         subscribeRepository.delete(subscribe);
     }
 }
