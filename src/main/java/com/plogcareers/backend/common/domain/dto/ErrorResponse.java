@@ -20,6 +20,7 @@ import java.util.Objects;
 @Getter
 @Builder
 public class ErrorResponse {
+    @Builder.Default
     private LocalDateTime timestamp = LocalDateTime.now();
 
     private String message; //예외 메시지 저장
