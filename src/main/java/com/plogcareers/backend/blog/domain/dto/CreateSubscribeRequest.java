@@ -3,13 +3,17 @@ package com.plogcareers.backend.blog.domain.dto;
 import com.plogcareers.backend.blog.domain.entity.Subscribe;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class CreateSubscribeRequest {
     @NotNull
     @ApiParam(value = "유저 ID")
