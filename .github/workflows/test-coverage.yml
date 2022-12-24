@@ -14,11 +14,19 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 18
-      - name: Run Coverage
+
+      - name: Run Test
         run: |
           chmod +x gradlew    
           ./gradlew test
           ./gradlew jacocoTestReport
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: ${{ always() }}  # 테스트가 실패하여도 Report를 보기 위해 `always`로 설정
+        with:
+          files: build/test-results/**/*.xml
+
       - name: Add coverage to PR
         id: jacoco
         uses: madrapps/jacoco-report@v1.3
