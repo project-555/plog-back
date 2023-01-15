@@ -33,7 +33,8 @@ public enum ErrorCode {
     ERR_SUBSCRIBE_NOT_FOUND(HttpStatus.NOT_FOUND, "구독정보를 찾을 수 없습니다."),
 
     // COMMON
-    ERR_INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류입니다.");
+    ERR_INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류입니다."),
+    ERR_UNSUPPORTED_FILE_TYPE(HttpStatus.BAD_REQUEST, "지원하지 않는 파일 형식입니다.");
 
     private final HttpStatus status;
     private final String code;

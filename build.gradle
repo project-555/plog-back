@@ -61,6 +61,15 @@ dependencies {
     // https://mvnrepository.com/artifact/com.querydsl/querydsl-apt
     implementation 'com.querydsl:querydsl-apt:5.0.0'
 
+    // https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-objectstorage
+    implementation 'com.oracle.oci.sdk:oci-java-sdk-objectstorage:3.2.0'
+
+    // https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-common-httpclient-jersey
+    implementation 'com.oracle.oci.sdk:oci-java-sdk-common-httpclient-jersey:3.2.0'
+
+    // https://mvnrepository.com/artifact/org.apache.tika/tika-core
+    implementation 'org.apache.tika:tika-core:2.6.0'
+
 }
 
 tasks.named('test') {
