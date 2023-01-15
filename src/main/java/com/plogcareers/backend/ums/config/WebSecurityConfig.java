@@ -46,6 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/blogs/**").hasRole("USER")
                 .antMatchers(HttpMethod.PATCH, "/blogs/**").hasRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/blogs/**").hasRole("USER")
+                .antMatchers(HttpMethod.POST, "/upload-file").hasRole("USER") // 파일 업로드는 회원만 가능하도록 설정
                 .anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
