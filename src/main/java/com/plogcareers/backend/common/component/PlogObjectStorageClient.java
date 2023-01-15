@@ -27,18 +27,13 @@ public class PlogObjectStorageClient {
     String bucketBaseURL = "https://objectstorage.ap-seoul-1.oraclecloud.com/p/Ygg8eb33Rpix8cffpOvCHnaSCCui_rp8Q42nHdWun4FW81PCpeheeh8HVGseIpBd/n/cnwjsjnbopx3/b/plog-bucket/o/";
 
     public PlogObjectStorageClient() throws IOException {
+        // Config 파일 로드
         ClassPathResource resource = new ClassPathResource("oracle/oracle_config");
         String configurationFilePath = resource.getFile().getPath();
         String profile = "DEFAULT";
-
-        // Configuring the AuthenticationDetailsProvider. It's assuming there is a default OCI
-        // config file
-        // "~/.oci/config", and a profile in that config with the name "DEFAULT". Make changes to
-        // the following
-        // line if needed and use ConfigFileReader.parse(configurationFilePath, profile);
-
         final ConfigFileReader.ConfigFile configFile = ConfigFileReader.parse(configurationFilePath, profile);
 
+        // provider 생성 및 client 구성
         final AuthenticationDetailsProvider provider = new ConfigFileAuthenticationDetailsProvider(configFile);
         this.client = ObjectStorageClient
                 .builder()
@@ -47,6 +42,7 @@ public class PlogObjectStorageClient {
     }
 
     public String uploadFile(InputStream stream) throws IOException {
+        // 업로드 설정
         UploadConfiguration uploadConfiguration = UploadConfiguration.builder()
                 .allowMultipartUploads(true)
                 .allowParallelUploads(true)
@@ -84,8 +80,10 @@ public class PlogObjectStorageClient {
         UploadRequest uploadDetails = UploadRequest.builder(stream, stream.available())
                 .allowOverwrite(true)
                 .build(request);
+        // 업로드 요청
         uploadManager.upload(uploadDetails);
 
+        // URL 반환
         return this.bucketBaseURL + fileName;
     }
 
