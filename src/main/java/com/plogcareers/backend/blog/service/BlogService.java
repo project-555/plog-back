@@ -9,6 +9,8 @@ import com.plogcareers.backend.blog.repository.BlogRepository;
 import com.plogcareers.backend.blog.repository.CategoryRepositortySupport;
 import com.plogcareers.backend.blog.repository.CategoryRepository;
 import com.plogcareers.backend.blog.repository.TagRepository;
+import com.plogcareers.backend.ums.domain.dto.CheckBlogNameExistRequest;
+import com.plogcareers.backend.ums.exception.BlogNameDuplicatedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -118,6 +120,12 @@ public class BlogService {
             throw new BlogTagUnmatchedException();
         }
         tagRepository.delete(tag);
+    }
+
+    public void checkBlogNameExist(CheckBlogNameExistRequest request) {
+        if (blogRepository.existsByBlogName(request.getBlogName())) {
+            throw new BlogNameDuplicatedException();
+        }
     }
 }
 

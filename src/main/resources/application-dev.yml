@@ -3,3 +3,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/plog_dev
     username: plog
     password: 565plog9632@
+
+  redis:
+    host: localhost
+    password: 6379

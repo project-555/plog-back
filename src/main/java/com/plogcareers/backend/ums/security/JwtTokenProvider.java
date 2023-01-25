@@ -21,12 +21,8 @@ import java.util.List;
 @Component
 public class JwtTokenProvider {
 
-    private String secretKey = "plogsecurity";
-
-    // 토큰 유효시간 30분
-    private final long tokenValidTime = 30 * 60 * 1000L;
-
     private final UserDetailsService userDetailsService;
+    private String secretKey = "plogsecurity";
 
     // 객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct
@@ -40,6 +36,8 @@ public class JwtTokenProvider {
         claims.put("roles", roles); // 정보는 key / value 쌍으로 저장된다.
         claims.put("userId", userId);
         Date now = new Date();
+        // 토큰 유효시간 30분
+        long tokenValidTime = 30 * 60 * 1000L;
         return Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보

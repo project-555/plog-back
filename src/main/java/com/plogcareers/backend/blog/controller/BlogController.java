@@ -12,6 +12,7 @@ import com.plogcareers.backend.common.domain.dto.SDataResponse;
 import com.plogcareers.backend.common.domain.dto.SResponse;
 import com.plogcareers.backend.common.exception.InvalidParamException;
 import com.plogcareers.backend.ums.constant.Auth;
+import com.plogcareers.backend.ums.domain.dto.CheckBlogNameExistRequest;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.service.UserService;
 import io.swagger.annotations.*;
@@ -405,6 +406,20 @@ public class BlogController {
                                                @RequestHeader(name = Auth.token) String token) {
         Long loginedUserID = userService.getLoginedUserID(token);
         blogService.deleteTag(blogID, tagID, loginedUserID);
+        return ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation(value = "블로그명 중복 확인")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "블로그명 중복 없음, 사용 가능"),
+            @ApiResponse(code = 400, message = "블로그명 중복 있음, 사용 불가", response = ErrorResponse.class)
+    })
+    @PostMapping("/check-blog-name-exist")
+    public ResponseEntity<SResponse> checkBlogNameExist(@Valid @RequestBody CheckBlogNameExistRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
+        blogService.checkBlogNameExist(request);
         return ResponseEntity.noContent().build();
     }
 }
