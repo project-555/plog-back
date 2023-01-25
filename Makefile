@@ -10,7 +10,7 @@ run:
 
 .PHONY: test
 test:
-	@./gradlew test
+	@./gradlew test --stacktrace
 	@./gradlew jacocoTestReport
 	@open ./build/reports/tests/test/index.html
 	@open ./build/reports/jacoco/test/html/index.html

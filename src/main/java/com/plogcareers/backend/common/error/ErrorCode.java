@@ -27,6 +27,13 @@ public enum ErrorCode {
     // UMS Domain
     ERR_LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "이메일이나, 비밀번호가 일치하지 않습니다."),
     ERR_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "유저가 존재하지 않습니다."),
+    ERR_EMAIL_VERIFY_CODE_NOT_FOUND(HttpStatus.NOT_FOUND, "이메일 인증 코드가 존재하지 않습니다."),
+    ERR_EMAIL_VERIFY_CODE_UNMATCHED(HttpStatus.BAD_REQUEST, "이메일 인증 코드가 일치하지 않습니다."),
+    ERR_VERIFY_TOKEN_UNMATCHED(HttpStatus.BAD_REQUEST, "인증 토큰이 일치하지 않습니다."),
+    ERR_VERIFY_EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 이메일은 인증되지 않았거나, 만료되었습니다."),
+    ERR_EMAIL_DUPLICATED(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
+    ERR_BLOG_NAME_DUPLICATED(HttpStatus.BAD_REQUEST, "이미 존재하는 블로그 이름입니다."),
+
     // Home Domain
     ERR_SELF_SUBSCRIBE(HttpStatus.BAD_REQUEST, "본인의 블로그는 구독할 수 없습니다."),
     ERR_SUBSCRIBE_DUPLICATED(HttpStatus.BAD_REQUEST, "이미 구독한 블로그입니다."),

@@ -1,11 +1,12 @@
 package com.plogcareers.backend.ums.exception;
 
+import com.plogcareers.backend.common.error.ErrorCode;
+import com.plogcareers.backend.common.exception.UserException;
 import lombok.Getter;
-import org.postgresql.util.PSQLException;
 
 @Getter
-public class EmailDuplicatedException extends Exception {
+public class EmailDuplicatedException extends UserException {
     public EmailDuplicatedException() {
-        super("중복되는 이메일이 존재합니다.");
+        super(ErrorCode.ERR_EMAIL_DUPLICATED);
     }
 }

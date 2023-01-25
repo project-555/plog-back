@@ -4,11 +4,7 @@ import com.plogcareers.backend.common.domain.dto.ErrorResponse;
 import com.plogcareers.backend.common.domain.dto.SDataResponse;
 import com.plogcareers.backend.common.domain.dto.SResponse;
 import com.plogcareers.backend.common.exception.InvalidParamException;
-import com.plogcareers.backend.ums.domain.dto.EmailCheckRequest;
-import com.plogcareers.backend.ums.domain.dto.UserJoinRequest;
-import com.plogcareers.backend.ums.domain.dto.UserLoginRequest;
-import com.plogcareers.backend.ums.domain.dto.UserLoginResponse;
-import com.plogcareers.backend.ums.exception.EmailDuplicatedException;
+import com.plogcareers.backend.ums.domain.dto.*;
 import com.plogcareers.backend.ums.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,7 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -37,24 +36,12 @@ public class UserController {
             @ApiResponse(code = 200, message = "회원가입 정상처리"),
             @ApiResponse(code = 400, message = "회원가입 실패", response = ErrorResponse.class)
     })
-    public ResponseEntity<SResponse> join(@RequestBody @Valid UserJoinRequest request) {
-        userService.join(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    // 이메일 확인
-    @GetMapping("/email/chk")
-    @ApiOperation(value = "이메일 중복확인")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "이메일 사용 가능", response = SResponse.class),
-            @ApiResponse(code = 400, message = "이메일 중복", response = ErrorResponse.class)
-    })
-    public ResponseEntity<SResponse> emailCheck(@Valid EmailCheckRequest request, BindingResult result) throws InvalidParamException, EmailDuplicatedException {
+    public ResponseEntity<SResponse> join(@Valid @RequestBody UserJoinRequest request, BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        userService.emailCheck(request.getEmail());
-        return ResponseEntity.status(HttpStatus.OK).build();
+        userService.join(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // 로그인
@@ -67,5 +54,71 @@ public class UserController {
     })
     public ResponseEntity<SResponse> login(@RequestBody UserLoginRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(userService.login(request)));
+    }
+
+    @ApiOperation(value = "회원가입 이메일 인증 메일 전송")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "인증 메일 전송 성공")
+    })
+    @PostMapping("/send-join-verify-email")
+    public ResponseEntity<SResponse> sendJoinVerifyEmail(@Valid @RequestBody SendJoinVerifyEmailRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
+        userService.sendJoinVerifyEmail(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation(value = "회원가입 이메일 인증")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "이메일 인증 성공", response = VerifyEmailResponse.class),
+            @ApiResponse(code = 400, message = "이메일 인증 실패", response = ErrorResponse.class)
+    })
+    @PostMapping("/verify-email")
+    public ResponseEntity<SResponse> verifyEmail(@Valid @RequestBody VerifyEmailRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
+        VerifyEmailResponse response = userService.verifyEmail(request);
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(response));
+    }
+
+    @ApiOperation(value = "비밀번호 찾기 인증 메일 전송")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "비밀번호 찾기 이메일 전송 성공"),
+            @ApiResponse(code = 400, message = "비밀번호 찾기 이메일 전송 실패", response = ErrorResponse.class)
+    })
+    @PostMapping("/send-find-password-email")
+    public ResponseEntity<SResponse> sendFindPasswordEmail(@Valid @RequestBody SendFindPasswordEmailRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
+        userService.sendFindPasswordEmail(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation(value = "비밀번호 찾기 코드 인증")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "비밀번호 찾기 코드 인증 성공", response = VerifyFindPasswordEmailResponse.class),
+            @ApiResponse(code = 400, message = "비밀번호 찾기 코드 인증 실패", response = ErrorResponse.class)
+    })
+    @PostMapping("/verify-find-password")
+    public ResponseEntity<SResponse> verifyFindPasswordEmail(@Valid @RequestBody VerifyFindPasswordEmailRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
+        VerifyFindPasswordEmailResponse response = userService.verifyFindPasswordEmail(request);
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(response));
+    }
+
+    @ApiOperation(value = "비밀번호 변경")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "비밀번호 변경 성공"),
+            @ApiResponse(code = 400, message = "비밀번호 변경 실패", response = ErrorResponse.class)
+    })
+    @PostMapping("/change-password")
+    public ResponseEntity<SResponse> changePassword(@RequestBody ChangePasswordRequest request) {
+        userService.changePassword(request);
+        return ResponseEntity.noContent().build();
     }
 }

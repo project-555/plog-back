@@ -16,8 +16,7 @@ jobs:
           java-version: 18
       - name: Copy Oracle Key Files
         run: |
-          cp -r ./src/main/resources/oracle/.keys ~/.oci/
-          cd ~/.oci 
+          cp -r ./src/main/resources/oracle/ ~/.oci/
 
       - name: Run Test
         run: |

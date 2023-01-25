@@ -13,6 +13,7 @@ import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadRequest;
 import com.plogcareers.backend.common.exception.UnsupportedFileTypeException;
 import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -27,7 +28,10 @@ public class PlogObjectStorageClient {
 
     public PlogObjectStorageClient() throws IOException {
         // Config 파일 로드
-        final ConfigFileReader.ConfigFile configFile = ConfigFileReader.parseDefault();
+        ClassPathResource resource = new ClassPathResource("oracle/oracle_config");
+        String configurationFilePath = resource.getFile().getPath();
+        String profile = "DEFAULT";
+        final ConfigFileReader.ConfigFile configFile = ConfigFileReader.parse(configurationFilePath, profile);
 
         // provider 생성 및 client 구성
         final AuthenticationDetailsProvider provider = new ConfigFileAuthenticationDetailsProvider(configFile);

@@ -11,7 +11,21 @@ spring:
         ddl_auto: none
         format_sql: true
         show_sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: plogcareers@gmail.com
+    password: ppvuczvpltvulxex
 
+    properties:
+      mail:
+        smtp:
+          ssl:
+            protocols: TLSv1.2
+          auth: true
+          starttls:
+            enable: true
+            required: true
 # springfox
 springfox:
   documentation:
