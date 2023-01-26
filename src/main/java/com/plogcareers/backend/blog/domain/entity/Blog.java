@@ -1,5 +1,6 @@
 package com.plogcareers.backend.blog.domain.entity;
 
+import com.plogcareers.backend.blog.domain.dto.GetBlogResponse;
 import com.plogcareers.backend.ums.domain.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,5 +54,15 @@ public class Blog {
 
     public Boolean isSelfSubscribe(User user) {
         return user.getId().equals(this.user.getId());
+    }
+
+    public GetBlogResponse toGetBlogResponse() {
+        return GetBlogResponse.builder()
+                .blogID(this.id)
+                .blogName(this.blogName)
+                .blogUser(this.user.toBlogUserDTO())
+                .shortIntro(this.shortIntro)
+                .introHtml(this.introHtml)
+                .build();
     }
 }
