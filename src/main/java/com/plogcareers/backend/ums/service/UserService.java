@@ -1,5 +1,7 @@
 package com.plogcareers.backend.ums.service;
 
+import com.plogcareers.backend.blog.domain.entity.Blog;
+import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.repository.BlogRepository;
 import com.plogcareers.backend.ums.domain.dto.*;
 import com.plogcareers.backend.ums.domain.entity.EmailVerifyCode;
@@ -20,6 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -71,10 +75,13 @@ public class UserService {
             throw new LoginFailException();
         }
 
+        List<Blog> blogs = blogRepository.findByUser(user);
+        if (blogs.isEmpty()) {
+            throw new BlogNotFoundException();
+        }
+
         return UserLoginResponse.builder()
-                .userId(user.getId())
-                .nickName(user.getNickname())
-                .token(new Token(jwtTokenProvider.createToken(user.getUsername(), user.getRoles(), user.getId())))
+                .token(new Token(jwtTokenProvider.createToken(user.getUsername(), user, blogs.get(0).getId())))
                 .build();
     }
 
