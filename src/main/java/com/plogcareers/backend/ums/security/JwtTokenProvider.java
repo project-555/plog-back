@@ -1,5 +1,6 @@
 package com.plogcareers.backend.ums.security;
 
+import com.plogcareers.backend.ums.domain.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -15,7 +16,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -31,10 +31,12 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰 생성
-    public String createToken(String userPk, List<String> roles, Long userId) {
+    public String createToken(String userPk, User user, Long blogID) {
         Claims claims = Jwts.claims().setSubject(userPk); // JWT payload 에 저장되는 정보단위
-        claims.put("roles", roles); // 정보는 key / value 쌍으로 저장된다.
-        claims.put("userId", userId);
+        claims.put("roles", user.getRoles()); // 유저가 가진 권한
+        claims.put("userID", user.getId()); // 유저의 ID
+        claims.put("nickname", user.getNickname()); // 유저의 닉네임
+        claims.put("blogID", blogID); // 유저가 가진 블로그 ID
         Date now = new Date();
         // 토큰 유효시간 30분
         long tokenValidTime = 30 * 60 * 1000L;
