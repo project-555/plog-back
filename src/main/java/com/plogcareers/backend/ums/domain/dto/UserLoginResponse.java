@@ -8,7 +8,5 @@ import lombok.Getter;
 @Getter
 @Builder
 public class UserLoginResponse {
-    private Long userId;
-    private String nickName;
     private Token token;
 }
