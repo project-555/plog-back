@@ -86,7 +86,7 @@ public class UserService {
     }
 
 
-    public void sendJoinVerifyEmail(SendJoinVerifyEmailRequest request) {
+    public void sendVerifyJoinEmail(SendVerifyJoinEmailRequest request) {
         // 이미 가입된 이메일인지 확인
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new EmailDuplicatedException();
@@ -112,7 +112,7 @@ public class UserService {
         javaMailSender.send(simpleMailMessage);
     }
 
-    public VerifyEmailResponse verifyEmail(VerifyEmailRequest request) {
+    public VerifyJoinEmailResponse verifyJoinEmail(VerifyJoinEmailRequest request) {
         EmailVerifyCode emailVerifyCode = emailVerifyCodeRepository.findById(request.getEmail()).orElseThrow(EmailVerifyCodeNotFoundException::new);
 
         if (!emailVerifyCode.getVerifyCode().equals(request.getVerifyCode())) {
@@ -132,7 +132,7 @@ public class UserService {
                         .build()
         );
 
-        return VerifyEmailResponse.builder()
+        return VerifyJoinEmailResponse.builder()
                 .email(request.getEmail())
                 .verifyToken(verifyToken)
                 .build();
