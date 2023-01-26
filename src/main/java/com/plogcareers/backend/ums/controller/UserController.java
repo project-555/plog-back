@@ -60,26 +60,26 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "인증 메일 전송 성공")
     })
-    @PostMapping("/send-join-verify-email")
-    public ResponseEntity<SResponse> sendJoinVerifyEmail(@Valid @RequestBody SendJoinVerifyEmailRequest request, BindingResult result) {
+    @PostMapping("/send-verify-join-email")
+    public ResponseEntity<SResponse> sendVerifyJoinEmail(@Valid @RequestBody SendVerifyJoinEmailRequest request, BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        userService.sendJoinVerifyEmail(request);
+        userService.sendVerifyJoinEmail(request);
         return ResponseEntity.noContent().build();
     }
 
     @ApiOperation(value = "회원가입 이메일 인증")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "이메일 인증 성공", response = VerifyEmailResponse.class),
+            @ApiResponse(code = 200, message = "이메일 인증 성공", response = VerifyJoinEmailResponse.class),
             @ApiResponse(code = 400, message = "이메일 인증 실패", response = ErrorResponse.class)
     })
-    @PostMapping("/verify-email")
-    public ResponseEntity<SResponse> verifyEmail(@Valid @RequestBody VerifyEmailRequest request, BindingResult result) {
+    @PostMapping("/verify-join-email")
+    public ResponseEntity<SResponse> verifyJoinEmail(@Valid @RequestBody VerifyJoinEmailRequest request, BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        VerifyEmailResponse response = userService.verifyEmail(request);
+        VerifyJoinEmailResponse response = userService.verifyJoinEmail(request);
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(response));
     }
 
@@ -97,12 +97,12 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @ApiOperation(value = "비밀번호 찾기 코드 인증")
+    @ApiOperation(value = "비밀번호 찾기 이메일 인증")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "비밀번호 찾기 코드 인증 성공", response = VerifyFindPasswordEmailResponse.class),
-            @ApiResponse(code = 400, message = "비밀번호 찾기 코드 인증 실패", response = ErrorResponse.class)
+            @ApiResponse(code = 200, message = "비밀번호 찾기 이메일 인증 성공", response = VerifyFindPasswordEmailResponse.class),
+            @ApiResponse(code = 400, message = "비밀번호 찾기 이메일 인증 실패", response = ErrorResponse.class)
     })
-    @PostMapping("/verify-find-password")
+    @PostMapping("/verify-find-password-email")
     public ResponseEntity<SResponse> verifyFindPasswordEmail(@Valid @RequestBody VerifyFindPasswordEmailRequest request, BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);

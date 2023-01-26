@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class VerifyEmailResponse {
+public class VerifyJoinEmailResponse {
     String email;
     String verifyToken;
 }
