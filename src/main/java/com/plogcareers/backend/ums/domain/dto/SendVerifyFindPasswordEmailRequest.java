@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Getter
 @Setter
-public class SendFindPasswordEmailRequest {
+public class SendVerifyFindPasswordEmailRequest {
     @NotNull
     @Email
     @ApiParam(value = "비밀번호를 찾고자 하는 이메일 주소")

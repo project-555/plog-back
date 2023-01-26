@@ -138,7 +138,7 @@ public class UserService {
                 .build();
     }
 
-    public void sendFindPasswordEmail(SendFindPasswordEmailRequest request) {
+    public void sendVerifyFindPasswordEmail(SendVerifyFindPasswordEmailRequest request) {
         // 유저 유무 체크
         if (!userRepository.existsByEmail(request.getEmail())) {
             throw new UserNotFoundException();
