@@ -3,7 +3,6 @@ package com.plogcareers.backend.ums.domain.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -11,12 +10,8 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
-public class VerifyEmailRequest {
+public class SendVerifyJoinEmailRequest {
     @Email
     @NotNull
-    String email;
-
-    @NotNull
-    String verifyCode;
+    private String email;
 }
