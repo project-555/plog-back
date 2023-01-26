@@ -88,12 +88,12 @@ public class UserController {
             @ApiResponse(code = 204, message = "비밀번호 찾기 이메일 전송 성공"),
             @ApiResponse(code = 400, message = "비밀번호 찾기 이메일 전송 실패", response = ErrorResponse.class)
     })
-    @PostMapping("/send-find-password-email")
-    public ResponseEntity<SResponse> sendFindPasswordEmail(@Valid @RequestBody SendFindPasswordEmailRequest request, BindingResult result) {
+    @PostMapping("/send-verify-find-password-email")
+    public ResponseEntity<SResponse> sendVerifyFindPasswordEmail(@Valid @RequestBody SendVerifyFindPasswordEmailRequest request, BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        userService.sendFindPasswordEmail(request);
+        userService.sendVerifyFindPasswordEmail(request);
         return ResponseEntity.noContent().build();
     }
 
