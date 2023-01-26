@@ -1,5 +1,6 @@
 package com.plogcareers.backend.ums.domain.entity;
 
+import com.plogcareers.backend.blog.domain.dto.BlogUserDTO;
 import com.plogcareers.backend.blog.domain.model.CommentUserDTO;
 import com.plogcareers.backend.blog.domain.model.PostingStarUserDTO;
 import lombok.*;
@@ -29,22 +30,34 @@ public class User implements UserDetails {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "email", length = 50, nullable = false, updatable = false, unique = true)
     private String email;
+
     @Column(name = "password", length = 512, nullable = false)
     private String password;
+
     @Column(name = "first_name", length = 20, nullable = false)
     private String firstName;
+
     @Column(name = "last_name", length = 20, nullable = false)
     private String lastName;
+
     @Column(name = "join_dt")
     private LocalDateTime joinDt;
+
     @Column(name = "birth")
     private LocalDate birth;
+
     @Column(name = "sex")
     private String sex;
+
     @Column(name = "nickname")
     private String nickname;
+
+    @Column(name = "profile_image_url")
+    private String profileImageURL;
+
     @Builder.Default
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     private List<UserRole> roles = new ArrayList<>();
@@ -81,6 +94,14 @@ public class User implements UserDetails {
         return PostingStarUserDTO.builder()
                 .id(this.id)
                 .nickname(this.nickname)
+                .build();
+    }
+
+    public BlogUserDTO toBlogUserDTO() {
+        return BlogUserDTO.builder()
+                .userID(this.id)
+                .nickname(this.nickname)
+                .profileImageURL(this.profileImageURL)
                 .build();
     }
 

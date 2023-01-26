@@ -362,7 +362,7 @@ public class BlogController {
     })
     @PostMapping("/{blogID}/tag")
     public ResponseEntity<SResponse> createTag(@PathVariable Long blogID,
-                                               @RequestHeader(name = Auth.token) String token,
+                                               @ApiIgnore @RequestHeader(name = Auth.token) String token,
                                                @Valid @RequestBody CreateTagRequest request,
                                                BindingResult result) {
         if (result.hasErrors()) {
@@ -383,7 +383,7 @@ public class BlogController {
     @PutMapping("/{blogID}/tags/{tagID}")
     public ResponseEntity<SResponse> updateTag(@PathVariable Long blogID,
                                                @PathVariable Long tagID,
-                                               @RequestHeader(name = Auth.token) String token,
+                                               @ApiIgnore @RequestHeader(name = Auth.token) String token,
                                                @Valid @RequestBody UpdateTagRequest request,
                                                BindingResult result) {
         if (result.hasErrors()) {
@@ -401,8 +401,8 @@ public class BlogController {
             @ApiResponse(code = 404, message = "자원 없음", response = ErrorResponse.class)
     })
     @DeleteMapping("/{blogID}/tags/{tagID}")
-    public ResponseEntity<SResponse> deleteTag(@PathVariable Long blogID,
-                                               @PathVariable Long tagID,
+    public ResponseEntity<SResponse> deleteTag(@ApiParam(value = "삭제하고자 하는 태그가 속해 있는 블로그 ID", example = "1") @PathVariable Long blogID,
+                                               @ApiParam(value = "삭제하고자 하는 태그 ID", example = "10") @PathVariable Long tagID,
                                                @RequestHeader(name = Auth.token) String token) {
         Long loginedUserID = userService.getLoginedUserID(token);
         blogService.deleteTag(blogID, tagID, loginedUserID);
@@ -421,5 +421,16 @@ public class BlogController {
         }
         blogService.checkBlogNameExist(request);
         return ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation(value = "블로그 단건 조회")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "정상 조회", response = GetBlogResponse.class),
+            @ApiResponse(code = 400, message = "잘못된 사용자 요청", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "자원 없음", response = ErrorResponse.class)
+    })
+    @GetMapping("/{blogID}")
+    public ResponseEntity<SResponse> getBlog(@ApiParam(value = "조회하고자 하는 블로그의 ID", example = "1") @PathVariable Long blogID) {
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(blogService.getBlog(blogID)));
     }
 }

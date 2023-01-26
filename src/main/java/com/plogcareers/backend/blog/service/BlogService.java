@@ -127,5 +127,10 @@ public class BlogService {
             throw new BlogNameDuplicatedException();
         }
     }
+
+    public GetBlogResponse getBlog(Long blogID) {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
+        return blog.toGetBlogResponse();
+    }
 }
 
