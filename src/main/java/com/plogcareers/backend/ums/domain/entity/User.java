@@ -1,6 +1,7 @@
 package com.plogcareers.backend.ums.domain.entity;
 
 import com.plogcareers.backend.blog.domain.dto.BlogUserDTO;
+import com.plogcareers.backend.blog.domain.dto.HomePostingUserDTO;
 import com.plogcareers.backend.blog.domain.model.CommentUserDTO;
 import com.plogcareers.backend.blog.domain.model.PostingStarUserDTO;
 import lombok.*;
@@ -102,6 +103,13 @@ public class User implements UserDetails {
                 .userID(this.id)
                 .nickname(this.nickname)
                 .profileImageURL(this.profileImageURL)
+                .build();
+    }
+
+    public HomePostingUserDTO toHomePostingUserDTO() {
+        return HomePostingUserDTO.builder()
+                .userID(this.id)
+                .nickname(this.nickname)
                 .build();
     }
 
