@@ -1,7 +1,7 @@
 package com.plogcareers.backend.blog.domain.entity;
 
+import com.plogcareers.backend.blog.domain.dto.HomePostingUserDTO;
 import com.plogcareers.backend.blog.domain.model.HomePostingDTO;
-import com.plogcareers.backend.blog.domain.model.PostingDTO;
 import com.plogcareers.backend.ums.domain.entity.User;
 import lombok.*;
 
@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "v_posting", schema = "plog_blog")
+@Table(name = "v_hot_posting", schema = "plog_blog")
 @NoArgsConstructor
 @AllArgsConstructor
-public class VPosting {
+public class VHotPosting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -66,23 +66,9 @@ public class VPosting {
     @Column(name = "summary", nullable = false)
     private String summary;
 
-    public PostingDTO toPostingDTO() {
-        return PostingDTO.builder()
-                .id(this.id)
-                .title(this.title)
-                .mdContent(this.mdContent)
-                .htmlContent(this.htmlContent)
-                .stateID(this.stateID)
-                .categoryID(this.categoryID)
-                .isStarAllowed(this.isStarAllowed)
-                .isCommentAllowed(this.isCommentAllowed)
-                .hitCnt(this.hitCnt)
-                .thumbnailImageURL(this.thumbnailImageUrl)
-                .createDt(this.createDt)
-                .updateDt(this.updateDt)
-                .starCnt(this.postingStarCount)
-                .build();
-    }
+    @Column(name = "star_row_num", nullable = false)
+    private String starRowNum;
+
 
     public HomePostingDTO toHomePostingDTO() {
         return HomePostingDTO.builder()

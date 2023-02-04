@@ -66,6 +66,8 @@ dependencies {
     implementation 'com.querydsl:querydsl-jpa:5.0.0'
     // https://mvnrepository.com/artifact/com.querydsl/querydsl-apt
     implementation 'com.querydsl:querydsl-apt:5.0.0'
+    // https://mvnrepository.com/artifact/com.querydsl/querydsl-sql
+    implementation 'com.querydsl:querydsl-sql:5.0.0'
 
     // https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-objectstorage
     implementation 'com.oracle.oci.sdk:oci-java-sdk-objectstorage:3.2.0'

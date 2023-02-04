@@ -43,6 +43,27 @@ public class VPostingRepositorySupport extends QuerydslRepositorySupport {
                 .fetch();
     }
 
+    public List<VPosting> listHomePostings(Long lastPostingID, int pageSize) {
+        return queryFactory.selectFrom(
+                        qPosting
+                )
+                .where(
+                        ltPostingID(lastPostingID),
+                        qPosting.stateID.eq(State.PUBLIC)
+
+                )
+                .orderBy(qPosting.id.desc())
+                .limit(pageSize)
+                .fetch();
+    }
+
+    private BooleanExpression ltPostingID(Long postingID) {
+        if (postingID == null) {
+            return null;
+        }
+        return qPosting.id.lt(postingID);
+    }
+
     private BooleanExpression postingTagIn(List<PostingTag> postingTags) {
         if (postingTags == null || postingTags.isEmpty()) {
             return null;
