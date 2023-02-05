@@ -1,6 +1,7 @@
 package com.plogcareers.backend.blog.domain.dto;
 
 import com.plogcareers.backend.blog.domain.entity.Tag;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import javax.validation.constraints.NotNull;
 public class UpdateTagRequest {
     @NotNull
     @Length(min = 1, max = 30)
+    @ApiModelProperty(value = "수정할 태그 이름")
     String tagName;
 
     public Tag toTagEntity(Tag tag) {

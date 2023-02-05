@@ -33,7 +33,7 @@ public class UserController {
     @PostMapping("/join")
     @ApiOperation(value = "회원가입")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "회원가입 정상처리"),
+            @ApiResponse(code = 201, message = "회원가입 정상처리"),
             @ApiResponse(code = 400, message = "회원가입 실패", response = ErrorResponse.class)
     })
     public ResponseEntity<SResponse> join(@Valid @RequestBody UserJoinRequest request, BindingResult result) {
@@ -58,7 +58,8 @@ public class UserController {
 
     @ApiOperation(value = "회원가입 이메일 인증 메일 전송")
     @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "인증 메일 전송 성공")
+            @ApiResponse(code = 204, message = "인증 메일 전송 성공"),
+            @ApiResponse(code = 400, message = "사용자 요청 오류", response = ErrorResponse.class)
     })
     @PostMapping("/send-verify-join-email")
     public ResponseEntity<SResponse> sendVerifyJoinEmail(@Valid @RequestBody SendVerifyJoinEmailRequest request, BindingResult result) {

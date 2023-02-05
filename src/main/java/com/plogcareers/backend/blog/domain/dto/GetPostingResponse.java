@@ -1,5 +1,6 @@
 package com.plogcareers.backend.blog.domain.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -13,18 +14,41 @@ import java.util.Objects;
 @Builder
 public class GetPostingResponse {
 
+    @ApiModelProperty(value = "포스팅 ID")
     private Long id;
+
+    @ApiModelProperty(value = "포스팅 제목")
     private String title;
+
+    @ApiModelProperty(value = "포스팅 내용 HTML")
     private String htmlContent;
-    private Long categoryID;
-    private Long stateID;
-    private Long hitCnt;
-    private LocalDateTime createDt;
-    private LocalDateTime updateDt;
-    private Boolean isCommentAllowed;
-    private Boolean isStarAllowed;
-    private String thumbnailImageUrl;
+
+    @ApiModelProperty(value = "포스팅 내용 Markdown")
     private String mdContent;
+
+    @ApiModelProperty(value = "포스팅 카테고리 ID")
+    private Long categoryID;
+
+    @ApiModelProperty(value = "포스팅 상태 ID")
+    private Long stateID;
+
+    @ApiModelProperty(value = "포스팅 조회수")
+    private Long hitCnt;
+
+    @ApiModelProperty(value = "포스팅 생성일")
+    private LocalDateTime createDt;
+
+    @ApiModelProperty(value = "포스팅 수정일")
+    private LocalDateTime updateDt;
+
+    @ApiModelProperty(value = "포스팅 댓글 허용 여부")
+    private Boolean isCommentAllowed;
+
+    @ApiModelProperty(value = "포스팅 좋아요 허용 여부")
+    private Boolean isStarAllowed;
+
+    @ApiModelProperty(value = "포스팅 썸네일 이미지 URL")
+    private String thumbnailImageUrl;
 
     @Override
     public boolean equals(Object o) {

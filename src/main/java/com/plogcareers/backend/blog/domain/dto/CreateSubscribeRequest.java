@@ -1,7 +1,7 @@
 package com.plogcareers.backend.blog.domain.dto;
 
 import com.plogcareers.backend.blog.domain.entity.Subscribe;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,10 +15,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateSubscribeRequest {
+    
     @NotNull
-    @ApiParam(value = "유저 ID")
+    @ApiModelProperty(value = "구독할 유저 ID")
     private Long userId;
-    @ApiParam(value = "구독할 블로그 ID")
+
+    @ApiModelProperty(value = "구독할 블로그 ID")
     private Long blogId;
 
     public Subscribe toEntity() {

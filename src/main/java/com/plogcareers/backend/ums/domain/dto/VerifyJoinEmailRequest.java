@@ -1,5 +1,6 @@
 package com.plogcareers.backend.ums.domain.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,10 @@ import javax.validation.constraints.NotNull;
 public class VerifyJoinEmailRequest {
     @Email
     @NotNull
+    @ApiModelProperty(value = "회원가입 할 이메일")
     String email;
 
     @NotNull
+    @ApiModelProperty(value = "회원가입 이메일 인증 후 받은 인증 코드")
     String verifyCode;
 }

@@ -2,6 +2,7 @@ package com.plogcareers.backend.blog.domain.dto;
 
 import com.plogcareers.backend.blog.domain.entity.Comment;
 import com.plogcareers.backend.blog.domain.model.CommentDTO;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class ListCommentsResponse {
+    @ApiModelProperty(value = "댓글 리스트")
     List<CommentDTO> comments = new ArrayList<>();
 
     public ListCommentsResponse(List<Comment> comments, Boolean isPostingOwner, Long loginedUserId) {
