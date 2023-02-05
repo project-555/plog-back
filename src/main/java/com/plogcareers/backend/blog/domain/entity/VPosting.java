@@ -71,10 +71,10 @@ public class VPosting {
                 .isStarAllowed(this.isStarAllowed)
                 .isCommentAllowed(this.isCommentAllowed)
                 .hitCnt(this.hitCnt)
-                .thumbnailImageUrl(this.thumbnailImageUrl)
+                .thumbnailImageURL(this.thumbnailImageUrl)
                 .createDt(this.createDt)
                 .updateDt(this.updateDt)
-                .postingStarCount(this.postingStarCount)
+                .starCnt(this.postingStarCount)
                 .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.plogcareers.backend.common.domain.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 @AllArgsConstructor
@@ -8,5 +9,6 @@ import lombok.*;
 @Setter
 @Builder
 public class UploadFileResponse {
-    String uploadedFileURL;
+    @ApiModelProperty(value = "업로드 된 파일의 URL")
+    private String uploadedFileURL;
 }

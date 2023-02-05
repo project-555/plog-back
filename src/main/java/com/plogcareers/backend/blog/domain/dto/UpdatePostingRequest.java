@@ -1,7 +1,7 @@
 package com.plogcareers.backend.blog.domain.dto;
 
 import com.plogcareers.backend.blog.domain.entity.Posting;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -19,29 +19,40 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UpdatePostingRequest {
     @NotNull
-    @ApiParam(value = "포스팅 제목")
-    @Length(min = 1, max = 200)
-    private String title;
+    @ApiModelProperty(value = "수정할 댓글 허용 여부")
+    Boolean isCommentAllowed;
+
     @NotNull
-    @ApiParam(value = "포스팅본문")
+    @ApiModelProperty(value = "수정할 좋아요 허용 여부")
+    Boolean isStarAllowed;
+
+    @NotNull
+    @Length(min = 1, max = 200)
+    @ApiModelProperty(value = "수정할 포스팅 제목")
+    private String title;
+
+    @NotNull
+    @ApiModelProperty(value = "수정할 포스팅 본문 HTML")
     @Length(min = 1, max = 10000)
     private String htmlContent;
+
     @NotNull
-    @ApiParam(value = "포스팅 카테고리")
+    @ApiModelProperty(value = "수정할 포스팅 본문 Markdown")
+    private String mdContent;
+
+    @NotNull
+    @ApiModelProperty(value = "수정할 포스팅 카테고리")
     private Long categoryID;
+
     @NotNull
-    @ApiParam(value = "포스팅 상태")
+    @ApiModelProperty(value = "수정할 포스팅 상태")
     @Range(min = 1, max = 2)
     private Long stateID;
-    @NotNull
-    @ApiParam(value = "댓글 허용 여부")
-    Boolean isCommentAllowed;
-    @NotNull
-    @ApiParam(value = "좋아요 허용 여부")
-    Boolean isStarAllowed;
-    @ApiParam(value = "포스팅 썸네일")
+
+    @ApiModelProperty(value = "수정할 포스팅 썸네일")
     private String thumbnailImageUrl;
-    private String mdContent;
+
+    @ApiModelProperty(value = "수정할 포스팅 태그 ID 리스트")
     private List<Long> tagIDs;
 
     public Posting toPostingEntity(Posting posting) {

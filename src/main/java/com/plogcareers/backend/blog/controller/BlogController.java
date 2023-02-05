@@ -38,8 +38,8 @@ public class BlogController {
     @ApiOperation(value = "Posting 생성")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "정상 동작 시"),
-            @ApiResponse(code = 404, message = "태그 없음"),
-            @ApiResponse(code = 500, message = "서버 에러")
+            @ApiResponse(code = 404, message = "태그 없음", response = ErrorResponse.class),
+            @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
     }
     )
     @ResponseStatus(value = HttpStatus.CREATED)
@@ -141,8 +141,8 @@ public class BlogController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "정상 조회(data)", response = ListPostingTagResponse.class),
             @ApiResponse(code = 299, message = "정상 조회(outer)", response = SDataResponse.class),
-            @ApiResponse(code = 404, message = "포스팅 없음"),
-            @ApiResponse(code = 500, message = "서버 에러")
+            @ApiResponse(code = 404, message = "포스팅 없음", response = ErrorResponse.class),
+            @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
     }
     )
     @GetMapping("/{blogID}/postings/{postingID}/tags")
