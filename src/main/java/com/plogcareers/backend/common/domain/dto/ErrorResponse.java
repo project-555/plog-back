@@ -3,6 +3,7 @@ package com.plogcareers.backend.common.domain.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.plogcareers.backend.common.error.ErrorCode;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +24,13 @@ public class ErrorResponse {
     @Builder.Default
     private LocalDateTime timestamp = LocalDateTime.now();
 
+    @ApiModelProperty(value = "예외 메시지")
     private String message; //예외 메시지 저장
 
+    @ApiModelProperty(value = "예외 코드")
     private String code; // 예외를 세분화하기 위한 사용자 지정 코드,
 
+    @ApiModelProperty(value = "예외 상태 HTTP 코드")
     private HttpStatus status; // HTTP 상태 값 저장 400, 404, 500 등..
 
     //@Valid의 Parameter 검증을 통과하지 못한 필드가 담긴다.

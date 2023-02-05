@@ -67,10 +67,10 @@ public class UserJoinRequest {
 
 
     @NotNull
-    @Pattern(regexp = "^[a-z0-9]{4,20}$", message = "블로그 이름은 영문 소문자와 숫자로만 구성되어야 합니다. (4~20자)")
+    @Pattern(regexp = "^[a-z0-9_-]{4,20}$", message = "블로그 이름은 영문 소문자와 숫자 혹은 특수문자 (\"_\",\"-\") 만 구성되어야 합니다. (4~20자)")
     private String blogName;
     private String shortIntro;
-    private String introHtml;
+    private String introHTML;
 
 
     public User toUserEntity(PasswordEncoder passwordEncoder) {
@@ -93,7 +93,9 @@ public class UserJoinRequest {
                 .user(user)
                 .blogName(this.blogName)
                 .shortIntro(this.shortIntro)
-                .introHtml(this.introHtml)
+                .introHTML(this.introHTML)
+                .createDt(LocalDateTime.now())
+                .updateDt(LocalDateTime.now())
                 .build();
     }
 }

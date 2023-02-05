@@ -27,7 +27,7 @@ public class Tag {
 
     public TagDTO toTagDTO() {
         return TagDTO.builder()
-                .tagId(this.id)
+                .tagID(this.id)
                 .tagName(this.tagName)
                 .build();
     }

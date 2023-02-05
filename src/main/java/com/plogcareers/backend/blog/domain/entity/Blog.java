@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Table(name = "blog", schema = "plog_blog")
 public class Blog {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "blog_name")
@@ -32,7 +32,7 @@ public class Blog {
     private String shortIntro;
 
     @Column(name = "intro_html")
-    private String introHtml;
+    private String introHTML;
 
     @Column(name = "create_dt")
     private LocalDateTime createDt;
@@ -62,7 +62,7 @@ public class Blog {
                 .blogName(this.blogName)
                 .blogUser(this.user.toBlogUserDTO())
                 .shortIntro(this.shortIntro)
-                .introHtml(this.introHtml)
+                .introHtml(this.introHTML)
                 .build();
     }
 }
