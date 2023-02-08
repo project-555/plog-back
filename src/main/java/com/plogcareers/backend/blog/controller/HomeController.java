@@ -84,7 +84,7 @@ public class HomeController {
     public ResponseEntity<SDataResponse<ListHomePostingsResponse>> listFollowingPostings(@ApiIgnore @RequestHeader(name = Auth.token, required = false) String token,
                                                                                 ListFollowingPostingsRequest request) {
         Long loginedUserID = userService.getLoginedUserID(token);
-        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(homeService.listFollowingPostings(loginedUserID, request.getLastPostingID(), request.getPageSize())));
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(homeService.listFollowingPostings(loginedUserID, request.getLastCursorID(), request.getPageSize())));
     }
 
     @ApiOperation(value = "홈 포스팅 리스트(최신)")
@@ -96,6 +96,6 @@ public class HomeController {
     )
     @GetMapping("/recent-postings")
     public ResponseEntity<SDataResponse<ListHomePostingsResponse>> listRecentPostings(ListRecentPostingsRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(homeService.listRecentPostings(request.getLastPostingID(), request.getPageSize())));
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(homeService.listRecentPostings(request.getLastCursorID(), request.getPageSize())));
     }
 }
