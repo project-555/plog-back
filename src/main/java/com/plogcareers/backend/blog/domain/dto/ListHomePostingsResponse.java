@@ -1,10 +1,7 @@
 package com.plogcareers.backend.blog.domain.dto;
 
 import com.plogcareers.backend.blog.domain.model.HomePostingDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,11 +10,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class ListHomePostingsResponse {
     List<HomePostingDTO> homePostings;
-
-    @Override
-    public boolean equals(Object obj) {
-        return this.homePostings.equals(obj);
-    }
 }
