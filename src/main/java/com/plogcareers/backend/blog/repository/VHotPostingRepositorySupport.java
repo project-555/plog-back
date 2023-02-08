@@ -20,12 +20,12 @@ public class VHotPostingRepositorySupport extends QuerydslRepositorySupport {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public List<VHotPosting> listFollowingHomePostings(Long lastPostingID, List<Long> followingIDs, int pageSize) {
+    public List<VHotPosting> listFollowingHomePostings(Long lastCursorID, List<Long> followingIDs, Long pageSize) {
         return queryFactory.selectFrom(
                         qHotPosting
                 )
                 .where(
-                        ltPostingID(lastPostingID),
+                        ltPostingID(lastCursorID),
                         qHotPosting.stateID.eq(State.PUBLIC),
                         qHotPosting.blogID.in(followingIDs)
                 )
@@ -33,10 +33,10 @@ public class VHotPostingRepositorySupport extends QuerydslRepositorySupport {
                 .fetch();
     }
 
-    private BooleanExpression ltPostingID(Long postingID) {
-        if (postingID == null) {
+    private BooleanExpression ltPostingID(Long cursorID) {
+        if (cursorID == null) {
             return null;
         }
-        return qHotPosting.id.lt(postingID);
+        return qHotPosting.id.lt(cursorID);
     }
 }

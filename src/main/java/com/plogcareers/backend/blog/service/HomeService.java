@@ -56,17 +56,17 @@ public class HomeService {
         subscribeRepository.delete(subscribe);
     }
 
-    public ListHomePostingsResponse listFollowingPostings(Long loginedUserID, Long lastPostingID, Integer pageSize) {
+    public ListHomePostingsResponse listFollowingPostings(Long loginedUserID, Long lastCursorID, Long pageSize) {
         List<Subscribe> subscribes = subscribeRepository.findByUserId(loginedUserID);
         List<Long> followingIDs = subscribes.stream()
                                             .map(Subscribe::getBlogId)
                                             .toList();
-        List<VHotPosting> homePostings = vHotPostingRepositorySupport.listFollowingHomePostings(lastPostingID, followingIDs, pageSize);
+        List<VHotPosting> homePostings = vHotPostingRepositorySupport.listFollowingHomePostings(lastCursorID, followingIDs, pageSize);
         return ListHomePostingsResponse.builder().homePostings(homePostings.stream().map(VHotPosting::toHomePostingDTO).toList()).build();
     }
 
-    public ListHomePostingsResponse listRecentPostings(Long lastPostingID, int pageSize) {
-        List<VPosting> homePostings = vPostingRepositorySupport.listHomePostings(lastPostingID, pageSize);
+    public ListHomePostingsResponse listRecentPostings(Long lastCursorID, Long pageSize) {
+        List<VPosting> homePostings = vPostingRepositorySupport.listHomePostings(lastCursorID, pageSize);
         return ListHomePostingsResponse.builder().homePostings(homePostings.stream().map(VPosting::toHomePostingDTO).toList()).build();
     }
 

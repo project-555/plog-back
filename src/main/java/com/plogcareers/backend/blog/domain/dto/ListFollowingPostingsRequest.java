@@ -1,15 +1,8 @@
 package com.plogcareers.backend.blog.domain.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-public class ListFollowingPostingsRequest {
-    Long lastPostingID;
-    Integer pageSize;
+public class ListFollowingPostingsRequest extends CursorPagingRequest {
 }
