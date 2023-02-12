@@ -23,7 +23,7 @@ import java.util.UUID;
 public class PlogObjectStorageClient {
     private final ObjectStorage client;
     // TODO: yaml 설정 파일 이관 필요
-    String bucketBaseURL = "https://objectstorage.ap-seoul-1.oraclecloud.com/p/Ygg8eb33Rpix8cffpOvCHnaSCCui_rp8Q42nHdWun4FW81PCpeheeh8HVGseIpBd/n/cnwjsjnbopx3/b/plog-bucket/o/";
+    String bucketBaseURL = "https://objectstorage.ap-seoul-1.oraclecloud.com/p/zWVjzyjhfIJ5QeR4I4izkE45ueLMEyXe2GAisPji4glQlyzkzOFECXy9ej8z8FhY/n/cnwjsjnbopx3/b/plog-bucket/o/";
 
     public PlogObjectStorageClient() throws IOException {
         // Config 파일 로드
