@@ -33,11 +33,11 @@ public class Subscribe {
     public SubscribeDTO toSubscribeDTO(Blog blog) {
         return SubscribeDTO.builder()
                 .id(this.id)
-                .blog_id(blog.getId())
-                .blog_name(blog.getBlogName())
-                .blog_user_id(blog.getUser().getId())
+                .blogId(blog.getId())
+                .blogName(blog.getBlogName())
+                .blogUserId(blog.getUser().getId())
                 .nickname(blog.getUser().getNickname())
-                .profile_image_url(blog.getUser().getProfileImageURL())
+                .profileImageUrl(blog.getUser().getProfileImageURL())
                 .build();
     }
 
