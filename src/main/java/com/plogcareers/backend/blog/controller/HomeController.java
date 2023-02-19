@@ -1,9 +1,6 @@
 package com.plogcareers.backend.blog.controller;
 
-import com.plogcareers.backend.blog.domain.dto.CreateSubscribeRequest;
-import com.plogcareers.backend.blog.domain.dto.ListFollowingPostingsRequest;
-import com.plogcareers.backend.blog.domain.dto.ListHomePostingsResponse;
-import com.plogcareers.backend.blog.domain.dto.ListRecentPostingsRequest;
+import com.plogcareers.backend.blog.domain.dto.*;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.service.HomeService;
 import com.plogcareers.backend.common.domain.dto.ErrorResponse;
@@ -12,10 +9,7 @@ import com.plogcareers.backend.common.domain.dto.*;
 import com.plogcareers.backend.common.exception.InvalidParamException;
 import com.plogcareers.backend.ums.constant.Auth;
 import com.plogcareers.backend.ums.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,6 +65,17 @@ public class HomeController {
         Long loginedUserID = userService.getLoginedUserID(token);
         homeService.deleteSubscribe(subscribeID, loginedUserID);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @ApiOperation(value = "구독 리스트 조회")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "정상 조회(data)", response = ListSubscribesResponse.class),
+            @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
+    }
+    )
+    @GetMapping("/{userID}/subscribe")
+    public ResponseEntity<SResponse> listSubscribes(@ApiParam(name = "userID", value = "유저 ID") @PathVariable Long userID) {
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(homeService.listSubscribes(userID)));
     }
 
     @ApiOperation(value = "홈 포스팅 리스트(구독)")
