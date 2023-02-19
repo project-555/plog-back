@@ -2,10 +2,12 @@ package com.plogcareers.backend.blog.service;
 
 import com.plogcareers.backend.blog.domain.dto.CreateSubscribeRequest;
 import com.plogcareers.backend.blog.domain.dto.ListHomePostingsResponse;
+import com.plogcareers.backend.blog.domain.dto.ListSubscribesResponse;
 import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.domain.entity.Subscribe;
 import com.plogcareers.backend.blog.domain.entity.VHotPosting;
 import com.plogcareers.backend.blog.domain.entity.VPosting;
+import com.plogcareers.backend.blog.domain.model.SubscribeDTO;
 import com.plogcareers.backend.blog.exception.*;
 import com.plogcareers.backend.blog.repository.BlogRepository;
 import com.plogcareers.backend.blog.repository.SubscribeRepository;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -54,6 +57,17 @@ public class HomeService {
             throw new NotProperAuthorityException();
         }
         subscribeRepository.delete(subscribe);
+    }
+
+    public ListSubscribesResponse listSubscribes (Long userID) {
+        List<Subscribe> subscribes = subscribeRepository.findByUserId(userID);
+        List<SubscribeDTO> subscribeDTOs = new ArrayList<>();
+        for (Subscribe subscribe: subscribes) {
+            Blog blog = blogRepository.findById(subscribe.getBlogId()).orElseThrow(BlogNotFoundException::new);
+            SubscribeDTO subscribeDTO = subscribe.toSubscribeDTO(blog);
+            subscribeDTOs.add(subscribeDTO);
+        }
+        return ListSubscribesResponse.builder().subscribes(subscribeDTOs).build();
     }
 
     public ListHomePostingsResponse listFollowingPostings(Long loginedUserID, Long lastCursorID, Long pageSize) {
