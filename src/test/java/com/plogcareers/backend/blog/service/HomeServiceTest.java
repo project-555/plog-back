@@ -233,9 +233,9 @@ public class HomeServiceTest {
                 subscribeRepository.findByUserId(1L)
         ).thenReturn(
                 List.of(
-                        Subscribe.builder().blogId(1L).build(),
-                        Subscribe.builder().blogId(2L).build(),
-                        Subscribe.builder().blogId(3L).build()
+                        Subscribe.builder().blog(Blog.builder().id(1L).build()).build(),
+                        Subscribe.builder().blog(Blog.builder().id(2L).build()).build(),
+                        Subscribe.builder().blog(Blog.builder().id(3L).build()).build()
                 )
         );
         when(
