@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,7 +45,7 @@ public class HomeService {
         if (subscribeRepository.existsByUserIdAndBlogId(user.getId(), blog.getId())) {
             throw new SubscribeDuplicatedException();
         }
-        subscribeRepository.save(request.toEntity());
+        subscribeRepository.save(request.toEntity(blog));
     }
 
     @Transactional
@@ -61,19 +60,16 @@ public class HomeService {
 
     public ListSubscribesResponse listSubscribes (Long userID) {
         List<Subscribe> subscribes = subscribeRepository.findByUserId(userID);
-        List<SubscribeDTO> subscribeDTOs = new ArrayList<>();
-        for (Subscribe subscribe: subscribes) {
-            Blog blog = blogRepository.findById(subscribe.getBlogId()).orElseThrow(BlogNotFoundException::new);
-            SubscribeDTO subscribeDTO = subscribe.toSubscribeDTO(blog);
-            subscribeDTOs.add(subscribeDTO);
-        }
+        List<SubscribeDTO> subscribeDTOs = subscribes.stream()
+                                                     .map(Subscribe::toSubscribeDTO)
+                                                     .toList();
         return ListSubscribesResponse.builder().subscribes(subscribeDTOs).build();
     }
 
     public ListHomePostingsResponse listFollowingPostings(Long loginedUserID, Long lastCursorID, Long pageSize) {
         List<Subscribe> subscribes = subscribeRepository.findByUserId(loginedUserID);
         List<Long> followingIDs = subscribes.stream()
-                                            .map(Subscribe::getBlogId)
+                                            .map(subscribe -> subscribe.getBlog().getId())
                                             .toList();
         List<VHotPosting> homePostings = vHotPostingRepositorySupport.listFollowingHomePostings(lastCursorID, followingIDs, pageSize);
         return ListHomePostingsResponse.builder().homePostings(homePostings.stream().map(VHotPosting::toHomePostingDTO).toList()).build();

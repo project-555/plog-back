@@ -4,6 +4,7 @@ import com.plogcareers.backend.blog.domain.dto.BlogUserDTO;
 import com.plogcareers.backend.blog.domain.dto.HomePostingUserDTO;
 import com.plogcareers.backend.blog.domain.model.CommentUserDTO;
 import com.plogcareers.backend.blog.domain.model.PostingStarUserDTO;
+import com.plogcareers.backend.blog.domain.model.SubscribeUserDTO;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -110,6 +111,14 @@ public class User implements UserDetails {
         return HomePostingUserDTO.builder()
                 .userID(this.id)
                 .nickname(this.nickname)
+                .build();
+    }
+
+    public SubscribeUserDTO toSubscribeUserDTO() {
+        return SubscribeUserDTO.builder()
+                .blogUserId(this.id)
+                .nickname(this.nickname)
+                .profileImageUrl(this.profileImageURL)
                 .build();
     }
 

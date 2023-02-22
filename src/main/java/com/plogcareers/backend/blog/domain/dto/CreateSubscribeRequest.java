@@ -1,5 +1,6 @@
 package com.plogcareers.backend.blog.domain.dto;
 
+import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.domain.entity.Subscribe;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -23,10 +24,10 @@ public class CreateSubscribeRequest {
     @ApiModelProperty(value = "구독할 블로그 ID")
     private Long blogId;
 
-    public Subscribe toEntity() {
+    public Subscribe toEntity(Blog blog) {
         return Subscribe.builder()
                 .userId(userId)
-                .blogId(blogId)
+                .blog(blog)
                 .createDt(LocalDateTime.now())
                 .build();
     }
