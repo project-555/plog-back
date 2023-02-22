@@ -16,15 +16,10 @@ public class SubscribeDTO {
     @ApiModelProperty(value = "구독한 블로그 ID")
     public Long blogId;
 
-    @ApiModelProperty(value = "구독한 블로그 유저 ID")
-    public Long blogUserId;
-
     @ApiModelProperty(value = "구독한 블로그 이름")
     public String blogName;
 
-    @ApiModelProperty(value = "구독한 블로그 유저 닉네임")
-    public String nickname;
+    @ApiModelProperty(value = "구독한 블로그 유저")
+    public SubscribeUserDTO user;
 
-    @ApiModelProperty(value = "구독한 블로그 유저 프로필 이미지 url")
-    public String profileImageUrl;
 }

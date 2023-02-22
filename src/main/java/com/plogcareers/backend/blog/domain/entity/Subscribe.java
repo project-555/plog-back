@@ -24,20 +24,19 @@ public class Subscribe {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "blog_id")
-    private Long blogId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "blog_id")
+    private Blog blog;
 
     @Column(name = "create_dt")
     private LocalDateTime createDt;
 
-    public SubscribeDTO toSubscribeDTO(Blog blog) {
+    public SubscribeDTO toSubscribeDTO() {
         return SubscribeDTO.builder()
                 .id(this.id)
-                .blogId(blog.getId())
-                .blogName(blog.getBlogName())
-                .blogUserId(blog.getUser().getId())
-                .nickname(blog.getUser().getNickname())
-                .profileImageUrl(blog.getUser().getProfileImageURL())
+                .blogId(this.blog.getId())
+                .blogName(this.blog.getBlogName())
+                .user(this.blog.getUser().toSubscribeUserDTO())
                 .build();
     }
 
