@@ -35,7 +35,16 @@ public class BlogController {
     private final PostingService postingService;
     private final UserService userService;
 
-    @ApiOperation(value = "Posting 생성")
+    @ApiOperation(value = "Posting 생성", notes =
+            """
+            |errorCode|status|Description|
+            |---|---|---|
+            |`ERR_TAG_NOT_FOUND`|404|포스팅에 추가하려는 TagID에 맞는 태그를 찾지 못했을 때 발생|
+            |`ERR_NO_PROPER_AUTHORITY`|401|블로그 주인이 아닌데 생성 요청을 한 경우|
+            |`ERR_CATEGORY_NOT_FOUND`|404|포스팅에 추가하려는 카테고리를 찾지 못한 경우|
+            |`ERR_BLOG_NOT_FOUND`|404|포스팅을 추가하려는 블로그를 찾지 못한 경우|
+            """
+    )
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "정상 동작 시"),
             @ApiResponse(code = 404, message = "태그 없음", response = ErrorResponse.class),
@@ -56,7 +65,11 @@ public class BlogController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new SDataResponse<>(postingID));
     }
 
-    @ApiOperation(value = "Posting 단건 조회")
+    @ApiOperation(value = "Posting 단건 조회", notes = """
+    |errorCode|status|description|
+    |---|---|---|
+    |||
+    """)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "정상 조회(data)", response = GetPostingResponse.class),
             @ApiResponse(code = 299, message = "정상 조회(outer)", response = SDataResponse.class),
