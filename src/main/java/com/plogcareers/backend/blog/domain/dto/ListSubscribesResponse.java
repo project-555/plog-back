@@ -11,6 +11,8 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode
+@ToString
 public class ListSubscribesResponse {
     @ApiModelProperty(value = "구독 리스트")
     List<SubscribeDTO> subscribes;

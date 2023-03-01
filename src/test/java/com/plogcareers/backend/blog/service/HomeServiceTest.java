@@ -3,11 +3,14 @@ package com.plogcareers.backend.blog.service;
 import com.plogcareers.backend.blog.domain.dto.CreateSubscribeRequest;
 import com.plogcareers.backend.blog.domain.dto.HomePostingUserDTO;
 import com.plogcareers.backend.blog.domain.dto.ListHomePostingsResponse;
+import com.plogcareers.backend.blog.domain.dto.ListSubscribesResponse;
 import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.domain.entity.Subscribe;
 import com.plogcareers.backend.blog.domain.entity.VHotPosting;
 import com.plogcareers.backend.blog.domain.entity.VPosting;
 import com.plogcareers.backend.blog.domain.model.HomePostingDTO;
+import com.plogcareers.backend.blog.domain.model.SubscribeDTO;
+import com.plogcareers.backend.blog.domain.model.SubscribeUserDTO;
 import com.plogcareers.backend.blog.exception.*;
 import com.plogcareers.backend.blog.repository.BlogRepository;
 import com.plogcareers.backend.blog.repository.SubscribeRepository;
@@ -223,6 +226,37 @@ public class HomeServiceTest {
 
         // then
         verify(subscribeRepository, times(1)).delete(any());
+    }
+
+    @Test
+    @DisplayName("listSubscribes - 정상동작")
+    void testListSubscribes_1() {
+        // given
+        when(
+                subscribeRepository.findByUserId(1L)
+        ).thenReturn(
+                List.of(
+                        Subscribe.builder().id(2L).blog(Blog.builder().id(2L).user(User.builder().id(2L).build()).build()).build(),
+                        Subscribe.builder().id(3L).blog(Blog.builder().id(3L).user(User.builder().id(3L).build()).build()).build()
+                )
+        );
+        // when
+        ListSubscribesResponse got = homeService.listSubscribes(1L);
+
+        ListSubscribesResponse want = ListSubscribesResponse.builder().subscribes(
+                List.of(
+                        SubscribeDTO.builder().id(2L)
+                                .blogId(2L)
+                                .user(SubscribeUserDTO.builder().blogUserId(2L).build())
+                                .build(),
+                        SubscribeDTO.builder().id(3L)
+                                .blogId(3L)
+                                .user(SubscribeUserDTO.builder().blogUserId(3L).build())
+                                .build()
+                )
+        ).build();
+        // then
+        Assertions.assertEquals(got, want);
     }
 
     @Test

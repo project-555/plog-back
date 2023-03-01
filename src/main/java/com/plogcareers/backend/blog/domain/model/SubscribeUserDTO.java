@@ -9,6 +9,8 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode
+@ToString
 public class SubscribeUserDTO {
     @ApiModelProperty(value = "구독한 블로그 유저 ID")
     public Long blogUserId;
