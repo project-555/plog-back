@@ -2,6 +2,7 @@ package com.plogcareers.backend.ums.service;
 
 import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
+import com.plogcareers.backend.ums.exception.NotProperAuthorityException;
 import com.plogcareers.backend.blog.repository.BlogRepository;
 import com.plogcareers.backend.ums.domain.dto.*;
 import com.plogcareers.backend.ums.domain.entity.EmailVerifyCode;
@@ -210,6 +211,25 @@ public class UserService {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(UserNotFoundException::new);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
+    }
+
+    public void updateUserProfile(Long loginedUserID, UpdateUserProfileRequest request) {
+        User user = userRepository.findById(request.getUserID()).orElseThrow(UserNotFoundException::new);
+        if (!loginedUserID.equals(user.getId())) {
+            throw new NotProperAuthorityException();
+        }
+        userRepository.save(request.toUserEntity(user));
+    }
+
+    public void updateUserPassword(Long loginedUserID, UpdateUserPasswordRequest request){
+        User user = userRepository.findById(request.getUserID()).orElseThrow(UserNotFoundException::new);
+        if (!loginedUserID.equals(user.getId())) {
+            throw new NotProperAuthorityException();
+        }
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new IncorrectPasswordException();
+        }
+        userRepository.save(request.toUserEntity(user, passwordEncoder));
     }
 }
 
