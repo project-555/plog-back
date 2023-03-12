@@ -11,6 +11,7 @@ import com.plogcareers.backend.blog.repository.CategoryRepository;
 import com.plogcareers.backend.blog.repository.TagRepository;
 import com.plogcareers.backend.ums.domain.dto.CheckBlogNameExistRequest;
 import com.plogcareers.backend.ums.exception.BlogNameDuplicatedException;
+import com.plogcareers.backend.ums.exception.NotProperAuthorityException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

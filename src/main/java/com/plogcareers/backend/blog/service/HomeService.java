@@ -14,6 +14,7 @@ import com.plogcareers.backend.blog.repository.SubscribeRepository;
 import com.plogcareers.backend.blog.repository.VHotPostingRepositorySupport;
 import com.plogcareers.backend.blog.repository.VPostingRepositorySupport;
 import com.plogcareers.backend.ums.domain.entity.User;
+import com.plogcareers.backend.ums.exception.NotProperAuthorityException;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

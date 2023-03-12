@@ -6,6 +6,7 @@ import com.plogcareers.backend.blog.domain.entity.*;
 import com.plogcareers.backend.blog.exception.*;
 import com.plogcareers.backend.blog.repository.*;
 import com.plogcareers.backend.ums.domain.entity.User;
+import com.plogcareers.backend.ums.exception.NotProperAuthorityException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

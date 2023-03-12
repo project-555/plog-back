@@ -34,6 +34,8 @@ public enum ErrorCode {
     ERR_EMAIL_DUPLICATED(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
     ERR_BLOG_NAME_DUPLICATED(HttpStatus.BAD_REQUEST, "이미 존재하는 블로그 이름입니다."),
 
+    ERR_INCORRECT_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+
     // Home Domain
     ERR_SELF_SUBSCRIBE(HttpStatus.BAD_REQUEST, "본인의 블로그는 구독할 수 없습니다."),
     ERR_SUBSCRIBE_DUPLICATED(HttpStatus.BAD_REQUEST, "이미 구독한 블로그입니다."),
