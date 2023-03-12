@@ -87,6 +87,7 @@ public class VPosting {
     public HomePostingDTO toHomePostingDTO() {
         return HomePostingDTO.builder()
                 .postingID(this.id)
+                .blogID(this.blogID)
                 .homePostingUser(this.user.toHomePostingUserDTO())
                 .title(this.title)
                 .summary(this.summary)
