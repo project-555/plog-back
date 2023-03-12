@@ -1,4 +1,4 @@
-package com.plogcareers.backend.blog.exception;
+package com.plogcareers.backend.ums.exception;
 
 import com.plogcareers.backend.common.error.ErrorCode;
 import com.plogcareers.backend.common.exception.UserException;

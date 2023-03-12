@@ -4,6 +4,7 @@ import com.plogcareers.backend.common.domain.dto.ErrorResponse;
 import com.plogcareers.backend.common.domain.dto.SDataResponse;
 import com.plogcareers.backend.common.domain.dto.SResponse;
 import com.plogcareers.backend.common.exception.InvalidParamException;
+import com.plogcareers.backend.ums.constant.Auth;
 import com.plogcareers.backend.ums.domain.dto.*;
 import com.plogcareers.backend.ums.service.UserService;
 import io.swagger.annotations.Api;
@@ -14,10 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 
@@ -120,6 +119,44 @@ public class UserController {
     @PostMapping("/change-password")
     public ResponseEntity<SResponse> changePassword(@RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @ApiOperation(value = "회원 기본 정보 수정")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "정상 수정"),
+            @ApiResponse(code = 401, message = "잘못된 사용자 요청", response = ErrorResponse.class),
+    })
+
+    @PutMapping("/edit-profile")
+    public ResponseEntity<SResponse> updateUserProfile(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+                                                @Valid @RequestBody UpdateUserProfileRequest request,
+                                                BindingResult result) {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
+        Long loginedUserID = userService.getLoginedUserID(token);
+        userService.updateUserProfile(loginedUserID, request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation(value = "회원 비밀번호 수정")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "정상 수정"),
+            @ApiResponse(code = 400, message = "기존 비밀번호 불일치", response = ErrorResponse.class),
+            @ApiResponse(code = 401, message = "잘못된 사용자 요청", response = ErrorResponse.class)
+    })
+
+    @PutMapping("/edit-password")
+    public ResponseEntity<SResponse> updateUserPassword(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+                                                @Valid @RequestBody UpdateUserPasswordRequest request,
+                                                BindingResult result) {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
+        Long loginedUserID = userService.getLoginedUserID(token);
+        userService.updateUserPassword(loginedUserID, request);
         return ResponseEntity.noContent().build();
     }
 }

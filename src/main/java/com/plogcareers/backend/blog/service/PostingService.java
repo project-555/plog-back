@@ -5,6 +5,7 @@ import com.plogcareers.backend.blog.domain.entity.*;
 import com.plogcareers.backend.blog.exception.*;
 import com.plogcareers.backend.blog.repository.*;
 import com.plogcareers.backend.ums.domain.entity.User;
+import com.plogcareers.backend.ums.exception.NotProperAuthorityException;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
