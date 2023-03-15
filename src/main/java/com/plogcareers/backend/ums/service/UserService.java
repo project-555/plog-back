@@ -226,6 +226,7 @@ public class UserService {
         if (!loginedUserID.equals(user.getId())) {
             throw new NotProperAuthorityException();
         }
+        // 현재 비밀번호 확인
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new IncorrectPasswordException();
         }
