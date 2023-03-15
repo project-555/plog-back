@@ -2,14 +2,12 @@ package com.plogcareers.backend.ums.domain.dto;
 
 import com.plogcareers.backend.ums.domain.entity.User;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Getter
 @Setter
 public class UpdateUserPasswordRequest {
