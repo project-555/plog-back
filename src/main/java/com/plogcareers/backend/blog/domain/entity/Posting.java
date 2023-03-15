@@ -71,6 +71,7 @@ public class Posting {
                 .updateDt(this.updateDt)
                 .isStarAllowed(this.isStarAllowed)
                 .isCommentAllowed(this.isCommentAllowed)
+                .categoryID(this.categoryID)
                 .thumbnailImageUrl(this.thumbnailImageUrl)
                 .mdContent(this.mdContent)
                 .build();
