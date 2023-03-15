@@ -55,7 +55,7 @@ public class VPosting {
     private Boolean isStarAllowed;
 
     @Column(name = "thumbnail_image_url")
-    private String thumbnailImageUrl;
+    private String thumbnailImageURL;
 
     @Column(name = "md_content", nullable = false)
     private String mdContent;
@@ -77,10 +77,10 @@ public class VPosting {
                 .isStarAllowed(this.isStarAllowed)
                 .isCommentAllowed(this.isCommentAllowed)
                 .hitCnt(this.hitCnt)
-                .thumbnailImageURL(this.thumbnailImageUrl)
+                .starCnt(this.postingStarCount)
+                .thumbnailImageURL(this.thumbnailImageURL)
                 .createDt(this.createDt)
                 .updateDt(this.updateDt)
-                .starCnt(this.postingStarCount)
                 .build();
     }
 
@@ -91,7 +91,9 @@ public class VPosting {
                 .homePostingUser(this.user.toHomePostingUserDTO())
                 .title(this.title)
                 .summary(this.summary)
-                .thumbnailImageUrl(this.thumbnailImageUrl)
+                .starCnt(this.postingStarCount)
+                .hitCnt(this.hitCnt)
+                .thumbnailImageURL(this.thumbnailImageURL)
                 .createDt(this.createDt)
                 .build();
     }
