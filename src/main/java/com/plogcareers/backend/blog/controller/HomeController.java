@@ -4,8 +4,8 @@ import com.plogcareers.backend.blog.domain.dto.*;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.service.HomeService;
 import com.plogcareers.backend.common.domain.dto.ErrorResponse;
+import com.plogcareers.backend.common.domain.dto.SDataResponse;
 import com.plogcareers.backend.common.domain.dto.SResponse;
-import com.plogcareers.backend.common.domain.dto.*;
 import com.plogcareers.backend.common.exception.InvalidParamException;
 import com.plogcareers.backend.ums.constant.Auth;
 import com.plogcareers.backend.ums.service.UserService;
@@ -61,7 +61,7 @@ public class HomeController {
     @DeleteMapping("/subscribes/{subscribeID}")
     public ResponseEntity<SResponse> deleteSubscribe(@PathVariable Long subscribeID,
                                                      @ApiIgnore @RequestHeader(name = Auth.token) String token
-                                                     ) throws BlogNotFoundException {
+    ) throws BlogNotFoundException {
         Long loginedUserID = userService.getLoginedUserID(token);
         homeService.deleteSubscribe(subscribeID, loginedUserID);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -83,11 +83,11 @@ public class HomeController {
             @ApiResponse(code = 200, message = "정상조회(data)", response = ListHomePostingsResponse.class),
             @ApiResponse(code = 299, message = "정상조회(outer)", response = SDataResponse.class),
             @ApiResponse(code = 400, message = "잘못된 요청", response = ErrorResponse.class),
-            @ApiResponse(code =500, message = "서버 에러", response = ErrorResponse.class)}
+            @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)}
     )
     @GetMapping("/following-postings")
     public ResponseEntity<SDataResponse<ListHomePostingsResponse>> listFollowingPostings(@ApiIgnore @RequestHeader(name = Auth.token, required = false) String token,
-                                                                                ListFollowingPostingsRequest request) {
+                                                                                         ListFollowingPostingsRequest request) {
         Long loginedUserID = userService.getLoginedUserID(token);
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(homeService.listFollowingPostings(loginedUserID, request.getLastCursorID(), request.getPageSize())));
     }
@@ -97,10 +97,12 @@ public class HomeController {
             @ApiResponse(code = 200, message = "정상조회(data)", response = ListHomePostingsResponse.class),
             @ApiResponse(code = 299, message = "정상조회(outer)", response = SDataResponse.class),
             @ApiResponse(code = 400, message = "잘못된 요청", response = ErrorResponse.class),
-            @ApiResponse(code =500, message = "서버 에러", response = ErrorResponse.class)}
+            @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)}
     )
     @GetMapping("/recent-postings")
     public ResponseEntity<SDataResponse<ListHomePostingsResponse>> listRecentPostings(ListRecentPostingsRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(homeService.listRecentPostings(request.getLastCursorID(), request.getPageSize())));
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(
+                homeService.listRecentPostings(request.getLastCursorID(), request.getPageSize()))
+        );
     }
 }
