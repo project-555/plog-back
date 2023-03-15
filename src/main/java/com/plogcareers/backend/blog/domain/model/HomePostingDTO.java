@@ -30,7 +30,7 @@ public class HomePostingDTO {
     @ApiModelProperty(value = "포스팅 썸네일 이미지 URL", example = "https://plogcareers.com/thumbnail.png")
     private String thumbnailImageURL;
 
-    @ApiModelProperty(value = "포스팅 작성일", required = true, example = "2019-01-01 00:00:00")
+    @ApiModelProperty(value = "포스팅 좋아요 수", required = true, example = "1")
     private Long starCnt;
 
     @ApiModelProperty(value = "포스팅 조회 수", required = true, example = "1")
