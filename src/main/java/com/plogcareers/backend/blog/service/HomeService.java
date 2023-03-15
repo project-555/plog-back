@@ -58,26 +58,30 @@ public class HomeService {
         subscribeRepository.delete(subscribe);
     }
 
-    public ListSubscribesResponse listSubscribes (Long userID) {
+    public ListSubscribesResponse listSubscribes(Long userID) {
         List<Subscribe> subscribes = subscribeRepository.findByUserId(userID);
         List<SubscribeDTO> subscribeDTOs = subscribes.stream()
-                                                     .map(Subscribe::toSubscribeDTO)
-                                                     .toList();
+                .map(Subscribe::toSubscribeDTO)
+                .toList();
         return ListSubscribesResponse.builder().subscribes(subscribeDTOs).build();
     }
 
     public ListHomePostingsResponse listFollowingPostings(Long loginedUserID, Long lastCursorID, Long pageSize) {
         List<Subscribe> subscribes = subscribeRepository.findByUserId(loginedUserID);
         List<Long> followingIDs = subscribes.stream()
-                                            .map(subscribe -> subscribe.getBlog().getId())
-                                            .toList();
+                .map(subscribe -> subscribe.getBlog().getId())
+                .toList();
         List<VHotPosting> homePostings = vHotPostingRepositorySupport.listFollowingHomePostings(lastCursorID, followingIDs, pageSize);
         return ListHomePostingsResponse.builder().homePostings(homePostings.stream().map(VHotPosting::toHomePostingDTO).toList()).build();
     }
 
     public ListHomePostingsResponse listRecentPostings(Long lastCursorID, Long pageSize) {
         List<VPosting> homePostings = vPostingRepositorySupport.listHomePostings(lastCursorID, pageSize);
-        return ListHomePostingsResponse.builder().homePostings(homePostings.stream().map(VPosting::toHomePostingDTO).toList()).build();
+        return ListHomePostingsResponse.builder().homePostings(
+                homePostings.stream()
+                        .map(VPosting::toHomePostingDTO)
+                        .toList()
+        ).build();
     }
 
 }

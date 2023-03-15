@@ -71,18 +71,14 @@ public class User implements UserDetails {
 
     public List<String> getRoles() {
         List<String> roleStrs = new ArrayList<>();
-        this.roles.forEach(userRole -> {
-            roleStrs.add(userRole.getRole());
-        });
+        this.roles.forEach(userRole -> roleStrs.add(userRole.getRole()));
         return roleStrs;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<String> roleStrs = new ArrayList<>();
-        roles.forEach(userRole -> {
-            roleStrs.add(userRole.getRole());
-        });
+        roles.forEach(userRole -> roleStrs.add(userRole.getRole()));
         return roleStrs.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
@@ -111,6 +107,7 @@ public class User implements UserDetails {
         return HomePostingUserDTO.builder()
                 .userID(this.id)
                 .nickname(this.nickname)
+                .profileImageURL(this.profileImageURL)
                 .build();
     }
 

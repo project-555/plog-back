@@ -1,6 +1,5 @@
 package com.plogcareers.backend.blog.domain.entity;
 
-import com.plogcareers.backend.blog.domain.dto.HomePostingUserDTO;
 import com.plogcareers.backend.blog.domain.model.HomePostingDTO;
 import com.plogcareers.backend.ums.domain.entity.User;
 import lombok.*;
@@ -55,7 +54,7 @@ public class VHotPosting {
     private Boolean isStarAllowed;
 
     @Column(name = "thumbnail_image_url")
-    private String thumbnailImageUrl;
+    private String thumbnailImageURL;
 
     @Column(name = "md_content", nullable = false)
     private String mdContent;
@@ -76,7 +75,8 @@ public class VHotPosting {
                 .homePostingUser(this.user.toHomePostingUserDTO())
                 .title(this.title)
                 .summary(this.summary)
-                .thumbnailImageUrl(this.thumbnailImageUrl)
+                .thumbnailImageURL(this.thumbnailImageURL)
+                .starCnt(this.postingStarCount)
                 .createDt(this.createDt)
                 .build();
     }
