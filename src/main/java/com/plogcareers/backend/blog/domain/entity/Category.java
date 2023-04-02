@@ -29,7 +29,7 @@ public class Category {
 
     public CategoryDTO toCategoryDto() {
         return CategoryDTO.builder()
-                .categoryId(id)
+                .categoryID(id)
                 .categoryName(categoryName)
                 .categoryDesc(categoryDesc)
                 .build();

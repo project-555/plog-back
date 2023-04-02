@@ -8,7 +8,10 @@ import com.plogcareers.backend.blog.domain.entity.Subscribe;
 import com.plogcareers.backend.blog.domain.entity.VHotPosting;
 import com.plogcareers.backend.blog.domain.entity.VPosting;
 import com.plogcareers.backend.blog.domain.model.SubscribeDTO;
-import com.plogcareers.backend.blog.exception.*;
+import com.plogcareers.backend.blog.exception.BlogNotFoundException;
+import com.plogcareers.backend.blog.exception.SelfSubscribeException;
+import com.plogcareers.backend.blog.exception.SubscribeDuplicatedException;
+import com.plogcareers.backend.blog.exception.SubscribeNotFoundException;
 import com.plogcareers.backend.blog.repository.BlogRepository;
 import com.plogcareers.backend.blog.repository.SubscribeRepository;
 import com.plogcareers.backend.blog.repository.VHotPostingRepositorySupport;
@@ -35,15 +38,15 @@ public class HomeService {
     private final VHotPostingRepositorySupport vHotPostingRepositorySupport;
 
     public void createSubscribe(Long loginedUserID, @NotNull CreateSubscribeRequest request) throws BlogNotFoundException {
-        Blog blog = blogRepository.findById(request.getBlogId()).orElseThrow(BlogNotFoundException::new);
-        User user = userRepository.findById(request.getUserId()).orElseThrow(UserNotFoundException::new);
+        Blog blog = blogRepository.findById(request.getBlogID()).orElseThrow(BlogNotFoundException::new);
+        User user = userRepository.findById(request.getUserID()).orElseThrow(UserNotFoundException::new);
         if (!user.getId().equals(loginedUserID)) {
             throw new NotProperAuthorityException();
         }
         if (blog.isSelfSubscribe(user)) {
             throw new SelfSubscribeException();
         }
-        if (subscribeRepository.existsByUserIdAndBlogId(user.getId(), blog.getId())) {
+        if (subscribeRepository.existsByUserIDAndBlogId(user.getId(), blog.getId())) {
             throw new SubscribeDuplicatedException();
         }
         subscribeRepository.save(request.toEntity(blog));
@@ -60,7 +63,7 @@ public class HomeService {
     }
 
     public ListSubscribesResponse listSubscribes(Long userID) {
-        List<Subscribe> subscribes = subscribeRepository.findByUserId(userID);
+        List<Subscribe> subscribes = subscribeRepository.findByUserID(userID);
         List<SubscribeDTO> subscribeDTOs = subscribes.stream()
                 .map(Subscribe::toSubscribeDTO)
                 .toList();
@@ -68,7 +71,7 @@ public class HomeService {
     }
 
     public ListHomePostingsResponse listFollowingPostings(Long loginedUserID, Long lastCursorID, Long pageSize) {
-        List<Subscribe> subscribes = subscribeRepository.findByUserId(loginedUserID);
+        List<Subscribe> subscribes = subscribeRepository.findByUserID(loginedUserID);
         List<Long> followingIDs = subscribes.stream()
                 .map(subscribe -> subscribe.getBlog().getId())
                 .toList();

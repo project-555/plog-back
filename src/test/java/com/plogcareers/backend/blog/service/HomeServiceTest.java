@@ -11,7 +11,10 @@ import com.plogcareers.backend.blog.domain.entity.VPosting;
 import com.plogcareers.backend.blog.domain.model.HomePostingDTO;
 import com.plogcareers.backend.blog.domain.model.SubscribeDTO;
 import com.plogcareers.backend.blog.domain.model.SubscribeUserDTO;
-import com.plogcareers.backend.blog.exception.*;
+import com.plogcareers.backend.blog.exception.BlogNotFoundException;
+import com.plogcareers.backend.blog.exception.SelfSubscribeException;
+import com.plogcareers.backend.blog.exception.SubscribeDuplicatedException;
+import com.plogcareers.backend.blog.exception.SubscribeNotFoundException;
 import com.plogcareers.backend.blog.repository.BlogRepository;
 import com.plogcareers.backend.blog.repository.SubscribeRepository;
 import com.plogcareers.backend.blog.repository.VHotPostingRepositorySupport;
@@ -59,7 +62,7 @@ public class HomeServiceTest {
                 blogRepository.findById(1L)
         ).thenReturn(Optional.empty());
         // when + then
-        Assertions.assertThrows(BlogNotFoundException.class, () -> homeService.createSubscribe(1L, CreateSubscribeRequest.builder().blogId(1L).build()));
+        Assertions.assertThrows(BlogNotFoundException.class, () -> homeService.createSubscribe(1L, CreateSubscribeRequest.builder().blogID(1L).build()));
     }
 
     @Test
@@ -75,7 +78,7 @@ public class HomeServiceTest {
                 userRepository.findById(-1L)
         ).thenReturn(Optional.empty());
         // when + then
-        Assertions.assertThrows(UserNotFoundException.class, () -> homeService.createSubscribe(-1L, CreateSubscribeRequest.builder().blogId(1L).userId(-1L).build()));
+        Assertions.assertThrows(UserNotFoundException.class, () -> homeService.createSubscribe(-1L, CreateSubscribeRequest.builder().blogID(1L).userID(-1L).build()));
     }
 
     @Test
@@ -93,7 +96,7 @@ public class HomeServiceTest {
                 Optional.of(User.builder().id(1L).build())
         );
         // when + then
-        Assertions.assertThrows(NotProperAuthorityException.class, () -> homeService.createSubscribe(-1L, CreateSubscribeRequest.builder().blogId(1L).userId(1L).build()));
+        Assertions.assertThrows(NotProperAuthorityException.class, () -> homeService.createSubscribe(-1L, CreateSubscribeRequest.builder().blogID(1L).userID(1L).build()));
     }
 
     @Test
@@ -111,7 +114,7 @@ public class HomeServiceTest {
                 Optional.of(User.builder().id(1L).build())
         );
         // when + then
-        Assertions.assertThrows(SelfSubscribeException.class, () -> homeService.createSubscribe(1L, CreateSubscribeRequest.builder().blogId(1L).userId(1L).build()));
+        Assertions.assertThrows(SelfSubscribeException.class, () -> homeService.createSubscribe(1L, CreateSubscribeRequest.builder().blogID(1L).userID(1L).build()));
     }
 
     @Test
@@ -129,10 +132,10 @@ public class HomeServiceTest {
                 Optional.of(User.builder().id(1L).build())
         );
         when(
-                subscribeRepository.existsByUserIdAndBlogId(1L, 1L)
+                subscribeRepository.existsByUserIDAndBlogId(1L, 1L)
         ).thenReturn(true);
         // when + then
-        Assertions.assertThrows(SubscribeDuplicatedException.class, () -> homeService.createSubscribe(1L, CreateSubscribeRequest.builder().blogId(1L).userId(1L).build()));
+        Assertions.assertThrows(SubscribeDuplicatedException.class, () -> homeService.createSubscribe(1L, CreateSubscribeRequest.builder().blogID(1L).userID(1L).build()));
     }
 
     @Test
@@ -150,7 +153,7 @@ public class HomeServiceTest {
                 Optional.of(User.builder().id(1L).build())
         );
         // when
-        homeService.createSubscribe(1L, CreateSubscribeRequest.builder().userId(1L).blogId(1L).build());
+        homeService.createSubscribe(1L, CreateSubscribeRequest.builder().userID(1L).blogID(1L).build());
 
         // then
         verify(subscribeRepository, times(1)).save(any());
@@ -169,7 +172,7 @@ public class HomeServiceTest {
                 userRepository.findById(-1L)
         ).thenReturn(Optional.empty());
         // when + then
-        Assertions.assertThrows(UserNotFoundException.class, () -> homeService.createSubscribe(-1L, CreateSubscribeRequest.builder().blogId(1L).userId(-1L).build()));
+        Assertions.assertThrows(UserNotFoundException.class, () -> homeService.createSubscribe(-1L, CreateSubscribeRequest.builder().blogID(1L).userID(-1L).build()));
     }
 
     @Test
@@ -202,7 +205,7 @@ public class HomeServiceTest {
         when(
                 subscribeRepository.findById(1L)
         ).thenReturn(
-                Optional.of(Subscribe.builder().id(1L).userId(2L).build())
+                Optional.of(Subscribe.builder().id(1L).userID(2L).build())
         );
         // when + then
         Assertions.assertThrows(NotProperAuthorityException.class, () -> homeService.deleteSubscribe(1L, 1L));
@@ -220,7 +223,7 @@ public class HomeServiceTest {
         when(
                 subscribeRepository.findById(1L)
         ).thenReturn(
-                Optional.of(Subscribe.builder().id(1L).userId(1L).build())
+                Optional.of(Subscribe.builder().id(1L).userID(1L).build())
         );
         // when
         homeService.deleteSubscribe(1L, 1L);
@@ -234,7 +237,7 @@ public class HomeServiceTest {
     void testListSubscribes_1() {
         // given
         when(
-                subscribeRepository.findByUserId(1L)
+                subscribeRepository.findByUserID(1L)
         ).thenReturn(
                 List.of(
                         Subscribe.builder().id(2L).blog(Blog.builder().id(2L).user(User.builder().id(2L).build()).build()).build(),
@@ -248,11 +251,11 @@ public class HomeServiceTest {
                 List.of(
                         SubscribeDTO.builder().id(2L)
                                 .blogId(2L)
-                                .user(SubscribeUserDTO.builder().blogUserId(2L).build())
+                                .user(SubscribeUserDTO.builder().blogUserID(2L).build())
                                 .build(),
                         SubscribeDTO.builder().id(3L)
                                 .blogId(3L)
-                                .user(SubscribeUserDTO.builder().blogUserId(3L).build())
+                                .user(SubscribeUserDTO.builder().blogUserID(3L).build())
                                 .build()
                 )
         ).build();
@@ -265,7 +268,7 @@ public class HomeServiceTest {
     void testListFollowingPostings_1() {
         // given
         when(
-                subscribeRepository.findByUserId(1L)
+                subscribeRepository.findByUserID(1L)
         ).thenReturn(
                 List.of(
                         Subscribe.builder().blog(Blog.builder().id(1L).build()).build(),

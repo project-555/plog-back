@@ -22,7 +22,7 @@ public class Subscribe {
     private Long id;
 
     @Column(name = "user_id")
-    private Long userId;
+    private Long userID;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "blog_id")
@@ -41,7 +41,7 @@ public class Subscribe {
     }
 
     public Boolean isOwner(User user) {
-        return user.getId().equals(this.userId);
+        return user.getId().equals(this.userID);
     }
 
 }

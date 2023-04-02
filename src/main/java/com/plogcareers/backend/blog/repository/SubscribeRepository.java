@@ -5,9 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface SubscribeRepository  extends JpaRepository<Subscribe, Long> {
+public interface SubscribeRepository extends JpaRepository<Subscribe, Long> {
 
-    Boolean existsByUserIdAndBlogId(Long userId, Long blogId);
-    List<Subscribe> findByUserId(Long userId);
+    Boolean existsByUserIDAndBlogId(Long userID, Long blogId);
+
+    List<Subscribe> findByUserID(Long userID);
 
 }

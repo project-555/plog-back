@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public class CategoryDTO {
     @ApiModelProperty(value = "카테고리 ID")
-    private Long categoryId;
+    private Long categoryID;
 
     @ApiModelProperty(value = "카테고리 이름")
     private String categoryName;

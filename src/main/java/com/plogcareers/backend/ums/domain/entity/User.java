@@ -85,7 +85,7 @@ public class User implements UserDetails {
     }
 
     public CommentUserDTO toCommentUserDTO() {
-        return CommentUserDTO.builder().userId(this.id).nickname(this.nickname).build();
+        return CommentUserDTO.builder().userID(this.id).nickname(this.nickname).build();
     }
 
     public PostingStarUserDTO toPostingStarUserDTO() {
@@ -113,7 +113,7 @@ public class User implements UserDetails {
 
     public SubscribeUserDTO toSubscribeUserDTO() {
         return SubscribeUserDTO.builder()
-                .blogUserId(this.id)
+                .blogUserID(this.id)
                 .nickname(this.nickname)
                 .profileImageUrl(this.profileImageURL)
                 .build();

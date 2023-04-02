@@ -48,11 +48,13 @@ public class Comment {
     @Column(name = "update_dt")
     private LocalDateTime updateDt;
 
-    public CommentDTO toCommentDTO(Boolean isPostingOwner, Long loginedUserId) {
-        if (this.isSecret && !isPostingOwner && !this.isOwner(loginedUserId)) {
+    public CommentDTO toCommentDTO(Boolean isPostingOwner, Long loginedUserID) {
+        // 비공개 덧글인 경우 작성자나 블로그 주인가 아니면 비공개 처리
+        if (this.isSecret && !isPostingOwner && !this.isOwner(loginedUserID)) {
             this.setCommentContent("작성자가 비공개로 표시한 덧글입니다.");
             this.user.setNickname(this.user.getNickname().charAt(0) + "****");
         }
+
         return CommentDTO.builder()
                 .id(this.id)
                 .commentContent(this.commentContent)
