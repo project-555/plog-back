@@ -16,17 +16,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateSubscribeRequest {
-    
+
     @NotNull
     @ApiModelProperty(value = "구독할 유저 ID")
-    private Long userId;
+    private Long userID;
 
     @ApiModelProperty(value = "구독할 블로그 ID")
-    private Long blogId;
+    private Long blogID;
 
     public Subscribe toEntity(Blog blog) {
         return Subscribe.builder()
-                .userId(userId)
+                .userID(userID)
                 .blog(blog)
                 .createDt(LocalDateTime.now())
                 .build();

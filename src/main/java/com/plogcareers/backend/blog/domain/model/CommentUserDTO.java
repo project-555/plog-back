@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class CommentUserDTO {
     @ApiModelProperty(value = "덧글을 남긴 유저 아이디")
-    Long userId;
+    Long userID;
     @ApiModelProperty(value = "덧글을 남긴 유저 닉네임")
     String nickname;
 }
