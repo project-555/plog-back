@@ -200,14 +200,15 @@ public class PostingService {
 
 
     public ListCommentsResponse listComments(Long blogID, Long postingID, Long loginedUserID) throws PostingNotFoundException, UserNotFoundException {
+        // 블로그 존재 확인
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
-        if (!blog.isOwner(loginedUserID)) {
-            throw new NotProperAuthorityException();
-        }
+
+        // 포스팅 존재 확인 및 해당 블로그에 포함되어 있는지 확인
         Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
         if (!blog.hasPosting(posting)) {
             throw new BlogPostingUnmatchedException();
         }
+
         return new ListCommentsResponse(commentRepositorySupport.ListComments(postingID), posting.isOwner(loginedUserID), loginedUserID);
     }
 

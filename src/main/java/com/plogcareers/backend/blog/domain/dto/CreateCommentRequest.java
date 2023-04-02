@@ -28,13 +28,13 @@ public class CreateCommentRequest {
     @ApiModelProperty(value = "비밀 댓글 여부")
     Boolean isSecret;
 
-    public Comment toCommentEntity(Long postingId, User user) {
+    public Comment toCommentEntity(Long postingID, User user) {
         return Comment.builder()
                 .commentContent(this.commentContent)
                 .user(user)
                 .createDt(LocalDateTime.now())
                 .updateDt(LocalDateTime.now())
-                .postingID(postingId)
+                .postingID(postingID)
                 .isSecret(this.isSecret)
                 .parentCommentID(this.parentCommentID)
                 .build();

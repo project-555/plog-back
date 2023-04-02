@@ -13,7 +13,7 @@ import lombok.*;
 @ToString
 public class SubscribeUserDTO {
     @ApiModelProperty(value = "구독한 블로그 유저 ID")
-    public Long blogUserId;
+    public Long blogUserID;
 
     @ApiModelProperty(value = "구독한 블로그 유저 닉네임")
     public String nickname;
