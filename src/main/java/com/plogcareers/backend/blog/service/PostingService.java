@@ -140,10 +140,7 @@ public class PostingService {
     public void createComment(Long blogID, Long postingID, Long loginedUserID, CreateCommentRequest request) throws UserNotFoundException, PostingNotFoundException, InvalidParentExistException {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
         Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
-
-        if (!blog.isOwner(loginedUserID)) {
-            throw new NotProperAuthorityException();
-        }
+        
         if (!blog.hasPosting(posting)) {
             throw new BlogPostingUnmatchedException();
         }
