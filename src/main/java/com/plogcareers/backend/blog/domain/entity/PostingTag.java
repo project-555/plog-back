@@ -31,7 +31,7 @@ public class PostingTag {
 
     public PostingTagDTO toPostingTagDto() {
         return PostingTagDTO.builder()
-                .tagId(tag.getId())
+                .tagID(tag.getId())
                 .tagName(tag.getTagName())
                 .build();
     }
