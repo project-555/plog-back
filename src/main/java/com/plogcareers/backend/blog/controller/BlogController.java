@@ -360,7 +360,7 @@ public class BlogController {
             @ApiResponse(code = 400, message = "잘못된 사용자 요청", response = ErrorResponse.class),
             @ApiResponse(code = 404, message = "자원 없음", response = ErrorResponse.class)
     })
-    @PostMapping("/{blogID}/tag")
+    @PostMapping("/{blogID}/tags")
     public ResponseEntity<SResponse> createTag(@PathVariable Long blogID,
                                                @ApiIgnore @RequestHeader(name = Auth.token) String token,
                                                @Valid @RequestBody CreateTagRequest request,
@@ -403,7 +403,7 @@ public class BlogController {
     @DeleteMapping("/{blogID}/tags/{tagID}")
     public ResponseEntity<SResponse> deleteTag(@ApiParam(value = "삭제하고자 하는 태그가 속해 있는 블로그 ID", example = "1") @PathVariable Long blogID,
                                                @ApiParam(value = "삭제하고자 하는 태그 ID", example = "10") @PathVariable Long tagID,
-                                               @RequestHeader(name = Auth.token) String token) {
+                                               @ApiIgnore @RequestHeader(name = Auth.token) String token) {
         Long loginedUserID = userService.getLoginedUserID(token);
         blogService.deleteTag(blogID, tagID, loginedUserID);
         return ResponseEntity.noContent().build();

@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public class PostingTagDTO {
     @ApiModelProperty(value = "포스팅에 달린 태그 ID")
-    private Long tagId;
+    private Long tagID;
 
     @ApiModelProperty(value = "포스팅에 달린 태그 이름")
     private String tagName;
