@@ -1,5 +1,6 @@
 package com.plogcareers.backend.blog.domain.entity;
 
+import com.plogcareers.backend.blog.domain.dto.CreateTagResponse;
 import com.plogcareers.backend.blog.domain.model.TagDTO;
 import lombok.*;
 
@@ -39,6 +40,13 @@ public class Tag {
                 .build();
     }
 
+    public CreateTagResponse toCreateTagResponse() {
+        return CreateTagResponse.builder()
+                .tagID(this.id)
+                .tagName(this.tagName)
+                .build();
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

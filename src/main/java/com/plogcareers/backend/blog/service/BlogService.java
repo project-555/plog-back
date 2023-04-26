@@ -91,12 +91,12 @@ public class BlogService {
         return new ListTagsResponse(tags.stream().map(Tag::toTagDTO).toList());
     }
 
-    public void createTag(Long blogID, Long loginedUserID, CreateTagRequest request) {
+    public CreateTagResponse createTag(Long blogID, Long loginedUserID, CreateTagRequest request) {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
         if (!blog.isOwner(loginedUserID)) {
             throw new NotProperAuthorityException();
         }
-        tagRepository.save(request.toTagEntity(blogID));
+        return tagRepository.save(request.toTagEntity(blogID)).toCreateTagResponse();
     }
 
     public void updateTag(Long blogID, Long tagID, Long loginedUserID, UpdateTagRequest request) {
