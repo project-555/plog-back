@@ -369,9 +369,12 @@ public class BlogController {
             throw new InvalidParamException(result);
         }
         Long loginedUserID = userService.getLoginedUserID(token);
-        blogService.createTag(blogID, loginedUserID, request);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new SDataResponse<>(
+                        blogService.createTag(blogID, loginedUserID, request)
+                )
+        );
     }
 
     @ApiOperation(value = "태그 수정")
