@@ -6,11 +6,9 @@ import com.plogcareers.backend.common.domain.dto.SResponse;
 import com.plogcareers.backend.common.exception.InvalidParamException;
 import com.plogcareers.backend.ums.constant.Auth;
 import com.plogcareers.backend.ums.domain.dto.*;
+import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -158,5 +156,34 @@ public class UserController {
         Long loginedUserID = userService.getLoginedUserID(token);
         userService.updateUserPassword(loginedUserID, request);
         return ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation(value = "회원 기본 정보 조회")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "정상 조회(data)", response = GetUserInfoResponse.class),
+            @ApiResponse(code = 299, message = "정상 조회(outer)", response = SDataResponse.class),
+            @ApiResponse(code = 404, message = "포스팅 혹은 유저 없음", response = ErrorResponse.class),
+            @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
+    })
+    @GetMapping("/user-info/{userID}")
+    public ResponseEntity<SResponse> getUserInfo(@ApiParam(name = "userID", value = "유저 ID") @PathVariable Long userID,
+                                                 @ApiIgnore @RequestHeader(name = Auth.token, required = false) String token) throws UserNotFoundException {
+        Long loginedUserID = userService.getLoginedUserID(token);
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(userService.getUserInfo(loginedUserID, userID)));
+    }
+
+    @ApiOperation(value = "회원 탈퇴")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "정상 동작 시"),
+            @ApiResponse(code = 404, message = "블로그 혹은 유저 없음", response = ErrorResponse.class),
+            @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
+    })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @DeleteMapping("/user-info/{userID}")
+    public ResponseEntity<SResponse> deleteUser(@ApiParam(name = "userID", value = "유저 ID") @PathVariable Long userID,
+                                                @ApiIgnore @RequestHeader(name = Auth.token) String token) throws UserNotFoundException {
+        Long loginedUserID = userService.getLoginedUserID(token);
+        userService.deleteUser(userID, loginedUserID);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
