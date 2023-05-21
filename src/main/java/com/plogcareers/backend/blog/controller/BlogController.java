@@ -43,7 +43,7 @@ public class BlogController {
     }
     )
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping("/{blogID}/posting")
+    @PostMapping("/{blogID}/postings")
     public ResponseEntity<SResponse> createPosting(@ApiParam(name = "blogID", value = "블로그 ID", required = true) @PathVariable Long blogID,
                                                    @ApiIgnore @RequestHeader(name = Auth.token) String token,
                                                    @Valid @RequestBody CreatePostingRequest request,
@@ -159,7 +159,7 @@ public class BlogController {
     }
     )
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping("/{blogID}/category")
+    @PostMapping("/{blogID}/categories")
     public ResponseEntity<SResponse> createCategory(@PathVariable Long blogID, @ApiIgnore @RequestHeader(name = Auth.token) String token,
                                                     @Valid @RequestBody CreateCategoryRequest categoryRequest) throws UserNotFoundException {
         Long loginedUserID = userService.getLoginedUserID(token);

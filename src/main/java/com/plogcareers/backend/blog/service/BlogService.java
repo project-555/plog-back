@@ -27,7 +27,6 @@ public class BlogService {
     private final CategoryRepositortySupport categoryRepositortySupport;
     private final TagRepository tagRepository;
 
-    // 카테고리 생성하기
     public void createCategory(Long blogID, Long loginedUserID, @NotNull CreateCategoryRequest createCategoryRequest) throws BlogNotFoundException, CategoryDuplicatedException {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
 
@@ -42,7 +41,6 @@ public class BlogService {
         categoryRepository.save(createCategoryRequest.toEntity(blog));
     }
 
-    // 카테고리 가져오기
     public ListCategoriesResponse listCategories(Long blogID) throws BlogNotFoundException {
         if (!blogRepository.existsById(blogID)) {
             throw new BlogNotFoundException();
@@ -52,7 +50,6 @@ public class BlogService {
         return new ListCategoriesResponse(categories.stream().map(Category::toCategoryDto).toList());
     }
 
-    // 카테고리 수정하기
     @Transactional
     public void updateCategory(Long blogID, Long loginedUserID, @NotNull UpdateCategoryRequest request) throws BlogNotFoundException, CategoryNotFoundException, NotProperAuthorityException {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
@@ -69,7 +66,6 @@ public class BlogService {
         categoryRepository.save(request.toCategoryEntity(category, blog));
     }
 
-    // 카테고리 삭제하기
     @Transactional
     public void deleteCategory(Long blogID, Long categoryID, Long loginedUserID) throws BlogNotFoundException, CategoryNotFoundException {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
@@ -80,6 +76,7 @@ public class BlogService {
         if (!category.isOwner(loginedUserID)) {
             throw new NotProperAuthorityException();
         }
+
         categoryRepository.deleteCategoryById(categoryID);
     }
 
@@ -96,6 +93,11 @@ public class BlogService {
         if (!blog.isOwner(loginedUserID)) {
             throw new NotProperAuthorityException();
         }
+
+        if (tagRepository.existsByBlogIDAndTagName(blogID, request.getTagName())) {
+            throw new TagDuplicatedException();
+        }
+
         return tagRepository.save(request.toTagEntity(blogID)).toCreateTagResponse();
     }
 
