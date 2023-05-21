@@ -22,6 +22,7 @@ public enum ErrorCode {
     ERR_BLOG_POSTING_UNMATCHED(HttpStatus.BAD_REQUEST, "블로그에 해당 포스팅이 속하지 않습니다."),
     ERR_POSTING_STAR_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 포스팅에 남긴 스타가 존재하지 않습니다."),
     ERR_BLOG_TAG_UNMATCHED(HttpStatus.BAD_REQUEST, "블로그에 해당 태그가 속하지 않습니다."),
+    ERR_BLOG_TAG_DUPLICATED(HttpStatus.BAD_REQUEST, "이미 해당 블로그에 같은 이름의 태그가 존재합니다."),
     // Parameter Validation
     ERR_INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "파라미터가 유효하지 않습니다."),
     // UMS Domain
@@ -40,6 +41,7 @@ public enum ErrorCode {
     ERR_SELF_SUBSCRIBE(HttpStatus.BAD_REQUEST, "본인의 블로그는 구독할 수 없습니다."),
     ERR_SUBSCRIBE_DUPLICATED(HttpStatus.BAD_REQUEST, "이미 구독한 블로그입니다."),
     ERR_SUBSCRIBE_NOT_FOUND(HttpStatus.NOT_FOUND, "구독정보를 찾을 수 없습니다."),
+
 
     // COMMON
     ERR_INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류입니다."),
