@@ -2,9 +2,11 @@ package com.plogcareers.backend.ums.domain.entity;
 
 import com.plogcareers.backend.blog.domain.dto.BlogUserDTO;
 import com.plogcareers.backend.blog.domain.dto.HomePostingUserDTO;
+import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.domain.model.CommentUserDTO;
 import com.plogcareers.backend.blog.domain.model.PostingStarUserDTO;
 import com.plogcareers.backend.blog.domain.model.SubscribeUserDTO;
+import com.plogcareers.backend.ums.domain.dto.GetUserInfoResponse;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -116,6 +118,17 @@ public class User implements UserDetails {
                 .blogUserID(this.id)
                 .nickname(this.nickname)
                 .profileImageUrl(this.profileImageURL)
+                .build();
+    }
+
+    public GetUserInfoResponse toGetUserInfoResponse(Blog blog) {
+        return GetUserInfoResponse.builder()
+                .email(this.email)
+                .nickname(this.nickname)
+                .profileImageUrl(this.profileImageURL)
+                .blogName(blog.getBlogName())
+                .shortIntro(blog.getShortIntro())
+                .introHtml(blog.getIntroHTML())
                 .build();
     }
 

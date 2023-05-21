@@ -232,5 +232,22 @@ public class UserService {
         }
         userRepository.save(request.toUserEntity(user, passwordEncoder));
     }
+
+    public GetUserInfoResponse getUserInfo(Long loginedUserID, Long userID) {
+        User user = userRepository.findById(userID).orElseThrow(UserNotFoundException::new);
+        List<Blog> blogs = blogRepository.findByUser(user);
+        if (!loginedUserID.equals(user.getId())) {
+            throw new NotProperAuthorityException();
+        }
+        return user.toGetUserInfoResponse(blogs.get(0));
+    }
+
+    public void deleteUser(Long userID, Long loginedUserID) throws UserNotFoundException {
+        User user = userRepository.findById(loginedUserID).orElseThrow(UserNotFoundException::new);
+        if (!user.getId().equals(userID)) {
+            throw new NotProperAuthorityException();
+        }
+        userRepository.delete(user);
+    }
 }
 
