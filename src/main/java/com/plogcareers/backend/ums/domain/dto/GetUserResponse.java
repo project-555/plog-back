@@ -9,7 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class GetUserInfoResponse {
+public class GetUserResponse {
     @ApiModelProperty(value = "이메일")
     private String email;
 
@@ -17,7 +17,7 @@ public class GetUserInfoResponse {
     private String nickname;
 
     @ApiModelProperty(value = "프로필 이미지 URL")
-    private String profileImageUrl;
+    private String profileImageURL;
 
     @ApiModelProperty(value = "블로그 제목")
     private String blogName;
@@ -26,5 +26,5 @@ public class GetUserInfoResponse {
     private String shortIntro;
 
     @ApiModelProperty(value = "블로그 소개 HTML")
-    private String introHtml;
+    private String introHTML;
 }
