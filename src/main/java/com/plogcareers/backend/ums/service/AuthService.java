@@ -232,8 +232,8 @@ public class AuthService {
         userRepository.save(request.toUserEntity(user, passwordEncoder));
     }
 
-    public void deleteUser(Long userID, Long loginedUserID) throws UserNotFoundException {
-        User user = userRepository.findById(userID).orElseThrow(UserNotFoundException::new);
+    public void exitUser(Long loginedUserID, ExitUserRequest request) throws UserNotFoundException {
+        User user = userRepository.findById(request.getUserID()).orElseThrow(UserNotFoundException::new);
         if (!loginedUserID.equals(user.getId())) {
             throw new NotProperAuthorityException();
         }
