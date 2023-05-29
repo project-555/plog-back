@@ -8,7 +8,7 @@ import com.plogcareers.backend.common.domain.dto.SDataResponse;
 import com.plogcareers.backend.common.domain.dto.SResponse;
 import com.plogcareers.backend.common.exception.InvalidParamException;
 import com.plogcareers.backend.ums.constant.Auth;
-import com.plogcareers.backend.ums.service.UserService;
+import com.plogcareers.backend.ums.service.AuthService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ import javax.validation.Valid;
 public class HomeController {
 
     private final HomeService homeService;
-    private final UserService userService;
+    private final AuthService authService;
 
     @ApiOperation(value = "블로그 구독")
     @ApiResponses(value = {
@@ -44,7 +44,7 @@ public class HomeController {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        Long loginedUserID = userService.getLoginedUserID(token);
+        Long loginedUserID = authService.getLoginedUserID(token);
         homeService.createSubscribe(loginedUserID, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -62,7 +62,7 @@ public class HomeController {
     public ResponseEntity<SResponse> deleteSubscribe(@PathVariable Long subscribeID,
                                                      @ApiIgnore @RequestHeader(name = Auth.token) String token
     ) throws BlogNotFoundException {
-        Long loginedUserID = userService.getLoginedUserID(token);
+        Long loginedUserID = authService.getLoginedUserID(token);
         homeService.deleteSubscribe(subscribeID, loginedUserID);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -88,7 +88,7 @@ public class HomeController {
     @GetMapping("/following-postings")
     public ResponseEntity<SDataResponse<ListHomePostingsResponse>> listFollowingPostings(@ApiIgnore @RequestHeader(name = Auth.token, required = false) String token,
                                                                                          ListFollowingPostingsRequest request) {
-        Long loginedUserID = userService.getLoginedUserID(token);
+        Long loginedUserID = authService.getLoginedUserID(token);
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(homeService.listFollowingPostings(loginedUserID, request.getLastCursorID(), request.getPageSize())));
     }
 
