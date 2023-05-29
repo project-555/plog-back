@@ -6,7 +6,6 @@ import com.plogcareers.backend.common.domain.dto.SResponse;
 import com.plogcareers.backend.common.exception.InvalidParamException;
 import com.plogcareers.backend.ums.constant.Auth;
 import com.plogcareers.backend.ums.domain.dto.*;
-import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.service.AuthService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -165,11 +164,11 @@ public class AuthController {
             @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @PostMapping("/user-info/{userID}")
-    public ResponseEntity<SResponse> deleteUser(@ApiParam(name = "userID", value = "유저 ID") @PathVariable Long userID,
-                                                @ApiIgnore @RequestHeader(name = Auth.token) String token) throws UserNotFoundException {
+    @PostMapping("/exit-user")
+    public ResponseEntity<SResponse> exitUser(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+                                                @Valid @RequestBody ExitUserRequest request) {
         Long loginedUserID = authService.getLoginedUserID(token);
-        authService.deleteUser(userID, loginedUserID);
+        authService.exitUser(loginedUserID, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

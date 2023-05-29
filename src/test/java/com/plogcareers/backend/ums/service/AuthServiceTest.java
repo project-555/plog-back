@@ -1,5 +1,6 @@
 package com.plogcareers.backend.ums.service;
 
+import com.plogcareers.backend.ums.domain.dto.ExitUserRequest;
 import com.plogcareers.backend.ums.domain.dto.UpdateUserPasswordRequest;
 import com.plogcareers.backend.ums.domain.dto.UpdateUserProfileRequest;
 import com.plogcareers.backend.ums.domain.entity.User;
@@ -129,32 +130,32 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("deleteUser - 유저가 없는 경우 테스트")
-    void testDeleteUser_1(){
+    @DisplayName("exitUser - 유저가 없는 경우 테스트")
+    void testExitUser_1(){
         // given
         when(
                 userRepository.findById(-1L)
         ).thenReturn(Optional.empty());
         // when + then
-        Assertions.assertThrows(UserNotFoundException.class, () -> authService.deleteUser(-1L, 1L));
+        Assertions.assertThrows(UserNotFoundException.class, () -> authService.exitUser(1L, ExitUserRequest.builder().userID(-1L).build()));
     }
 
     @Test
-    @DisplayName("deleteUser - 로그인한 유저와 요청 유저가 다른 경우 테스트")
-    void testDeleteUser_2(){
+    @DisplayName("exitUser - 로그인한 유저와 요청 유저가 다른 경우 테스트")
+    void testExitUser_2(){
         // given
         when(
-                userRepository.findById(1L)
+                userRepository.findById(2L)
         ).thenReturn(
-                Optional.of(User.builder().id(1L).build())
+                Optional.of(User.builder().id(2L).build())
         );
         // when + then
-        Assertions.assertThrows(NotProperAuthorityException.class, () -> authService.deleteUser(1L, 2L));
+        Assertions.assertThrows(NotProperAuthorityException.class, () -> authService.exitUser(1L, ExitUserRequest.builder().userID(2L).build()));
     }
 
     @Test
-    @DisplayName("deleteUser - 정상동작")
-    void testDeleteUser_3(){
+    @DisplayName("exitUser - 정상동작")
+    void testExitUser_3(){
         // given
         when(
                 userRepository.findById(1L)
@@ -162,7 +163,7 @@ public class AuthServiceTest {
                 Optional.of(User.builder().id(1L).build())
         );
         // when
-        authService.deleteUser(1L, 1L);
+        authService.exitUser(1L, ExitUserRequest.builder().userID(1L).build());
         // then
         verify(userRepository, times(1)).delete(any());
     }
