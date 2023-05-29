@@ -18,13 +18,13 @@ public class UserService {
     private final BlogRepository blogRepository;
 
 
-    public GetUserInfoResponse getUser(Long userID) {
+    public GetUserResponse getUser(Long userID) {
         User user = userRepository.findById(userID).orElseThrow(UserNotFoundException::new);
         List<Blog> blogs = blogRepository.findByUser(user);
         if (blogs.isEmpty()) {
             throw new BlogNotFoundException();
         }
-        return user.toGetUserInfoResponse(blogs.get(0));
+        return user.toGetUserResponse(blogs.get(0));
     }
 
 }

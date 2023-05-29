@@ -19,5 +19,5 @@ public class SubscribeUserDTO {
     public String nickname;
 
     @ApiModelProperty(value = "구독한 블로그 유저 프로필 이미지 url")
-    public String profileImageUrl;
+    public String profileImageURL;
 }

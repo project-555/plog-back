@@ -22,7 +22,7 @@ public class UserController {
 
     @ApiOperation(value = "회원 기본 정보 조회")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "정상 조회(data)", response = GetUserInfoResponse.class),
+            @ApiResponse(code = 200, message = "정상 조회(data)", response = GetUserResponse.class),
             @ApiResponse(code = 299, message = "정상 조회(outer)", response = SDataResponse.class),
             @ApiResponse(code = 404, message = "포스팅 혹은 유저 없음", response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
