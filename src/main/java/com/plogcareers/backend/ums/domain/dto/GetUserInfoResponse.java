@@ -3,6 +3,7 @@ package com.plogcareers.backend.ums.domain.dto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
