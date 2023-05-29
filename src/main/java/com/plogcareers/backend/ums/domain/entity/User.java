@@ -6,7 +6,7 @@ import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.domain.model.CommentUserDTO;
 import com.plogcareers.backend.blog.domain.model.PostingStarUserDTO;
 import com.plogcareers.backend.blog.domain.model.SubscribeUserDTO;
-import com.plogcareers.backend.ums.domain.dto.GetUserInfoResponse;
+import com.plogcareers.backend.ums.domain.dto.GetUserResponse;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -117,18 +117,18 @@ public class User implements UserDetails {
         return SubscribeUserDTO.builder()
                 .blogUserID(this.id)
                 .nickname(this.nickname)
-                .profileImageUrl(this.profileImageURL)
+                .profileImageURL(this.profileImageURL)
                 .build();
     }
 
-    public GetUserInfoResponse toGetUserInfoResponse(Blog blog) {
-        return GetUserInfoResponse.builder()
+    public GetUserResponse toGetUserResponse(Blog blog) {
+        return GetUserResponse.builder()
                 .email(this.email)
                 .nickname(this.nickname)
-                .profileImageUrl(this.profileImageURL)
+                .profileImageURL(this.profileImageURL)
                 .blogName(blog.getBlogName())
                 .shortIntro(blog.getShortIntro())
-                .introHtml(blog.getIntroHTML())
+                .introHTML(blog.getIntroHTML())
                 .build();
     }
 

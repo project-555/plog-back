@@ -2,7 +2,7 @@ package com.plogcareers.backend.ums.service;
 
 import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.repository.BlogRepository;
-import com.plogcareers.backend.ums.domain.dto.GetUserInfoResponse;
+import com.plogcareers.backend.ums.domain.dto.GetUserResponse;
 import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import com.plogcareers.backend.ums.repository.UserRepository;
@@ -31,8 +31,8 @@ public class UserServiceTest {
     UserService userService;
 
     @Test
-    @DisplayName("getUserInfo - 유저가 없는 경우 테스트")
-    void testGetUserInfo_1(){
+    @DisplayName("getUser - 유저가 없는 경우 테스트")
+    void testGetUser_1(){
         // given
         when(
                 userRepository.findById(-1L)
@@ -44,8 +44,8 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("getUserInfo - 정상동작")
-    void testGetUserInfo_2(){
+    @DisplayName("getUser - 정상동작")
+    void testGetUser_2(){
         User testUser = User.builder()
                 .id(1L)
                 .email("email")
@@ -68,15 +68,15 @@ public class UserServiceTest {
                         .build())
         );
         // when
-        GetUserInfoResponse got = userService.getUser(1L);
+        GetUserResponse got = userService.getUser(1L);
 
-        GetUserInfoResponse want = GetUserInfoResponse.builder()
+        GetUserResponse want = GetUserResponse.builder()
                                                     .email("email")
                                                     .nickname("nickname")
-                                                    .profileImageUrl("profileImageUrl")
+                                                    .profileImageURL("profileImageUrl")
                                                     .blogName("blogName")
                                                     .shortIntro("shortIntro")
-                                                    .introHtml("introHtml")
+                                                    .introHTML("introHtml")
                                                     .build();
         // then
         Assertions.assertEquals(got, want);
