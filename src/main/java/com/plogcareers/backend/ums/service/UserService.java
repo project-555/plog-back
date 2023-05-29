@@ -235,16 +235,19 @@ public class UserService {
 
     public GetUserInfoResponse getUserInfo(Long loginedUserID, Long userID) {
         User user = userRepository.findById(userID).orElseThrow(UserNotFoundException::new);
-        List<Blog> blogs = blogRepository.findByUser(user);
         if (!loginedUserID.equals(user.getId())) {
             throw new NotProperAuthorityException();
+        }
+        List<Blog> blogs = blogRepository.findByUser(user);
+        if (blogs.isEmpty()) {
+            throw new BlogNotFoundException();
         }
         return user.toGetUserInfoResponse(blogs.get(0));
     }
 
     public void deleteUser(Long userID, Long loginedUserID) throws UserNotFoundException {
-        User user = userRepository.findById(loginedUserID).orElseThrow(UserNotFoundException::new);
-        if (!user.getId().equals(userID)) {
+        User user = userRepository.findById(userID).orElseThrow(UserNotFoundException::new);
+        if (!loginedUserID.equals(user.getId())) {
             throw new NotProperAuthorityException();
         }
         userRepository.delete(user);
