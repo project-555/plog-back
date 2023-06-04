@@ -98,7 +98,7 @@ public class BlogController {
     }
     )
     @PutMapping("/{blogID}/postings/{postingID}")
-    public ResponseEntity<SResponse> updatePosting(@ApiIgnore @RequestHeader(name = "X-AUTH-TOKEN") String token,
+    public ResponseEntity<SResponse> updatePosting(@ApiIgnore @RequestHeader(name = Auth.token) String token,
                                                    @PathVariable Long blogID,
                                                    @PathVariable Long postingID,
                                                    @Valid @RequestBody UpdatePostingRequest request,
