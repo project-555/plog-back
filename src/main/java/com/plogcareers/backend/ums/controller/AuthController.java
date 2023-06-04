@@ -1,5 +1,6 @@
 package com.plogcareers.backend.ums.controller;
 
+import com.plogcareers.backend.blog.domain.dto.RefreshAccessTokenResponse;
 import com.plogcareers.backend.common.domain.dto.ErrorResponse;
 import com.plogcareers.backend.common.domain.dto.SDataResponse;
 import com.plogcareers.backend.common.domain.dto.SResponse;
@@ -7,7 +8,10 @@ import com.plogcareers.backend.common.exception.InvalidParamException;
 import com.plogcareers.backend.ums.constant.Auth;
 import com.plogcareers.backend.ums.domain.dto.*;
 import com.plogcareers.backend.ums.service.AuthService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -128,8 +132,8 @@ public class AuthController {
 
     @PutMapping("/edit-profile")
     public ResponseEntity<SResponse> updateUserProfile(@ApiIgnore @RequestHeader(name = Auth.token) String token,
-                                                @Valid @RequestBody UpdateUserProfileRequest request,
-                                                BindingResult result) {
+                                                       @Valid @RequestBody UpdateUserProfileRequest request,
+                                                       BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
@@ -147,8 +151,8 @@ public class AuthController {
 
     @PutMapping("/edit-password")
     public ResponseEntity<SResponse> updateUserPassword(@ApiIgnore @RequestHeader(name = Auth.token) String token,
-                                                @Valid @RequestBody UpdateUserPasswordRequest request,
-                                                BindingResult result) {
+                                                        @Valid @RequestBody UpdateUserPasswordRequest request,
+                                                        BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
@@ -166,9 +170,21 @@ public class AuthController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PostMapping("/exit-user")
     public ResponseEntity<SResponse> exitUser(@ApiIgnore @RequestHeader(name = Auth.token) String token,
-                                                @Valid @RequestBody ExitUserRequest request) {
+                                              @Valid @RequestBody ExitUserRequest request) {
         Long loginedUserID = authService.getLoginedUserID(token);
         authService.exitUser(loginedUserID, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @ApiOperation(value = "엑세스 토큰 리프레시")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "정상 리프레시 시"),
+            @ApiResponse(code = 401, message = "잘못된 사용자 요청", response = ErrorResponse.class)
+    })
+    @PostMapping("/refresh-access-token")
+    public ResponseEntity<SResponse> refreshToken(@ApiIgnore @RequestHeader(name = Auth.token) String token) {
+        Long loginedUserID = authService.getLoginedUserID(token);
+        RefreshAccessTokenResponse newToken = authService.refreshAccessToken(loginedUserID);
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(newToken));
     }
 }
