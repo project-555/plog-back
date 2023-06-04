@@ -102,7 +102,7 @@ public class AuthService {
         if (!StringUtils.hasText(token)) {
             return 0L;
         }
-        return userRepository.findByEmail(jwtTokenProvider.getUserPk(token)).orElseThrow(UserNotFoundException::new).getId();
+        return userRepository.findByEmail(jwtTokenProvider.getUserPk(jwtTokenProvider.resolveToken(token))).orElseThrow(UserNotFoundException::new).getId();
     }
 
 
