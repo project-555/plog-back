@@ -1,5 +1,6 @@
 package com.plogcareers.backend.ums.service;
 
+import com.plogcareers.backend.blog.domain.dto.RefreshAccessTokenResponse;
 import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.repository.BlogRepository;
@@ -81,6 +82,18 @@ public class AuthService {
         }
 
         return UserLoginResponse.builder()
+                .token(new Token(jwtTokenProvider.createToken(user.getUsername(), user, blogs.get(0).getId())))
+                .build();
+    }
+
+    public RefreshAccessTokenResponse refreshAccessToken(Long loginedUserID) {
+        User user = userRepository.findById(loginedUserID).orElseThrow(UserNotFoundException::new);
+        List<Blog> blogs = blogRepository.findByUser(user);
+        if (blogs.isEmpty()) {
+            throw new BlogNotFoundException();
+        }
+
+        return RefreshAccessTokenResponse.builder()
                 .token(new Token(jwtTokenProvider.createToken(user.getUsername(), user, blogs.get(0).getId())))
                 .build();
     }
@@ -220,7 +233,7 @@ public class AuthService {
         userRepository.save(request.toUserEntity(user));
     }
 
-    public void updateUserPassword(Long loginedUserID, UpdateUserPasswordRequest request){
+    public void updateUserPassword(Long loginedUserID, UpdateUserPasswordRequest request) {
         User user = userRepository.findById(request.getUserID()).orElseThrow(UserNotFoundException::new);
         if (!loginedUserID.equals(user.getId())) {
             throw new NotProperAuthorityException();
