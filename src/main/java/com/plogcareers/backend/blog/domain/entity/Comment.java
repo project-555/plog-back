@@ -1,6 +1,7 @@
 package com.plogcareers.backend.blog.domain.entity;
 
 import com.plogcareers.backend.blog.domain.model.CommentDTO;
+import com.plogcareers.backend.blog.domain.model.CommentUserDTO;
 import com.plogcareers.backend.ums.domain.entity.User;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -49,17 +50,19 @@ public class Comment {
     private LocalDateTime updateDt;
 
     public CommentDTO toCommentDTO(Boolean isPostingOwner, Long loginedUserID) {
+        String nickname = this.user.getNickname();
+        String commentContent = this.commentContent;
         // 비공개 덧글인 경우 작성자나 블로그 주인가 아니면 비공개 처리
         if (this.isSecret && !isPostingOwner && !this.isOwner(loginedUserID)) {
-            this.setCommentContent("작성자가 비공개로 표시한 덧글입니다.");
-            this.user.setNickname(this.user.getNickname().charAt(0) + "****");
+            commentContent = "작성자가 비공개로 표시한 덧글입니다.";
+            nickname = this.user.getNickname().charAt(0) + "****";
         }
 
         return CommentDTO.builder()
                 .id(this.id)
-                .commentContent(this.commentContent)
+                .commentContent(commentContent)
                 .updateDt(this.updateDt)
-                .user(this.user.toCommentUserDTO())
+                .user(CommentUserDTO.builder().userID(this.id).nickname(nickname).build())
                 .isSecret(this.isSecret)
                 .createDt(this.createDt)
                 .children(new ArrayList<>())
