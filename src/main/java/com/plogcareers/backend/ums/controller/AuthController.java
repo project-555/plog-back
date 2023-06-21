@@ -178,7 +178,7 @@ public class AuthController {
 
     @ApiOperation(value = "엑세스 토큰 리프레시")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "정상 리프레시 시"),
+            @ApiResponse(code = 200, message = "정상 리프레시 시", response = RefreshAccessTokenResponse.class),
             @ApiResponse(code = 401, message = "잘못된 사용자 요청", response = ErrorResponse.class)
     })
     @PostMapping("/refresh-access-token")
