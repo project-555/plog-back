@@ -1,10 +1,7 @@
 package com.plogcareers.backend.blog.domain.dto;
 
 import io.swagger.annotations.ApiParam;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
@@ -14,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class ListPostingsRequest {
     @ApiParam(value = "검색어")
     String search;

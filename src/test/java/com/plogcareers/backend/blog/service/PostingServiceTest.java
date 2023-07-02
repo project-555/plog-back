@@ -2,8 +2,14 @@ package com.plogcareers.backend.blog.service;
 
 import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
 import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
+import com.plogcareers.backend.blog.domain.dto.ListPostingsRequest;
+import com.plogcareers.backend.blog.domain.dto.ListPostingsResponse;
 import com.plogcareers.backend.blog.domain.entity.*;
-import com.plogcareers.backend.blog.exception.*;
+import com.plogcareers.backend.blog.domain.model.PostingDTO;
+import com.plogcareers.backend.blog.exception.BlogNotFoundException;
+import com.plogcareers.backend.blog.exception.BlogPostingUnmatchedException;
+import com.plogcareers.backend.blog.exception.CategoryNotFoundException;
+import com.plogcareers.backend.blog.exception.PostingNotFoundException;
 import com.plogcareers.backend.blog.repository.*;
 import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.exception.NotProperAuthorityException;
@@ -33,6 +39,9 @@ class PostingServiceTest {
     TagRepository tagRepository;
     @Mock
     PostingTagRepository postingTagRepository;
+
+    @Mock
+    VPostingRepositorySupport postingRepositorySupport;
 
     @InjectMocks
     PostingService postingService;
@@ -247,5 +256,134 @@ class PostingServiceTest {
 
         // then
         Assertions.assertEquals(got, GetPostingResponse.builder().id(1L).stateID(State.PUBLIC).build());
+    }
+
+    @Test
+    @DisplayName("ListPostings - 블로그가 없는 경우")
+    void listPostings() {
+        when(
+                blogRepository.findById(1L)
+        ).thenReturn(
+                Optional.empty()
+        );
+
+        Assertions.assertThrows(
+                BlogNotFoundException.class,
+                () -> {
+                    postingService.listPostings(1L, 1L,
+                            ListPostingsRequest.builder()
+                                    .pageSize(5L).build());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("ListPostings - 정상 동작 시 (블로그 주인의 경우)")
+    void listPostings_2() {
+        ListPostingsRequest request = ListPostingsRequest.builder()
+                .categoryID(1L)
+                .search("test_search")
+                .tagIDs(List.of(1L, 2L, 3L))
+                .lastCursorID(3L)
+                .pageSize(5L).build();
+        List<PostingTag> testTags = List.of(
+                PostingTag.builder().id(1L).build(),
+                PostingTag.builder().id(2L).build(),
+                PostingTag.builder().id(3L).build()
+        );
+
+        List<VPosting> testPostings = List.of(
+                VPosting.builder().id(1L).build(),
+                VPosting.builder().id(2L).build(),
+                VPosting.builder().id(3L).build()
+        );
+
+        when(
+                blogRepository.findById(1L)
+        ).thenReturn(
+                Optional.of(
+                        Blog.builder().id(1L).user(User.builder().id(1L).build()).build()
+                )
+        );
+
+        when(
+                postingTagRepository.findByTag_IdIn(List.of(1L, 2L, 3L))
+        ).thenReturn(
+                testTags
+        );
+
+        when(
+                postingRepositorySupport.listPostingsByOwner(1L, "test_search", 1L, testTags, 3L, 5L)
+        ).thenReturn(
+                testPostings
+        );
+
+        ListPostingsResponse got = postingService.listPostings(1L, 1L, request);
+
+
+        ListPostingsResponse expected = ListPostingsResponse.builder()
+                .postings(List.of(
+                        PostingDTO.builder().id(1L).build(),
+                        PostingDTO.builder().id(2L).build(),
+                        PostingDTO.builder().id(3L).build()
+                ))
+                .build();
+
+        Assertions.assertEquals(got, expected);
+    }
+
+    @Test
+    @DisplayName("ListPostings - 정상 동작 시 (블로그 주인이 아닌 경우)")
+    void listPostings_3() {
+        ListPostingsRequest request = ListPostingsRequest.builder()
+                .categoryID(1L)
+                .search("test_search")
+                .tagIDs(List.of(1L, 2L, 3L))
+                .lastCursorID(3L)
+                .pageSize(5L).build();
+
+        List<PostingTag> testTags = List.of(
+                PostingTag.builder().id(1L).build(),
+                PostingTag.builder().id(2L).build(),
+                PostingTag.builder().id(3L).build()
+        );
+
+        List<VPosting> testPostings = List.of(
+                VPosting.builder().id(1L).build(),
+                VPosting.builder().id(2L).build(),
+                VPosting.builder().id(3L).build()
+        );
+
+        when(
+                blogRepository.findById(1L)
+        ).thenReturn(
+                Optional.of(
+                        Blog.builder().id(1L).user(User.builder().id(2L).build()).build()
+                )
+        );
+
+        when(
+                postingTagRepository.findByTag_IdIn(List.of(1L, 2L, 3L))
+        ).thenReturn(
+                testTags
+        );
+
+        when(
+                postingRepositorySupport.listPostingsByUserAndGuest(1L, "test_search", 1L, testTags, 3L, 5L)
+        ).thenReturn(
+                testPostings
+        );
+
+        ListPostingsResponse got = postingService.listPostings(1L, 3L, request);
+
+        ListPostingsResponse want = ListPostingsResponse.builder()
+                .postings(List.of(
+                        PostingDTO.builder().id(1L).build(),
+                        PostingDTO.builder().id(2L).build(),
+                        PostingDTO.builder().id(3L).build()
+                ))
+                .build();
+
+        Assertions.assertEquals(got, want);
     }
 }
