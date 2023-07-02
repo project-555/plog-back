@@ -1,10 +1,7 @@
 package com.plogcareers.backend.blog.domain.model;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +9,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Getter
+@EqualsAndHashCode
+@ToString
 public class PostingDTO {
     @ApiModelProperty(value = "포스팅 ID")
     private Long id;
@@ -51,5 +50,5 @@ public class PostingDTO {
 
     @ApiModelProperty(value = "포스팅의 썸네일 이미지 URL")
     private String thumbnailImageURL;
-    
+
 }
