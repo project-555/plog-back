@@ -83,7 +83,12 @@ public class BlogController {
     })
     @GetMapping("/{blogID}/postings")
     public ResponseEntity<SResponse> listPostings(@ApiParam(name = "blogID", value = "블로그 ID") @PathVariable Long blogID,
-                                                  @ApiIgnore @RequestHeader(name = Auth.token, required = false) String token, ListPostingsRequest request) {
+                                                  @ApiIgnore @RequestHeader(name = Auth.token, required = false) String token,
+                                                  @Valid ListPostingsRequest request,
+                                                  BindingResult result) {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
         Long loginedUserID = authService.getLoginedUserID(token);
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.listPostings(blogID, loginedUserID, request)));
     }
