@@ -20,17 +20,20 @@ public class VPostingRepositorySupport extends QuerydslRepositorySupport {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public List<VPosting> listPostingsByOwner(Long blogID, String search, Long categoryID, List<PostingTag> postingTags) {
+    public List<VPosting> listPostingsByOwner(Long blogID, String search, Long categoryID, List<PostingTag> postingTags, Long lastCursorID, Long pageSize) {
         return queryFactory.selectFrom(qPosting).where(
-                qPosting.blogID.eq(blogID),
-                titleContains(search),
-                mdContentContains(search),
-                postingTagIn(postingTags),
-                categoryIDEq(categoryID)
-        ).fetch();
+                        qPosting.blogID.eq(blogID),
+                        titleContains(search),
+                        mdContentContains(search),
+                        postingTagIn(postingTags),
+                        categoryIDEq(categoryID),
+                        ltPostingID(lastCursorID)
+                ).limit(pageSize)
+                .orderBy(qPosting.id.desc())
+                .fetch();
     }
 
-    public List<VPosting> listPostingsByUserAndGuest(Long blogID, String search, Long categoryID, List<PostingTag> postingTags) {
+    public List<VPosting> listPostingsByUserAndGuest(Long blogID, String search, Long categoryID, List<PostingTag> postingTags, Long lastCursorID, Long pageSize) {
         return queryFactory.selectFrom(qPosting)
                 .where(
                         qPosting.blogID.eq(blogID),
@@ -38,8 +41,10 @@ public class VPostingRepositorySupport extends QuerydslRepositorySupport {
                         mdContentContains(search),
                         postingTagIn(postingTags),
                         categoryIDEq(categoryID),
-                        qPosting.stateID.eq(State.PUBLIC)
-                )
+                        qPosting.stateID.eq(State.PUBLIC),
+                        ltPostingID(lastCursorID)
+                ).limit(pageSize)
+                .orderBy(qPosting.id.desc())
                 .fetch();
     }
 
