@@ -72,11 +72,13 @@ public class PostingService {
             postingTags = postingTagRepository.findByTag_IdIn(request.getTagIDs());
         }
         List<VPosting> postings;
+
         if (blog.isOwner(loginedUserID)) {
-            postings = postingRepositorySupport.listPostingsByOwner(blogID, request.getSearch(), request.getCategoryID(), postingTags);
+            postings = postingRepositorySupport.listPostingsByOwner(blogID, request.getSearch(), request.getCategoryID(), postingTags, request.getLastCursorID(), request.getPageSize());
         } else {
-            postings = postingRepositorySupport.listPostingsByUserAndGuest(blogID, request.getSearch(), request.getCategoryID(), postingTags);
+            postings = postingRepositorySupport.listPostingsByUserAndGuest(blogID, request.getSearch(), request.getCategoryID(), postingTags, request.getLastCursorID(), request.getPageSize());
         }
+
         return new ListPostingsResponse(postings.stream().map(VPosting::toPostingDTO).toList());
     }
 
@@ -140,7 +142,7 @@ public class PostingService {
     public void createComment(Long blogID, Long postingID, Long loginedUserID, CreateCommentRequest request) throws UserNotFoundException, PostingNotFoundException, InvalidParentExistException {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
         Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
-        
+
         if (!blog.hasPosting(posting)) {
             throw new BlogPostingUnmatchedException();
         }
