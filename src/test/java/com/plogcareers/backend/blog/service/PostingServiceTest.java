@@ -6,6 +6,7 @@ import com.plogcareers.backend.blog.domain.dto.ListPostingsRequest;
 import com.plogcareers.backend.blog.domain.dto.ListPostingsResponse;
 import com.plogcareers.backend.blog.domain.entity.*;
 import com.plogcareers.backend.blog.domain.model.PostingDTO;
+import com.plogcareers.backend.blog.domain.model.PostingTagDTO;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.exception.BlogPostingUnmatchedException;
 import com.plogcareers.backend.blog.exception.CategoryNotFoundException;
@@ -55,9 +56,7 @@ class PostingServiceTest {
                 blogRepository.findById(-1L)
         ).thenReturn(Optional.empty());
         // when + then
-        Assertions.assertThrows(BlogNotFoundException.class, () -> {
-            postingService.createPosting(-1L, 1L, new CreatePostingRequest());
-        });
+        Assertions.assertThrows(BlogNotFoundException.class, () -> postingService.createPosting(-1L, 1L, new CreatePostingRequest()));
     }
 
     @Test
@@ -68,9 +67,7 @@ class PostingServiceTest {
                 blogRepository.findById(1L)
         ).thenReturn(Optional.of(Blog.builder().id(1L).user(User.builder().id(2L).build()).build()));
         // when + then
-        Assertions.assertThrows(NotProperAuthorityException.class, () -> {
-            postingService.createPosting(1L, 1L, new CreatePostingRequest());
-        });
+        Assertions.assertThrows(NotProperAuthorityException.class, () -> postingService.createPosting(1L, 1L, new CreatePostingRequest()));
     }
 
     @Test
@@ -85,12 +82,7 @@ class PostingServiceTest {
 
         // when + then
         Assertions.assertThrows(CategoryNotFoundException.class,
-                () -> {
-                    postingService.createPosting(
-                            1L, 1L,
-                            CreatePostingRequest.builder().categoryID(-1L).build()
-                    );
-                }
+                () -> postingService.createPosting(1L, 1L, CreatePostingRequest.builder().categoryID(-1L).build())
         );
     }
 
@@ -170,12 +162,7 @@ class PostingServiceTest {
         when(blogRepository.findById(-1L)).thenReturn(Optional.empty());
 
         // when + then
-        Assertions.assertThrows(
-                BlogNotFoundException.class,
-                () -> {
-                    postingService.getPosting(-1L, 1L, 1L);
-                }
-        );
+        Assertions.assertThrows(BlogNotFoundException.class, () -> postingService.getPosting(-1L, 1L, 1L));
     }
 
     @Test
@@ -187,12 +174,7 @@ class PostingServiceTest {
         ));
         when(postingRepository.findById(-1L)).thenReturn(Optional.empty());
         // when + then
-        Assertions.assertThrows(
-                PostingNotFoundException.class,
-                () -> {
-                    postingService.getPosting(1L, -1L, 1L);
-                }
-        );
+        Assertions.assertThrows(PostingNotFoundException.class, () -> postingService.getPosting(1L, -1L, 1L));
     }
 
     @Test
@@ -206,12 +188,7 @@ class PostingServiceTest {
                 Posting.builder().id(1L).blogID(2L).build()
         ));
         // when + then
-        Assertions.assertThrows(
-                BlogPostingUnmatchedException.class,
-                () -> {
-                    postingService.getPosting(1L, 1L, 1L);
-                }
-        );
+        Assertions.assertThrows(BlogPostingUnmatchedException.class, () -> postingService.getPosting(1L, 1L, 1L));
     }
 
     @Test
@@ -229,11 +206,7 @@ class PostingServiceTest {
                 Posting.builder().id(1L).blogID(1L).stateID(State.PRIVATE).build()
         ));
         // when + then
-        Assertions.assertThrows(PostingNotFoundException.class,
-                () -> {
-                    postingService.getPosting(1L, 1L, 2L);
-                }
-        );
+        Assertions.assertThrows(PostingNotFoundException.class, () -> postingService.getPosting(1L, 1L, 2L));
     }
 
     @Test
@@ -267,14 +240,7 @@ class PostingServiceTest {
                 Optional.empty()
         );
 
-        Assertions.assertThrows(
-                BlogNotFoundException.class,
-                () -> {
-                    postingService.listPostings(1L, 1L,
-                            ListPostingsRequest.builder()
-                                    .pageSize(5L).build());
-                }
-        );
+        Assertions.assertThrows(BlogNotFoundException.class, () -> postingService.listPostings(1L, 1L, ListPostingsRequest.builder().pageSize(5L).build()));
     }
 
     @Test
@@ -318,14 +284,25 @@ class PostingServiceTest {
                 testPostings
         );
 
+        when(
+                postingTagRepository.findByPostingIdIn(List.of(1L, 2L, 3L))
+        ).thenReturn(
+                List.of(
+                        PostingTag.builder()
+                                .posting(Posting.builder().id(1L).build())
+                                .tag(Tag.builder().id(1L).tagName("HELLO").build())
+                                .build()
+                )
+        );
+
         ListPostingsResponse got = postingService.listPostings(1L, 1L, request);
 
 
         ListPostingsResponse expected = ListPostingsResponse.builder()
                 .postings(List.of(
-                        PostingDTO.builder().id(1L).build(),
-                        PostingDTO.builder().id(2L).build(),
-                        PostingDTO.builder().id(3L).build()
+                        PostingDTO.builder().id(1L).postingTags(List.of(PostingTagDTO.builder().tagID(1L).tagName("HELLO").build())).build(),
+                        PostingDTO.builder().id(2L).postingTags(List.of()).build(),
+                        PostingDTO.builder().id(3L).postingTags(List.of()).build()
                 ))
                 .build();
 
@@ -374,13 +351,25 @@ class PostingServiceTest {
                 testPostings
         );
 
+        when(
+                postingTagRepository.findByPostingIdIn(List.of(1L, 2L, 3L))
+        ).thenReturn(
+                List.of(
+                        PostingTag.builder()
+                                .posting(Posting.builder().id(1L).build())
+                                .tag(Tag.builder().id(1L).tagName("HELLO").build())
+                                .build()
+                )
+        );
+
+
         ListPostingsResponse got = postingService.listPostings(1L, 3L, request);
 
         ListPostingsResponse want = ListPostingsResponse.builder()
                 .postings(List.of(
-                        PostingDTO.builder().id(1L).build(),
-                        PostingDTO.builder().id(2L).build(),
-                        PostingDTO.builder().id(3L).build()
+                        PostingDTO.builder().id(1L).postingTags(List.of(PostingTagDTO.builder().tagID(1L).tagName("HELLO").build())).build(),
+                        PostingDTO.builder().id(2L).postingTags(List.of()).build(),
+                        PostingDTO.builder().id(3L).postingTags(List.of()).build()
                 ))
                 .build();
 
