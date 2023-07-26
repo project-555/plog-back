@@ -2,11 +2,14 @@ package com.plogcareers.backend.blog.domain.entity;
 
 import com.plogcareers.backend.blog.domain.model.HomePostingDTO;
 import com.plogcareers.backend.blog.domain.model.PostingDTO;
+import com.plogcareers.backend.blog.domain.model.PostingTagDTO;
 import com.plogcareers.backend.ums.domain.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Getter
@@ -66,7 +69,12 @@ public class VPosting {
     @Column(name = "summary", nullable = false)
     private String summary;
 
-    public PostingDTO toPostingDTO() {
+    public PostingDTO toPostingDTO(List<PostingTag> postingTags) {
+        List<PostingTagDTO> postingTagDTOs = new ArrayList<>();
+        if (postingTags != null && !postingTags.isEmpty()) {
+            postingTagDTOs = postingTags.stream().map(PostingTag::toPostingTagDto).toList();
+        }
+
         return PostingDTO.builder()
                 .id(this.id)
                 .title(this.title)
@@ -78,6 +86,7 @@ public class VPosting {
                 .isCommentAllowed(this.isCommentAllowed)
                 .hitCnt(this.hitCnt)
                 .starCnt(this.postingStarCount)
+                .postingTags(postingTagDTOs)
                 .thumbnailImageURL(this.thumbnailImageURL)
                 .createDt(this.createDt)
                 .updateDt(this.updateDt)

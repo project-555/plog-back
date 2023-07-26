@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -67,19 +69,33 @@ public class PostingService {
 
     public ListPostingsResponse listPostings(Long blogID, Long loginedUserID, ListPostingsRequest request) {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
-        List<PostingTag> postingTags = null;
+        List<PostingTag> searchTags = null;
         if (request.getTagIDs() != null && !request.getTagIDs().isEmpty()) {
-            postingTags = postingTagRepository.findByTag_IdIn(request.getTagIDs());
+            searchTags = postingTagRepository.findByTag_IdIn(request.getTagIDs());
         }
         List<VPosting> postings;
 
         if (blog.isOwner(loginedUserID)) {
-            postings = postingRepositorySupport.listPostingsByOwner(blogID, request.getSearch(), request.getCategoryID(), postingTags, request.getLastCursorID(), request.getPageSize());
+            postings = postingRepositorySupport.listPostingsByOwner(blogID, request.getSearch(), request.getCategoryID(), searchTags, request.getLastCursorID(), request.getPageSize());
         } else {
-            postings = postingRepositorySupport.listPostingsByUserAndGuest(blogID, request.getSearch(), request.getCategoryID(), postingTags, request.getLastCursorID(), request.getPageSize());
+            postings = postingRepositorySupport.listPostingsByUserAndGuest(blogID, request.getSearch(), request.getCategoryID(), searchTags, request.getLastCursorID(), request.getPageSize());
         }
 
-        return new ListPostingsResponse(postings.stream().map(VPosting::toPostingDTO).toList());
+        List<Long> postingIDs = postings.stream().map(VPosting::getId).toList();
+        List<PostingTag> postingTags = postingTagRepository.findByPostingIdIn(postingIDs);
+        HashMap<Long, List<PostingTag>> postingTagMap = new HashMap<>();
+
+        for (PostingTag postingTag : postingTags) {
+            if (postingTagMap.containsKey(postingTag.getPosting().getId())) {
+                postingTagMap.get(postingTag.getPosting().getId()).add(postingTag);
+            } else {
+                postingTagMap.put(postingTag.getPosting().getId(), new ArrayList<>(List.of(postingTag)));
+            }
+        }
+
+        return new ListPostingsResponse(postings.stream().map(
+                (VPosting posting) -> posting.toPostingDTO(postingTagMap.get(posting.getId()))
+        ).toList());
     }
 
     // 포스팅 태그 가져오기
