@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -51,4 +52,6 @@ public class PostingDTO {
     @ApiModelProperty(value = "포스팅의 썸네일 이미지 URL")
     private String thumbnailImageURL;
 
+    @ApiModelProperty(value = "포스팅에 포함된 태그 정볼 리스트")
+    private List<PostingTagDTO> postingTags;
 }
