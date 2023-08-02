@@ -10,8 +10,11 @@ import com.plogcareers.backend.blog.repository.CategoryRepositortySupport;
 import com.plogcareers.backend.blog.repository.CategoryRepository;
 import com.plogcareers.backend.blog.repository.TagRepository;
 import com.plogcareers.backend.ums.domain.dto.CheckBlogNameExistRequest;
+import com.plogcareers.backend.ums.domain.dto.UpdateUserProfileRequest;
+import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.exception.BlogNameDuplicatedException;
 import com.plogcareers.backend.ums.exception.NotProperAuthorityException;
+import com.plogcareers.backend.ums.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -134,6 +137,14 @@ public class BlogService {
     public GetBlogResponse getBlog(Long blogID) {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
         return blog.toGetBlogResponse();
+    }
+
+    public void updateBlogIntro(Long loginedUserID, UpdateBlogIntroRequest request) {
+        Blog blog = blogRepository.findById(request.getBlogID()).orElseThrow(BlogNotFoundException::new);
+        if (!blog.isOwner(loginedUserID)) {
+            throw new NotProperAuthorityException();
+        }
+        blogRepository.save(request.toBlogEntity(blog));
     }
 }
 

@@ -441,4 +441,22 @@ public class BlogController {
     public ResponseEntity<SResponse> getBlog(@ApiParam(value = "조회하고자 하는 블로그의 ID", example = "1") @PathVariable Long blogID) {
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(blogService.getBlog(blogID)));
     }
+
+    @ApiOperation(value = "블로그 소개 수정")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "정상 수정"),
+            @ApiResponse(code = 401, message = "잘못된 사용자 요청", response = ErrorResponse.class),
+    })
+    @PutMapping("/edit-blog-intro")
+    public ResponseEntity<SResponse> updateBlogIntro(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+                                                       @Valid @RequestBody UpdateBlogIntroRequest request,
+                                                       BindingResult result) {
+        if (result.hasErrors()) {
+            throw new InvalidParamException(result);
+        }
+        Long loginedUserID = authService.getLoginedUserID(token);
+        blogService.updateBlogIntro(loginedUserID, request);
+        return ResponseEntity.noContent().build();
+    }
+
 }

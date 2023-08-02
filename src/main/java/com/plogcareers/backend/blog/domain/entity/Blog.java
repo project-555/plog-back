@@ -2,15 +2,13 @@ package com.plogcareers.backend.blog.domain.entity;
 
 import com.plogcareers.backend.blog.domain.dto.GetBlogResponse;
 import com.plogcareers.backend.ums.domain.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Setter
 @Getter
 @Builder
 @AllArgsConstructor
@@ -33,6 +31,9 @@ public class Blog {
 
     @Column(name = "intro_html")
     private String introHTML;
+
+    @Column(name = "intro_md")
+    private String introMd;
 
     @Column(name = "create_dt")
     private LocalDateTime createDt;
