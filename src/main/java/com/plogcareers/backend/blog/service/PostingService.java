@@ -64,6 +64,9 @@ public class PostingService {
             throw new PostingNotFoundException();
         }
 
+        posting.setHitCnt(posting.getHitCnt() + 1L);
+        postingRepository.save(posting);
+
         return posting.toGetPostingResponse();
     }
 
