@@ -74,6 +74,7 @@ public class Posting {
                 .categoryID(this.categoryID)
                 .thumbnailImageUrl(this.thumbnailImageUrl)
                 .mdContent(this.mdContent)
+                .hitCnt(this.hitCnt)
                 .build();
     }
 
