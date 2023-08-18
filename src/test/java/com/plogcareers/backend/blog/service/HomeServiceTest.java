@@ -277,7 +277,7 @@ public class HomeServiceTest {
                 )
         );
         when(
-                vHotPostingRepositorySupport.listFollowingHomePostings(1L, List.of(1L, 2L, 3L), 10L)
+                vHotPostingRepositorySupport.listFollowingHomePostings(1L, List.of(1L, 2L, 3L), 10L, "")
         ).thenReturn(
                 List.of(
                         VHotPosting.builder()
@@ -299,7 +299,7 @@ public class HomeServiceTest {
                 )
         );
         // when
-        ListHomePostingsResponse got = homeService.listFollowingPostings(1L, 1L, 10L);
+        ListHomePostingsResponse got = homeService.listFollowingPostings(1L, 1L, 10L, "");
 
         ListHomePostingsResponse want = ListHomePostingsResponse.builder().homePostings(
                 List.of(
@@ -328,7 +328,7 @@ public class HomeServiceTest {
     void testListRecentPostings_1() {
         // given
         when(
-                vPostingRepositorySupport.listHomePostings(1L, 10L)
+                vPostingRepositorySupport.listHomePostings(1L, 10L, "")
         ).thenReturn(
                 List.of(
                         VPosting.builder()
@@ -350,7 +350,7 @@ public class HomeServiceTest {
                 )
         );
         // when
-        ListHomePostingsResponse got = homeService.listRecentPostings(1L, 10L);
+        ListHomePostingsResponse got = homeService.listRecentPostings(1L, 10L, "");
 
         ListHomePostingsResponse want = ListHomePostingsResponse.builder().homePostings(
                 List.of(
