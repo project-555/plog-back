@@ -222,13 +222,14 @@ class PostingServiceTest {
                         .blogID(1L)
                         .userID(1L)
                         .stateID(State.PUBLIC)
+                        .hitCnt(1L)
                         .build()
         ));
         // when
         GetPostingResponse got = postingService.getPosting(1L, 1L, 1L);
 
         // then
-        Assertions.assertEquals(got, GetPostingResponse.builder().id(1L).stateID(State.PUBLIC).build());
+        Assertions.assertEquals(got, GetPostingResponse.builder().id(1L).stateID(State.PUBLIC).hitCnt(2L).build());
     }
 
     @Test
