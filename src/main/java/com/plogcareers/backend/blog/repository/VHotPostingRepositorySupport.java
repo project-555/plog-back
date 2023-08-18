@@ -20,14 +20,16 @@ public class VHotPostingRepositorySupport extends QuerydslRepositorySupport {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public List<VHotPosting> listFollowingHomePostings(Long lastCursorID, List<Long> followingIDs, Long pageSize) {
+    public List<VHotPosting> listFollowingHomePostings(Long lastCursorID, List<Long> followingIDs, Long pageSize, String search) {
         return queryFactory.selectFrom(
                         qHotPosting
                 )
                 .where(
                         ltPostingID(lastCursorID),
                         qHotPosting.stateID.eq(State.PUBLIC),
-                        qHotPosting.blogID.in(followingIDs)
+                        qHotPosting.blogID.in(followingIDs),
+                        qHotPosting.title.upper().contains(search.toUpperCase())
+                                .or(qHotPosting.mdContent.upper().contains(search.toUpperCase()))
                 )
                 .limit(pageSize)
                 .fetch();
