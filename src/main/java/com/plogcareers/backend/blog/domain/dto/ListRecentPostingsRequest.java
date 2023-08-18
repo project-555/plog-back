@@ -5,4 +5,5 @@ import lombok.*;
 @Getter
 @Setter
 public class ListRecentPostingsRequest extends CursorPagingRequest{
+    public String search;
 }

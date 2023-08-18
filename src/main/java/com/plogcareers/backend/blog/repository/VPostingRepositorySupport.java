@@ -48,14 +48,15 @@ public class VPostingRepositorySupport extends QuerydslRepositorySupport {
                 .fetch();
     }
 
-    public List<VPosting> listHomePostings(Long lastCursorID, Long pageSize) {
+    public List<VPosting> listHomePostings(Long lastCursorID, Long pageSize, String search) {
         return queryFactory.selectFrom(
                         qPosting
                 )
                 .where(
                         ltPostingID(lastCursorID),
-                        qPosting.stateID.eq(State.PUBLIC)
-
+                        qPosting.stateID.eq(State.PUBLIC),
+                        qPosting.title.upper().contains(search.toUpperCase())
+                                .or(qPosting.mdContent.upper().contains(search.toUpperCase()))
                 )
                 .orderBy(qPosting.id.desc())
                 .limit(pageSize)
