@@ -452,7 +452,7 @@ public class BlogController {
     @PatchMapping("/{blogID}")
     public ResponseEntity<SResponse> patchBlog(@ApiIgnore @RequestHeader(name = Auth.token) String token,
                                                        @PathVariable Long blogID,
-                                                       @Valid @RequestBody PatchBlogRequest request,
+                                                       @RequestBody PatchBlogRequest request,
                                                        BindingResult result) {
         patchBlogRequestValidator.validate(request, result);
 
