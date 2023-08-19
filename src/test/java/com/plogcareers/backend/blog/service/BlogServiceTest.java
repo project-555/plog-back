@@ -1,6 +1,6 @@
 package com.plogcareers.backend.blog.service;
 
-import com.plogcareers.backend.blog.domain.dto.UpdateBlogIntroRequest;
+import com.plogcareers.backend.blog.domain.dto.PatchBlogIntroRequest;
 import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.repository.BlogRepository;
@@ -28,19 +28,19 @@ public class BlogServiceTest {
 
 
     @Test
-    @DisplayName("updateBlogIntro - 블로그가 없는 경우 테스트")
-    void testUpdateBlogIntro_1() {
+    @DisplayName("patchBlogIntro - 블로그가 없는 경우 테스트")
+    void testPatchBlogIntro_1() {
         // given
         when(
                 blogRepository.findById(1L)
         ).thenReturn(Optional.empty());
         // when + then
-        Assertions.assertThrows(BlogNotFoundException.class, () -> blogService.updateBlogIntro(1L, UpdateBlogIntroRequest.builder().blogID(1L).build()));
+        Assertions.assertThrows(BlogNotFoundException.class, () -> blogService.patchBlogIntro(1L, PatchBlogIntroRequest.builder().blogID(1L).build()));
     }
 
     @Test
-    @DisplayName("updateBlogIntro - 로그인한 유저가 블로그 주인이 아닌 경우 테스트")
-    void testUpdateBlogIntro_2() {
+    @DisplayName("patchBlogIntro - 로그인한 유저가 블로그 주인이 아닌 경우 테스트")
+    void testPatchBlogIntro_2() {
         // given
         when(
                 blogRepository.findById(1L)
@@ -48,12 +48,12 @@ public class BlogServiceTest {
                 Optional.of(Blog.builder().id(1L).user(User.builder().id(1L).build()).build())
         );
         // when + then
-        Assertions.assertThrows(NotProperAuthorityException.class, () -> blogService.updateBlogIntro(-1L, UpdateBlogIntroRequest.builder().blogID(1L).build()));
+        Assertions.assertThrows(NotProperAuthorityException.class, () -> blogService.patchBlogIntro(-1L, PatchBlogIntroRequest.builder().blogID(1L).build()));
     }
 
     @Test
-    @DisplayName("updateBlogIntro - 정상동작")
-    void testUpdateBlogIntro_3() {
+    @DisplayName("patchBlogIntro - 정상동작")
+    void testPatchBlogIntro_3() {
         // given
         when(
                 blogRepository.findById(1L)
@@ -61,7 +61,7 @@ public class BlogServiceTest {
                 Optional.of(Blog.builder().id(1L).user(User.builder().id(1L).build()).build())
         );
         // when
-        blogService.updateBlogIntro(1L, UpdateBlogIntroRequest.builder().blogID(1L).build());
+        blogService.patchBlogIntro(1L, PatchBlogIntroRequest.builder().blogID(1L).build());
 
         // then
         verify(blogRepository, times(1)).save(any());
