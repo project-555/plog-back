@@ -48,7 +48,7 @@ public class VPostingRepositorySupport extends QuerydslRepositorySupport {
                 .fetch();
     }
 
-    public List<VPosting> listHomePostings(Long lastCursorID, Long pageSize, String search) {
+    public List<VPosting> listHomePostings(String search, Long lastCursorID, Long pageSize) {
         return queryFactory.selectFrom(
                         qPosting
                 )
