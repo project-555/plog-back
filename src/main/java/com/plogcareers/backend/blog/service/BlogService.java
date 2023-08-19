@@ -136,15 +136,11 @@ public class BlogService {
         return blog.toGetBlogResponse();
     }
 
-    public void patchBlogIntro(Long loginedUserID, PatchBlogIntroRequest request) {
-        Blog blog = blogRepository.findById(request.getBlogID()).orElseThrow(BlogNotFoundException::new);
+    public void patchBlog(Long loginedUserID, Long blogID, PatchBlogRequest request) {
+        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
 
         if (!blog.isOwner(loginedUserID)) {
             throw new NotProperAuthorityException();
-        }
-
-        if (!request.isValid()) {
-            throw new InvalidParameterException();
         }
 
         blogRepository.save(request.toBlogEntity(blog));

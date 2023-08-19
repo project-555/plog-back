@@ -1,6 +1,7 @@
 package com.plogcareers.backend.blog.controller;
 
 import com.plogcareers.backend.blog.domain.dto.*;
+import com.plogcareers.backend.blog.domain.validator.PatchBlogRequestValidator;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.exception.PostingNotFoundException;
 import com.plogcareers.backend.blog.exception.TagNotFoundException;
@@ -34,6 +35,7 @@ public class BlogController {
     private final BlogService blogService;
     private final PostingService postingService;
     private final AuthService authService;
+    private final PatchBlogRequestValidator patchBlogRequestValidator;
 
     @ApiOperation(value = "Posting 생성")
     @ApiResponses(value = {
@@ -448,15 +450,18 @@ public class BlogController {
             @ApiResponse(code = 401, message = "잘못된 사용자 요청", response = ErrorResponse.class),
     })
     @PatchMapping("/{blogID}")
-    public ResponseEntity<SResponse> patchBlogIntro(@ApiIgnore @RequestHeader(name = Auth.token) String token,
-                                                       @Valid @RequestBody PatchBlogIntroRequest request,
+    public ResponseEntity<SResponse> patchBlog(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+                                                       @PathVariable Long blogID,
+                                                       @Valid @RequestBody PatchBlogRequest request,
                                                        BindingResult result) {
+        patchBlogRequestValidator.validate(request, result);
+
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
 
         Long loginedUserID = authService.getLoginedUserID(token);
-        blogService.patchBlogIntro(loginedUserID, request);
+        blogService.patchBlog(loginedUserID, blogID, request);
 
         return ResponseEntity.noContent().build();
     }
