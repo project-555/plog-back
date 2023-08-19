@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Builder
 @Getter
-public class UpdateBlogIntroRequest {
+public class PatchBlogIntroRequest {
     @NotNull
     @ApiModelProperty(value = "정보를 수정할 블로그 ID")
     private Long blogID;
@@ -27,10 +27,24 @@ public class UpdateBlogIntroRequest {
     @ApiModelProperty(value = "블로그 소개 markdown")
     private String introMd;
 
+    public Boolean isValid() {
+        if ((this.introHTML != null && this.introMd != null) || (this.introHTML == null && this.introMd == null)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public Blog toBlogEntity(Blog blog) {
-        blog.setShortIntro(this.shortIntro);
-        blog.setIntroHTML(this.introHTML);
-        blog.setIntroMd(this.introMd);
+        if (this.shortIntro != null) {
+            blog.setShortIntro(this.shortIntro);
+        }
+
+        if (this.introHTML != null && this.introMd != null) {
+            blog.setIntroHTML(this.introHTML);
+            blog.setIntroMd(this.introMd);
+        }
+
         return blog;
     }
 }
