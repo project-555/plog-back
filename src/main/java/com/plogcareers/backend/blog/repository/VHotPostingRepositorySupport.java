@@ -20,7 +20,7 @@ public class VHotPostingRepositorySupport extends QuerydslRepositorySupport {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public List<VHotPosting> listFollowingHomePostings(Long lastCursorID, List<Long> followingIDs, Long pageSize, String search) {
+    public List<VHotPosting> listFollowingHomePostings(List<Long> followingIDs, String search, Long lastCursorID, Long pageSize) {
         return queryFactory.selectFrom(
                         qHotPosting
                 )
