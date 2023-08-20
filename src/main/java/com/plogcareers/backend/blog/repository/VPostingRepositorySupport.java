@@ -1,6 +1,7 @@
 package com.plogcareers.backend.blog.repository;
 
 import com.plogcareers.backend.blog.domain.entity.*;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -21,47 +22,58 @@ public class VPostingRepositorySupport extends QuerydslRepositorySupport {
     }
 
     public List<VPosting> listPostingsByOwner(Long blogID, String search, Long categoryID, List<PostingTag> postingTags, Long lastCursorID, Long pageSize) {
-        return queryFactory.selectFrom(qPosting).where(
-                        qPosting.blogID.eq(blogID),
-                        titleContains(search),
-                        mdContentContains(search),
-                        postingTagIn(postingTags),
-                        categoryIDEq(categoryID),
-                        ltPostingID(lastCursorID)
-                ).limit(pageSize)
+        BooleanBuilder where = new BooleanBuilder();
+
+        where.and(qPosting.blogID.eq(blogID));
+        where.and(postingTagIn(postingTags));
+        where.and(categoryIDEq(categoryID));
+        where.and(ltPostingID(lastCursorID));
+
+        if (search != null && !search.trim().isEmpty()) {
+            where.and(titleContains(search).or(mdContentContains(search)));
+        }
+
+        return queryFactory.selectFrom(qPosting).where(where).limit(pageSize)
                 .orderBy(qPosting.id.desc())
                 .fetch();
     }
 
     public List<VPosting> listPostingsByUserAndGuest(Long blogID, String search, Long categoryID, List<PostingTag> postingTags, Long lastCursorID, Long pageSize) {
+        BooleanBuilder where = new BooleanBuilder();
+
+        where.and(qPosting.blogID.eq(blogID));
+        where.and(postingTagIn(postingTags));
+        where.and(categoryIDEq(categoryID));
+        where.and(ltPostingID(lastCursorID));
+        where.and(qPosting.stateID.eq(State.PUBLIC));
+
+        if (search != null && !search.trim().isEmpty()) {
+            where.and(titleContains(search).or(mdContentContains(search)));
+        }
+
         return queryFactory.selectFrom(qPosting)
-                .where(
-                        qPosting.blogID.eq(blogID),
-                        titleContains(search),
-                        mdContentContains(search),
-                        postingTagIn(postingTags),
-                        categoryIDEq(categoryID),
-                        qPosting.stateID.eq(State.PUBLIC),
-                        ltPostingID(lastCursorID)
-                ).limit(pageSize)
+                .where(where).limit(pageSize)
                 .orderBy(qPosting.id.desc())
                 .fetch();
     }
 
     public List<VPosting> listHomePostings(String search, Long lastCursorID, Long pageSize) {
-        return queryFactory.selectFrom(
-                        qPosting
-                )
-                .where(
-                        ltPostingID(lastCursorID),
-                        qPosting.stateID.eq(State.PUBLIC),
-                        qPosting.title.upper().contains(search.toUpperCase())
-                                .or(qPosting.mdContent.upper().contains(search.toUpperCase()))
-                )
+        BooleanBuilder where = new BooleanBuilder();
+
+        where.and(ltPostingID(lastCursorID));
+        where.and(qPosting.stateID.eq(State.PUBLIC));
+
+        if (search != null && !search.trim().isEmpty()) {
+            where.and(titleContains(search).or(mdContentContains(search)));
+        }
+
+        return queryFactory.selectFrom(qPosting)
+                .where(where)
                 .orderBy(qPosting.id.desc())
                 .limit(pageSize)
                 .fetch();
     }
+
 
     private BooleanExpression ltPostingID(Long cursorID) {
         if (cursorID == null) {
@@ -79,12 +91,11 @@ public class VPostingRepositorySupport extends QuerydslRepositorySupport {
     }
 
     private BooleanExpression titleContains(String title) {
-
-        return title != null ? qPosting.title.contains(title) : null;
+        return qPosting.title.upper().contains(title.toUpperCase());
     }
 
     private BooleanExpression mdContentContains(String mdContent) {
-        return mdContent != null ? qPosting.mdContent.contains(mdContent) : null;
+        return qPosting.mdContent.upper().contains(mdContent.toUpperCase());
     }
 
     private BooleanExpression categoryIDEq(Long categoryID) {
