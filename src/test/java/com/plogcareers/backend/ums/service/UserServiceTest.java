@@ -64,7 +64,8 @@ public class UserServiceTest {
                 List.of(Blog.builder()
                         .blogName("blogName")
                         .shortIntro("shortIntro")
-                        .introHTML("introHtml")
+                        .introHTML("introHTML")
+                        .introMd("introMd")
                         .build())
         );
         // when
@@ -76,7 +77,8 @@ public class UserServiceTest {
                                                     .profileImageURL("profileImageUrl")
                                                     .blogName("blogName")
                                                     .shortIntro("shortIntro")
-                                                    .introHTML("introHtml")
+                                                    .introHTML("introHTML")
+                                                    .introMd("introMd")
                                                     .build();
         // then
         Assertions.assertEquals(got, want);

@@ -27,4 +27,7 @@ public class GetUserResponse {
 
     @ApiModelProperty(value = "블로그 소개 HTML")
     private String introHTML;
+
+    @ApiModelProperty(value = "블로그 소개 Md")
+    private String introMd;
 }

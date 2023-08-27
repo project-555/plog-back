@@ -129,6 +129,7 @@ public class User implements UserDetails {
                 .blogName(blog.getBlogName())
                 .shortIntro(blog.getShortIntro())
                 .introHTML(blog.getIntroHTML())
+                .introMd(blog.getIntroMd())
                 .build();
     }
 

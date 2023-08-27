@@ -63,7 +63,7 @@ public class Blog {
                 .blogName(this.blogName)
                 .blogUser(this.user.toBlogUserDTO())
                 .shortIntro(this.shortIntro)
-                .introHtml(this.introHTML)
+                .introHTML(this.introHTML)
                 .build();
     }
 }
