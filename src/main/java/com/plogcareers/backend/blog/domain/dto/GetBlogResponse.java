@@ -18,5 +18,5 @@ public class GetBlogResponse {
     @ApiModelProperty(value = "블로그 짧은 소개글")
     private String shortIntro;
     @ApiModelProperty(value = "블로그 소개 HTML")
-    private String introHtml;
+    private String introHTML;
 }
