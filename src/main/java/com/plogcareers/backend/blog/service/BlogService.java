@@ -51,19 +51,34 @@ public class BlogService {
     }
 
     @Transactional
-    public void updateCategory(Long blogID, Long loginedUserID, @NotNull UpdateCategoryRequest request) throws BlogNotFoundException, CategoryNotFoundException, NotProperAuthorityException {
-        Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
-        Category category = categoryRepository.findById(request.getId()).orElseThrow(CategoryNotFoundException::new);
-        if (!blog.isOwner(loginedUserID)) {
+    public void patchCategory(UpdateCategoryRequest request) throws BlogNotFoundException, CategoryNotFoundException, NotProperAuthorityException {
+        // 블로그, 카테고리 존재 체크
+        Blog blog = blogRepository.findById(request.getBlogID()).orElseThrow(BlogNotFoundException::new);
+        Category category = categoryRepository.findById(request.getCategoryID()).orElseThrow(CategoryNotFoundException::new);
+
+        // 권한 체크
+        if (!blog.isOwner(request.getLoginedUserID())) {
             throw new NotProperAuthorityException();
         }
-        if (!category.isOwner(loginedUserID)) {
+        if (!category.isOwner(request.getLoginedUserID())) {
             throw new CategoryBlogMismatchedException();
         }
-        if (categoryRepositortySupport.existsDuplicatedCategory(blogID, request.getId(), request.getCategoryName())) {
+
+        // 카테고리 중복 체크
+        if (categoryRepositortySupport.existsDuplicatedCategory(request.getBlogID(), request.getCategoryID(), request.getCategoryName())) {
             throw new CategoryDuplicatedException();
         }
-        categoryRepository.save(request.toCategoryEntity(category, blog));
+
+        // 파라미터의 값이 없으면 기존 값을 유지한다.
+        if (request.getCategoryName() != null && !request.getCategoryName().isEmpty()) {
+            category.setCategoryName(request.getCategoryName());
+        }
+        if (request.getCategoryDesc() != null && !request.getCategoryDesc().isEmpty()) {
+            category.setCategoryDesc(request.getCategoryDesc());
+        }
+
+        // 카테고리 저장
+        categoryRepository.save(category);
     }
 
     @Transactional

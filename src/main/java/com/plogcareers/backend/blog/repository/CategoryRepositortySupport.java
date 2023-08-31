@@ -2,6 +2,7 @@ package com.plogcareers.backend.blog.repository;
 
 import com.plogcareers.backend.blog.domain.entity.Category;
 import com.plogcareers.backend.blog.domain.entity.QCategory;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
@@ -19,9 +20,16 @@ public class CategoryRepositortySupport extends QuerydslRepositorySupport {
     }
 
     public Boolean existsDuplicatedCategory(Long blogID, Long categoryID, String categoryName) {
-        Category dupCategory = queryFactory.selectFrom(qCategory)
-                .where(qCategory.blog.id.eq(blogID).and(qCategory.categoryName.eq(categoryName)))
-                .fetchFirst();
+        if (categoryName == null || categoryName.trim().isEmpty()) {
+            return false;
+        }
+        BooleanBuilder where = new BooleanBuilder();
+
+        where.and(qCategory.blog.id.eq(blogID));
+        where.and(qCategory.categoryName.eq(categoryName));
+
+
+        Category dupCategory = queryFactory.selectFrom(qCategory).where(where).fetchFirst();
 
         if (dupCategory == null) {
             return false;
@@ -29,5 +37,4 @@ public class CategoryRepositortySupport extends QuerydslRepositorySupport {
 
         return !dupCategory.getId().equals(categoryID);
     }
-
 }
