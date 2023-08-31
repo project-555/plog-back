@@ -3,7 +3,7 @@ package com.plogcareers.backend.ums.domain.dto;
 import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.domain.entity.UserRole;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -28,41 +28,41 @@ enum Sex {
 @Getter
 @NoArgsConstructor
 public class UserJoinRequest {
-    @ApiParam(value = "회원가입 할 이메일")
+    @ApiModelProperty(value = "회원가입 할 이메일")
     @NotNull
     @Email
     private String email;
 
-    @ApiParam(value = "이메일 인증 후 얻은 토큰")
+    @ApiModelProperty(value = "이메일 인증 후 얻은 토큰")
     private String verifyToken;
 
     @NotNull
-    @ApiParam(value = "회원가입 할 비밀번호")
+    @ApiModelProperty(value = "회원가입 할 비밀번호")
     private String password;
 
     @NotNull
     @Length(min = 1, max = 30)
-    @ApiParam(value = "회원가입 할 이름")
+    @ApiModelProperty(value = "회원가입 할 이름")
     private String firstName;
 
     @NotNull
     @Length(min = 1, max = 20)
-    @ApiParam(value = "회원가입 할 성")
+    @ApiModelProperty(value = "회원가입 할 성")
     private String lastName;
 
     @NotNull
     @Length(min = 1, max = 30)
-    @ApiParam(value = "회원가입 할 닉네임")
+    @ApiModelProperty(value = "회원가입 할 닉네임")
     private String nickName;
 
     @NotNull
     @Past
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @ApiParam(value = "생년월일")
+    @ApiModelProperty(value = "생년월일")
     private LocalDate birth;
 
     @NotNull
-    @ApiParam(value = "성별", allowableValues = "FEMALE,MALE")
+    @ApiModelProperty(value = "성별", allowableValues = "FEMALE,MALE")
     private Sex sex;
 
 
