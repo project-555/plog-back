@@ -131,7 +131,7 @@ public class AuthController {
     })
 
     @PutMapping("/edit-profile")
-    public ResponseEntity<SResponse> updateUserProfile(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+    public ResponseEntity<SResponse> updateUserProfile(@ApiIgnore @RequestHeader(name = Auth.TOKEN) String token,
                                                        @Valid @RequestBody UpdateUserProfileRequest request,
                                                        BindingResult result) {
         if (result.hasErrors()) {
@@ -150,7 +150,7 @@ public class AuthController {
     })
 
     @PutMapping("/edit-password")
-    public ResponseEntity<SResponse> updateUserPassword(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+    public ResponseEntity<SResponse> updateUserPassword(@ApiIgnore @RequestHeader(name = Auth.TOKEN) String token,
                                                         @Valid @RequestBody UpdateUserPasswordRequest request,
                                                         BindingResult result) {
         if (result.hasErrors()) {
@@ -169,7 +169,7 @@ public class AuthController {
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PostMapping("/exit-user")
-    public ResponseEntity<SResponse> exitUser(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+    public ResponseEntity<SResponse> exitUser(@ApiIgnore @RequestHeader(name = Auth.TOKEN) String token,
                                               @Valid @RequestBody ExitUserRequest request) {
         Long loginedUserID = authService.getLoginedUserID(token);
         authService.exitUser(loginedUserID, request);
@@ -182,7 +182,7 @@ public class AuthController {
             @ApiResponse(code = 401, message = "잘못된 사용자 요청", response = ErrorResponse.class)
     })
     @PostMapping("/refresh-access-token")
-    public ResponseEntity<SResponse> refreshToken(@ApiIgnore @RequestHeader(name = Auth.token) String token) {
+    public ResponseEntity<SResponse> refreshToken(@ApiIgnore @RequestHeader(name = Auth.TOKEN) String token) {
         Long loginedUserID = authService.getLoginedUserID(token);
         RefreshAccessTokenResponse newToken = authService.refreshAccessToken(loginedUserID);
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(newToken));

@@ -38,7 +38,7 @@ public class HomeController {
     )
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/subscribes")
-    public ResponseEntity<SResponse> createSubscribe(@ApiIgnore @RequestHeader(name = Auth.token) String token,
+    public ResponseEntity<SResponse> createSubscribe(@ApiIgnore @RequestHeader(name = Auth.TOKEN) String token,
                                                      @Valid @RequestBody CreateSubscribeRequest request,
                                                      BindingResult result) throws BlogNotFoundException {
         if (result.hasErrors()) {
@@ -60,7 +60,7 @@ public class HomeController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/subscribes/{subscribeID}")
     public ResponseEntity<SResponse> deleteSubscribe(@PathVariable Long subscribeID,
-                                                     @ApiIgnore @RequestHeader(name = Auth.token) String token
+                                                     @ApiIgnore @RequestHeader(name = Auth.TOKEN) String token
     ) throws BlogNotFoundException {
         Long loginedUserID = authService.getLoginedUserID(token);
         homeService.deleteSubscribe(subscribeID, loginedUserID);
@@ -86,7 +86,7 @@ public class HomeController {
             @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)}
     )
     @GetMapping("/following-postings")
-    public ResponseEntity<SDataResponse<ListHomePostingsResponse>> listFollowingPostings(@ApiIgnore @RequestHeader(name = Auth.token, required = false) String token,
+    public ResponseEntity<SDataResponse<ListHomePostingsResponse>> listFollowingPostings(@ApiIgnore @RequestHeader(name = Auth.TOKEN, required = false) String token,
                                                                                          ListFollowingPostingsRequest request) {
         Long loginedUserID = authService.getLoginedUserID(token);
         return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(homeService.listFollowingPostings(loginedUserID, request.getSearch(), request.getLastCursorID(), request.getPageSize())));
