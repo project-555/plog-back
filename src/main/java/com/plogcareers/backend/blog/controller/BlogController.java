@@ -133,6 +133,20 @@ public class BlogController {
 
     }
 
+    @ApiOperation("Posting 카운트 조회")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "정상 조회(data)", response = CountPostingsResponse.class),
+            @ApiResponse(code = 299, message = "정상 조회(outer)", response = SDataResponse.class),
+            @ApiResponse(code = 404, message = "자원 없음. (상세 내용은 에러 메시지 참조)", response = ErrorResponse.class),
+            @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
+    })
+    @GetMapping("/{blogID}/postings/count")
+    public ResponseEntity<SResponse> countPosting(@PathVariable Long blogID, CountPostingsRequest request) {
+        request.setBlogID(blogID);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(postingService.countPostings(request)));
+    }
+
     @ApiOperation(value = "State 전체조회")
     @ApiResponses(
             @ApiResponse(code = 200, message = "정삭 동작 시")

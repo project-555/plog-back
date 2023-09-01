@@ -1,9 +1,6 @@
 package com.plogcareers.backend.blog.service;
 
-import com.plogcareers.backend.blog.domain.dto.CreatePostingRequest;
-import com.plogcareers.backend.blog.domain.dto.GetPostingResponse;
-import com.plogcareers.backend.blog.domain.dto.ListPostingsRequest;
-import com.plogcareers.backend.blog.domain.dto.ListPostingsResponse;
+import com.plogcareers.backend.blog.domain.dto.*;
 import com.plogcareers.backend.blog.domain.entity.*;
 import com.plogcareers.backend.blog.domain.model.PostingDTO;
 import com.plogcareers.backend.blog.domain.model.PostingTagDTO;
@@ -375,5 +372,33 @@ class PostingServiceTest {
                 .build();
 
         Assertions.assertEquals(got, want);
+    }
+
+    @Test
+    @DisplayName("updatePosting - 블로그가 없는 경우")
+    void countPosting_1() {
+        // given
+        when(blogRepository.existsById(1L)).thenReturn(false);
+
+        // when + then
+        Assertions.assertThrows(BlogNotFoundException.class, () -> postingService.countPostings(CountPostingsRequest.builder().blogID(1L).build()));
+    }
+
+    @Test
+    @DisplayName("정상 동작 시")
+    void countPostings_2() {
+        // given
+        when(blogRepository.existsById(1L)).thenReturn(true);
+        when(postingRepositorySupport.countPostings(1L, "test_search", List.of(1L, 2L, 3L))).thenReturn(1L);
+
+        // when
+        CountPostingsResponse got = postingService.countPostings(CountPostingsRequest.builder()
+                .blogID(1L)
+                .categoryIDs(List.of(1L, 2L, 3L))
+                .search("test_search")
+                .build());
+
+        // then
+        Assertions.assertEquals(CountPostingsResponse.builder().count(1L).build(), got);
     }
 }
