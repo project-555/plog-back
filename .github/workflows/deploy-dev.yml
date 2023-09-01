@@ -2,7 +2,10 @@ name: Deploy Development
 on:
   push:
     branches: [ main ]
-
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: '특정 Branch 배포'
 jobs:
   build:
     runs-on: ubuntu-latest
