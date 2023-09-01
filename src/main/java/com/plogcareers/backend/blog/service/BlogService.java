@@ -100,7 +100,7 @@ public class BlogService {
 
         return tagRepository.save(request.toTagEntity(blogID)).toCreateTagResponse();
     }
-
+    
     public void updateTag(Long blogID, Long tagID, Long loginedUserID, UpdateTagRequest request) {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
         if (!blog.isOwner(loginedUserID)) {

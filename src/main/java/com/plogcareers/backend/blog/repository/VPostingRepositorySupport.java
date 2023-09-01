@@ -74,6 +74,23 @@ public class VPostingRepositorySupport extends QuerydslRepositorySupport {
                 .fetch();
     }
 
+    public Long countPostings(Long blogID, String search, List<Long> categoryIDs) {
+        BooleanBuilder where = new BooleanBuilder();
+
+
+        where.and(qPosting.blogID.eq(blogID));
+        if (categoryIDs != null && !categoryIDs.isEmpty())
+            where.and(categoryIDIn(categoryIDs));
+        if (search != null && !search.trim().isEmpty())
+            where.and(titleContains(search).or(mdContentContains(search)));
+
+
+        return queryFactory.select(qPosting.count())
+                .from(qPosting)
+                .where(where)
+                .fetchOne();
+    }
+
 
     private BooleanExpression ltPostingID(Long cursorID) {
         if (cursorID == null) {
@@ -101,4 +118,9 @@ public class VPostingRepositorySupport extends QuerydslRepositorySupport {
     private BooleanExpression categoryIDEq(Long categoryID) {
         return categoryID != null ? qPosting.categoryID.eq(categoryID) : null;
     }
+
+    private BooleanExpression categoryIDIn(List<Long> categoryIDs) {
+        return categoryIDs != null && !categoryIDs.isEmpty() ? qPosting.categoryID.in(categoryIDs) : null;
+    }
+
 }

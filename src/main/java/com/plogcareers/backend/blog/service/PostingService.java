@@ -101,6 +101,16 @@ public class PostingService {
         ).toList());
     }
 
+    public CountPostingsResponse countPostings(CountPostingsRequest request) throws BlogNotFoundException {
+        if (!blogRepository.existsById(request.getBlogID())) {
+            throw new BlogNotFoundException();
+        }
+
+        Long count = postingRepositorySupport.countPostings(request.getBlogID(), request.getSearch(), request.getCategoryIDs());
+
+        return new CountPostingsResponse(count);
+    }
+
     // 포스팅 태그 가져오기
     public ListPostingTagResponse listPostingTags(Long blogID, Long postingID) throws PostingNotFoundException {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
