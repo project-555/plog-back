@@ -126,6 +126,7 @@ public class User implements UserDetails {
                 .email(this.email)
                 .nickname(this.nickname)
                 .profileImageURL(this.profileImageURL)
+                .blogID(blog.getId())
                 .blogName(blog.getBlogName())
                 .shortIntro(blog.getShortIntro())
                 .introHTML(blog.getIntroHTML())
