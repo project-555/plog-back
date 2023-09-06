@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Start Backend" type="CompoundRunConfigurationType">
+    <toRun name="RDS SSH TUNNEL" type="MAKEFILE_TARGET_RUN_CONFIGURATION" />
+    <toRun name="Redis SSH TUNNEL" type="MAKEFILE_TARGET_RUN_CONFIGURATION" />
+    <toRun name="BackendApplication" type="SpringBootApplicationConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>

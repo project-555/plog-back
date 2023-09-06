@@ -158,3 +158,6 @@ gradle-app.setting
 # VS Code
 /.vscode/**
 .DS_Store
+
+# Local Config
+/src/main/resources/application-local.yml
