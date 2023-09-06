@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -32,7 +32,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("getUser - 유저가 없는 경우 테스트")
-    void testGetUser_1(){
+    void testGetUser_1() {
         // given
         when(
                 userRepository.findById(-1L)
@@ -45,7 +45,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("getUser - 정상동작")
-    void testGetUser_2(){
+    void testGetUser_2() {
         User testUser = User.builder()
                 .id(1L)
                 .email("email")
@@ -62,6 +62,7 @@ public class UserServiceTest {
                 blogRepository.findByUser(testUser)
         ).thenReturn(
                 List.of(Blog.builder()
+                        .id(1L)
                         .blogName("blogName")
                         .shortIntro("shortIntro")
                         .introHTML("introHTML")
@@ -72,14 +73,15 @@ public class UserServiceTest {
         GetUserResponse got = userService.getUser(1L);
 
         GetUserResponse want = GetUserResponse.builder()
-                                                    .email("email")
-                                                    .nickname("nickname")
-                                                    .profileImageURL("profileImageUrl")
-                                                    .blogName("blogName")
-                                                    .shortIntro("shortIntro")
-                                                    .introHTML("introHTML")
-                                                    .introMd("introMd")
-                                                    .build();
+                .email("email")
+                .nickname("nickname")
+                .profileImageURL("profileImageUrl")
+                .blogID(1L)
+                .blogName("blogName")
+                .shortIntro("shortIntro")
+                .introHTML("introHTML")
+                .introMd("introMd")
+                .build();
         // then
         Assertions.assertEquals(got, want);
     }

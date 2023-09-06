@@ -19,6 +19,9 @@ public class GetUserResponse {
     @ApiModelProperty(value = "프로필 이미지 URL")
     private String profileImageURL;
 
+    @ApiModelProperty(value = "블로그 ID")
+    private Long blogID;
+
     @ApiModelProperty(value = "블로그 제목")
     private String blogName;
 
