@@ -32,4 +32,14 @@ public class CommonController {
         UploadFileResponse response = fileService.uploadFile(request);
         return ResponseEntity.ok().body(new SDataResponse<>(response));
     }
+
+    @ApiOperation(value = "AWS Pre-Signed URL 생성", notes = "Pre-Signed URL을 생성합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Pre-Signed URL 생성 성공", response = GeneratePreSignedURLResponse.class),
+            @ApiResponse(code = 400, message = "Pre-Signed URL 생성 실패", response = ErrorResponse.class)
+    })
+    @PostMapping("/generate-presigned-url")
+    public ResponseEntity<GeneratePreSignedURLResponse> generatePreSignedURL(@RequestBody GeneratePreSignedURLRequest request) {
+        return ResponseEntity.ok().body(fileService.generatePreSignedURL(request));
+    }
 }
