@@ -1,8 +1,8 @@
 package com.plogcareers.backend.ums.repository;
 
 import com.plogcareers.backend.ums.domain.entity.EmailVerifyCode;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.keyvalue.repository.KeyValueRepository;
 
-public interface EmailVerifyCodeRepository extends CrudRepository<EmailVerifyCode, String> {
+public interface EmailVerifyCodeRepository extends KeyValueRepository<EmailVerifyCode, String> {
 
 }
