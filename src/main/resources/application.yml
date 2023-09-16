@@ -1,5 +1,7 @@
 # Postgresql
 spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -45,3 +47,7 @@ spring:
 spring:
   profiles:
     active: dev
+---
+spring:
+  profiles:
+    active: test

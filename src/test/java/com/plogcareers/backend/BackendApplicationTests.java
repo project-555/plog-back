@@ -6,7 +6,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
 @SpringBootTest
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 class BackendApplicationTests {
 
 	@Test
