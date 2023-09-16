@@ -160,4 +160,4 @@ gradle-app.setting
 .DS_Store
 
 # Local Config
-/src/main/resources/application-local.yml
+/src/main/resources/application-local.yaml
