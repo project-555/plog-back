@@ -160,4 +160,5 @@ gradle-app.setting
 .DS_Store
 
 # Local Config
-/src/main/resources/application-local.yaml
+/src/main/resources/application*
+/.fastRequest/**
