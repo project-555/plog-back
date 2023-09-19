@@ -12,43 +12,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install OVPN
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Fetch application.yaml from AWS SecretsManager
         run: |
-          sudo apt update
-          sudo apt install -y openvpn openvpn-systemd-resolved
+          SECRET=$(aws secretsmanager get-secret-value --secret-id ${{ secrets.APPLICATION_SECRET_NAME }} | jq -r '.SecretString')
+          echo "$SECRET" > src/main/resources/application.yaml
 
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '18'
-          cache: 'gradle'
-
-      - name: Build Gradle
+      - name: Fetch application-dev.yaml from AWS SecretsManager
         run: |
-          ./gradlew build --stacktrace -x test
+          SECRET=$(aws secretsmanager get-secret-value --secret-id ${{ secrets.APPLICATION_DEV_SECRET_NAME }} | jq -r '.SecretString')
+          echo "$SECRET" > src/main/resources/application-dev.yaml
 
-      - name: Connect to VPN
-        uses: "kota65535/github-openvpn-connect-action@v2"
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
         with:
-          config_file: ./config/vpn-config.ovpn
+          registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: SCP Action
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          source: "./build/libs/backend-0.0.1-SNAPSHOT.jar"
-          target: "snapshots"
-
-      - name: SSH Action
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            fuser -k -n tcp 8080
-            nohup java -jar ./snapshots/build/libs/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev 1>/dev/null 2>&1 &
-            sudo service nginx restart
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: plog-back
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG

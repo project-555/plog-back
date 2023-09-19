@@ -6,6 +6,10 @@ plugins {
     id 'jacoco'
 }
 
+springBoot {
+    mainClass = 'com.plogcareers.backend.BackendApplication'
+}
+
 group = 'com.plogcareers'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '18'
