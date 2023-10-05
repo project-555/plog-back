@@ -10,7 +10,10 @@ env:
   ECR_REPOSITORY: plog-back
   ECS_CONTAINER: plog-back
   ECS_TASK: plog-back-task-family
-  
+  ECS_CLUSTER: plog-cluster
+  ECS_SERVICE: plog-api
+  ENVIRONMENT: dev
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -53,25 +56,25 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Download task definition
-        run: aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK }} --query taskDefinition > task-definition.json
+      - name: Download Task Definition
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK }} --query "taskDefinition" > current-task-def.json
+          cat current-task-def.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-definition.json
+          task-definition: current-task-def.json
           container-name: ${{ env.ECS_CONTAINER }}
           image: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           environment-variables: |
-            AWS_REGION=ap-northeast-2
-            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }}
-            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_KEY }}
+            SPRING_PROFILES_ACTIVE=${{ env.ENVIRONMENT }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          cluster: plog-cluster
-          service: plog-api
+          cluster: ${{ env.ECS_CLUSTER }}
+          service: ${{ env.ECS_SERVICE }}
           wait-for-service-stability: true
