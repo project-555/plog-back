@@ -4,6 +4,13 @@ on:
     inputs:
       branch:
         description: '특정 Branch 배포'
+env:
+  IMAGE_TAG: ${{ github.sha }}
+  ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
+  ECR_REPOSITORY: plog-back
+  ECS_CONTAINER: plog-back
+  ECS_TASK: plog-back-task-family
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,7 +40,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
         with:
-          registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
+          registry: ${{ env.ECR_REGISTRY }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -41,7 +48,30 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: plog-back
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Download task definition
+        run: aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK }} --query taskDefinition > task-definition.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.ECS_CONTAINER }}
+          image: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          environment-variables: |
+            AWS_REGION=ap-northeast-2
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_KEY }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          cluster: plog-cluster
+          service: plog-api
+          wait-for-service-stability: true
