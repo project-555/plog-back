@@ -10,6 +10,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @EqualsAndHashCode
 public class ListHomePostingsResponse {
     List<HomePostingDTO> homePostings;

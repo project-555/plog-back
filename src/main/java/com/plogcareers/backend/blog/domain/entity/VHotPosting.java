@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @Table(name = "v_hot_posting", schema = "plog_blog")
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class VHotPosting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

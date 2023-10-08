@@ -18,6 +18,7 @@ import java.util.List;
 @Table(name = "v_posting", schema = "plog_blog")
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class VPosting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

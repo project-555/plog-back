@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @ToString
+@EqualsAndHashCode
 @Entity
 @Table(schema = "plog_ums", name = "user")
 public class User implements UserDetails {

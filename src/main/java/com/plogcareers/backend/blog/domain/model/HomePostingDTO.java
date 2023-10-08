@@ -26,7 +26,7 @@ public class HomePostingDTO {
 
     @ApiModelProperty(value = "HTML 내용", required = true, example = "<p>HTML 내용</p>")
     private String htmlContent;
-    
+
     @ApiModelProperty(value = "포스팅 썸네일 이미지 URL", example = "https://plogcareers.com/thumbnail.png")
     private String thumbnailImageURL;
 

@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
+@EqualsAndHashCode
 @Table(name = "blog", schema = "plog_blog")
 public class Blog {
     @Id
