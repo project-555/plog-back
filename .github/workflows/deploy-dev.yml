@@ -56,6 +56,10 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Download Task Definition
         run: |
           aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK }} --query "taskDefinition" > current-task-def.json
