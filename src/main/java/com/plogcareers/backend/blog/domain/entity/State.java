@@ -1,14 +1,12 @@
 package com.plogcareers.backend.blog.domain.entity;
 
 import com.plogcareers.backend.blog.domain.model.StateDTO;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
+@Builder
 @Table(name = "state", schema = "plog_blog")
 @Getter
 @Setter
