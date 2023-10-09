@@ -14,9 +14,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 18
-      - name: Copy Oracle Key Files
-        run: |
-          cp -r ./src/main/resources/oracle/ ~/.oci/
 
       - name: Run Test
         run: |
