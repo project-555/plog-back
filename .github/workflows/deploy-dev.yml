@@ -29,6 +29,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
+      - name: Make Directory
+        run: |
+          mkdir -p src/main/resources
+
       - name: Fetch application.yaml from AWS SecretsManager
         run: |
           SECRET=$(aws secretsmanager get-secret-value --secret-id ${{ secrets.APPLICATION_SECRET_NAME }} | jq -r '.SecretString')
