@@ -66,9 +66,6 @@ public class VPosting {
     @Column(name = "posting_star_count")
     private Long postingStarCount;
 
-    @Column(name = "summary", nullable = false)
-    private String summary;
-
     public PostingDTO toPostingDTO(List<PostingTag> postingTags) {
         List<PostingTagDTO> postingTagDTOs = new ArrayList<>();
         if (postingTags != null && !postingTags.isEmpty()) {
@@ -99,7 +96,7 @@ public class VPosting {
                 .blogID(this.blogID)
                 .homePostingUser(this.user.toHomePostingUserDTO())
                 .title(this.title)
-                .summary(this.summary)
+                .htmlContent(this.htmlContent)
                 .starCnt(this.postingStarCount)
                 .hitCnt(this.hitCnt)
                 .thumbnailImageURL(this.thumbnailImageURL)

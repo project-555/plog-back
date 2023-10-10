@@ -62,9 +62,6 @@ public class VHotPosting {
     @Column(name = "posting_star_count")
     private Long postingStarCount;
 
-    @Column(name = "summary", nullable = false)
-    private String summary;
-
     @Column(name = "star_row_num", nullable = false)
     private String starRowNum;
 
@@ -74,7 +71,7 @@ public class VHotPosting {
                 .postingID(this.id)
                 .homePostingUser(this.user.toHomePostingUserDTO())
                 .title(this.title)
-                .summary(this.summary)
+                .htmlContent(this.htmlContent)
                 .thumbnailImageURL(this.thumbnailImageURL)
                 .starCnt(this.postingStarCount)
                 .createDt(this.createDt)
