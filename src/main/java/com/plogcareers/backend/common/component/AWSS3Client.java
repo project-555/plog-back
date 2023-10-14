@@ -1,20 +1,18 @@
-package com.plogcareers.backend.common.service;
+package com.plogcareers.backend.common.component;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import com.plogcareers.backend.common.domain.dto.GeneratePreSignedURLRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import java.net.URL;
 import java.util.Date;
 import java.util.UUID;
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class S3Service {
+public class AWSS3Client {
 
     private final AmazonS3 amazonS3;
 
