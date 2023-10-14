@@ -204,7 +204,7 @@ public class BlogController {
     public ResponseEntity<Void> patchCategory(@ApiIgnore @RequestHeader(name = Auth.TOKEN) String token,
                                               @ApiParam(name = "blogID", value = "블로그 ID") @PathVariable Long blogID,
                                               @ApiParam(name = "categoryID", value = "카테고리 ID") @PathVariable Long categoryID,
-                                              @Valid @RequestBody UpdateCategoryRequest request,
+                                              @Valid @RequestBody PatchCategoryRequest request,
                                               BindingResult result) throws BlogNotFoundException, UserNotFoundException, CategoryDuplicatedException {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);

@@ -10,11 +10,11 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 
 @Repository
-public class CategoryRepositortySupport extends QuerydslRepositorySupport {
+public class CategoryRepositorySupport extends QuerydslRepositorySupport {
     private final JPAQueryFactory queryFactory;
     private final QCategory qCategory = QCategory.category;
 
-    public CategoryRepositortySupport(EntityManager entityManager) {
+    public CategoryRepositorySupport(EntityManager entityManager) {
         super(Category.class);
         this.queryFactory = new JPAQueryFactory(entityManager);
     }

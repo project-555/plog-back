@@ -2,10 +2,7 @@ package com.plogcareers.backend.blog.domain.dto;
 
 import com.plogcareers.backend.blog.domain.model.TagDTO;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,6 +10,9 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@ToString
+@EqualsAndHashCode
 public class ListTagsResponse {
     @ApiModelProperty(value = "태그 리스트")
     List<TagDTO> tags;
