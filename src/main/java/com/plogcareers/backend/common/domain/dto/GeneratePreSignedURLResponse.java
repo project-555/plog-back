@@ -7,6 +7,8 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode
+@ToString
 public class GeneratePreSignedURLResponse {
     private String preSignedURL;
 }
