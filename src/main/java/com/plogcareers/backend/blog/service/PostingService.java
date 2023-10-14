@@ -3,11 +3,11 @@ package com.plogcareers.backend.blog.service;
 import com.plogcareers.backend.blog.domain.dto.*;
 import com.plogcareers.backend.blog.domain.entity.*;
 import com.plogcareers.backend.blog.exception.*;
-import com.plogcareers.backend.blog.repository.*;
+import com.plogcareers.backend.blog.repository.postgres.*;
 import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.exception.NotProperAuthorityException;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
-import com.plogcareers.backend.ums.repository.UserRepository;
+import com.plogcareers.backend.ums.repository.postgres.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +34,7 @@ public class PostingService {
     private final CategoryRepository categoryRepository;
 
     // 글 저장
-    public Long createPosting(Long blogID, Long userID, CreatePostingRequest request) throws TagNotFoundException {
+    public CreatePostingResponse createPosting(Long blogID, Long userID, CreatePostingRequest request) throws TagNotFoundException {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
         if (!blog.isOwner(userID)) {
             throw new NotProperAuthorityException();
@@ -50,7 +50,9 @@ public class PostingService {
             postingTagRepository.saveAll(tags.stream().map(tag -> tag.toPostingTag(posting)).toList());
         }
 
-        return posting.getId();
+        return CreatePostingResponse.builder()
+                .postingID(posting.getId())
+                .build();
     }
 
     // 글 가져오기

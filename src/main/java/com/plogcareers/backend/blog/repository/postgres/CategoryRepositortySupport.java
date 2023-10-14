@@ -1,4 +1,4 @@
-package com.plogcareers.backend.blog.repository;
+package com.plogcareers.backend.blog.repository.postgres;
 
 import com.plogcareers.backend.blog.domain.entity.Category;
 import com.plogcareers.backend.blog.domain.entity.QCategory;

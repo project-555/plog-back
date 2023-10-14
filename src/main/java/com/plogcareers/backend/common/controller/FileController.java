@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("")
-@Api(tags = "Common Domain")
-public class CommonController {
+@RequestMapping("/files")
+@Api(tags = "File Domain")
+public class FileController {
     private final FileService fileService;
 
     @ApiOperation(value = "AWS Pre-Signed URL 생성", notes = "Pre-Signed URL을 생성합니다.")
