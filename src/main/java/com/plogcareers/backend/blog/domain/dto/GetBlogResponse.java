@@ -8,6 +8,8 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode
+@ToString
 public class GetBlogResponse {
     @ApiModelProperty(value = "블로그 ID")
     private Long blogID;

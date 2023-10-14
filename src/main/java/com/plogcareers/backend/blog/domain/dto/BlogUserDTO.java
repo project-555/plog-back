@@ -8,6 +8,8 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode
+@ToString
 public class BlogUserDTO {
     @ApiModelProperty(value = "블로그 주인 유저 ID")
     Long userID;

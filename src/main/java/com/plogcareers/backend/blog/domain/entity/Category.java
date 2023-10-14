@@ -12,6 +12,8 @@ import javax.persistence.*;
 @Table(name = "category", schema = "plog_blog")
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
