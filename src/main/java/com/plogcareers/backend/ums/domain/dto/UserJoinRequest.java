@@ -1,14 +1,16 @@
 package com.plogcareers.backend.ums.domain.dto;
 
 import com.plogcareers.backend.blog.domain.entity.Blog;
+import com.plogcareers.backend.ums.domain.entity.Sex;
 import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.domain.entity.UserRole;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -19,14 +21,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
-// 성별
-enum Sex {
-    MALE, FEMALE
-}
-
-
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserJoinRequest {
     @ApiModelProperty(value = "회원가입 할 이메일")
     @NotNull
@@ -53,7 +51,7 @@ public class UserJoinRequest {
     @NotNull
     @Length(min = 1, max = 30)
     @ApiModelProperty(value = "회원가입 할 닉네임")
-    private String nickName;
+    private String nickname;
 
     @NotNull
     @Past
@@ -73,14 +71,14 @@ public class UserJoinRequest {
     private String introHTML;
 
 
-    public User toUserEntity(PasswordEncoder passwordEncoder) {
+    public User toUserEntity(String encodedPassword) {
 
         return User.builder()
                 .email(this.email)
                 .firstName(firstName)
                 .lastName(this.lastName)
-                .nickname(this.nickName)
-                .password(passwordEncoder.encode(this.password))
+                .nickname(this.nickname)
+                .password(encodedPassword)
                 .sex(String.valueOf(this.sex))
                 .joinDt(LocalDateTime.now())
                 .birth(this.birth)

@@ -8,6 +8,8 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode
+@ToString
 public class VerifyFindPasswordEmailResponse {
     @ApiModelProperty(value = "비밀번호 찾고자 하는 이메일")
     private String email;
