@@ -8,6 +8,8 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
+@EqualsAndHashCode
+@ToString
 public class CreateTagResponse {
     @ApiModelProperty(value = "생성된 태그 ID")
     Long tagID;

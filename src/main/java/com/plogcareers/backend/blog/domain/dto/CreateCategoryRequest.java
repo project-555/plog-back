@@ -4,17 +4,19 @@ import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.domain.entity.Category;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 
 @Getter
 @AllArgsConstructor
+@Builder
 public class CreateCategoryRequest {
     @NotNull
     @ApiModelProperty(value = "카테고리 이름")
     private String categoryName;
-    
+
     @ApiModelProperty(value = "카테고리 설명")
     private String categoryDesc;
 

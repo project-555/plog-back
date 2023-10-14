@@ -6,8 +6,8 @@ import com.plogcareers.backend.blog.domain.entity.Category;
 import com.plogcareers.backend.blog.domain.entity.Tag;
 import com.plogcareers.backend.blog.exception.*;
 import com.plogcareers.backend.blog.repository.postgres.BlogRepository;
-import com.plogcareers.backend.blog.repository.postgres.CategoryRepositortySupport;
 import com.plogcareers.backend.blog.repository.postgres.CategoryRepository;
+import com.plogcareers.backend.blog.repository.postgres.CategoryRepositorySupport;
 import com.plogcareers.backend.blog.repository.postgres.TagRepository;
 import com.plogcareers.backend.ums.domain.dto.CheckBlogNameExistRequest;
 import com.plogcareers.backend.ums.exception.BlogNameDuplicatedException;
@@ -24,7 +24,7 @@ import java.util.List;
 public class BlogService {
     private final BlogRepository blogRepository;
     private final CategoryRepository categoryRepository;
-    private final CategoryRepositortySupport categoryRepositortySupport;
+    private final CategoryRepositorySupport categoryRepositorySupport;
     private final TagRepository tagRepository;
 
     public void createCategory(Long blogID, Long loginedUserID, @NotNull CreateCategoryRequest createCategoryRequest) throws BlogNotFoundException, CategoryDuplicatedException {
@@ -51,23 +51,24 @@ public class BlogService {
     }
 
     @Transactional
-    public void patchCategory(UpdateCategoryRequest request) throws BlogNotFoundException, CategoryNotFoundException, NotProperAuthorityException {
-        // 블로그, 카테고리 존재 체크
+    public void patchCategory(PatchCategoryRequest request) throws BlogNotFoundException, CategoryNotFoundException, NotProperAuthorityException {
+        // 블로그 가져온 후 권한 체크
         Blog blog = blogRepository.findById(request.getBlogID()).orElseThrow(BlogNotFoundException::new);
-        Category category = categoryRepository.findById(request.getCategoryID()).orElseThrow(CategoryNotFoundException::new);
-
-        // 권한 체크
         if (!blog.isOwner(request.getLoginedUserID())) {
             throw new NotProperAuthorityException();
         }
+
+        // 카테고리 가져온 후 권한 체크
+        Category category = categoryRepository.findById(request.getCategoryID()).orElseThrow(CategoryNotFoundException::new);
         if (!category.isOwner(request.getLoginedUserID())) {
             throw new CategoryBlogMismatchedException();
         }
 
         // 카테고리 중복 체크
-        if (categoryRepositortySupport.existsDuplicatedCategory(request.getBlogID(), request.getCategoryID(), request.getCategoryName())) {
+        if (request.getCategoryName() != null && !request.getCategoryName().isEmpty() && categoryRepositorySupport.existsDuplicatedCategory(request.getBlogID(), request.getCategoryID(), request.getCategoryName())) {
             throw new CategoryDuplicatedException();
         }
+
 
         // 파라미터의 값이 없으면 기존 값을 유지한다.
         if (request.getCategoryName() != null && !request.getCategoryName().isEmpty()) {
@@ -83,16 +84,20 @@ public class BlogService {
 
     @Transactional
     public void deleteCategory(Long blogID, Long categoryID, Long loginedUserID) throws BlogNotFoundException, CategoryNotFoundException {
+        // 블로그 가져온 후 권한 체크
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
-        Category category = categoryRepository.findById(categoryID).orElseThrow(CategoryNotFoundException::new);
         if (!blog.isOwner(loginedUserID)) {
             throw new NotProperAuthorityException();
         }
+
+        // 카테고리 가져온 후 권한 체크
+        Category category = categoryRepository.findById(categoryID).orElseThrow(CategoryNotFoundException::new);
         if (!category.isOwner(loginedUserID)) {
             throw new NotProperAuthorityException();
         }
 
-        categoryRepository.deleteCategoryById(categoryID);
+        // 카테고리 삭제
+        categoryRepository.delete(category);
     }
 
     public ListTagsResponse listTags(Long blogID) {
@@ -121,22 +126,35 @@ public class BlogService {
         if (!blog.isOwner(loginedUserID)) {
             throw new NotProperAuthorityException();
         }
+
         Tag tag = tagRepository.findById(tagID).orElseThrow(TagNotFoundException::new);
         if (!blog.hasTag(tag)) {
             throw new BlogTagUnmatchedException();
         }
+        if (tag.getTagName().equals(request.getTagName())) {
+            return;
+        }
+
+        if (tagRepository.existsByBlogIDAndTagName(blogID, request.getTagName()))
+            throw new TagDuplicatedException();
+
         tagRepository.save(request.toTagEntity(tag));
     }
 
     public void deleteTag(Long blogID, Long tagID, Long loginedUserID) {
+        // 블로그 가져온 후 권한 체크
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
         if (!blog.isOwner(loginedUserID)) {
             throw new NotProperAuthorityException();
         }
+
+        // 태그 가져온 후 권한 체크
         Tag tag = tagRepository.findById(tagID).orElseThrow(TagNotFoundException::new);
         if (!blog.hasTag(tag)) {
             throw new BlogTagUnmatchedException();
         }
+
+        // 태그 삭제
         tagRepository.delete(tag);
     }
 

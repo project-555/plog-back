@@ -1,16 +1,14 @@
 package com.plogcareers.backend.blog.domain.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateCategoryRequest {
+@Builder
+public class PatchCategoryRequest {
     @ApiModelProperty(hidden = true)
     private Long blogID;
     @ApiModelProperty(hidden = true)
