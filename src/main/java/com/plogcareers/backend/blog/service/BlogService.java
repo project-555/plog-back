@@ -5,10 +5,10 @@ import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.domain.entity.Category;
 import com.plogcareers.backend.blog.domain.entity.Tag;
 import com.plogcareers.backend.blog.exception.*;
-import com.plogcareers.backend.blog.repository.BlogRepository;
-import com.plogcareers.backend.blog.repository.CategoryRepositortySupport;
-import com.plogcareers.backend.blog.repository.CategoryRepository;
-import com.plogcareers.backend.blog.repository.TagRepository;
+import com.plogcareers.backend.blog.repository.postgres.BlogRepository;
+import com.plogcareers.backend.blog.repository.postgres.CategoryRepositortySupport;
+import com.plogcareers.backend.blog.repository.postgres.CategoryRepository;
+import com.plogcareers.backend.blog.repository.postgres.TagRepository;
 import com.plogcareers.backend.ums.domain.dto.CheckBlogNameExistRequest;
 import com.plogcareers.backend.ums.exception.BlogNameDuplicatedException;
 import com.plogcareers.backend.ums.exception.NotProperAuthorityException;
@@ -115,7 +115,7 @@ public class BlogService {
 
         return tagRepository.save(request.toTagEntity(blogID)).toCreateTagResponse();
     }
-    
+
     public void updateTag(Long blogID, Long tagID, Long loginedUserID, UpdateTagRequest request) {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
         if (!blog.isOwner(loginedUserID)) {

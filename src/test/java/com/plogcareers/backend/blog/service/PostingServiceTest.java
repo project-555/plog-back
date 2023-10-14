@@ -8,7 +8,7 @@ import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.exception.BlogPostingUnmatchedException;
 import com.plogcareers.backend.blog.exception.CategoryNotFoundException;
 import com.plogcareers.backend.blog.exception.PostingNotFoundException;
-import com.plogcareers.backend.blog.repository.*;
+import com.plogcareers.backend.blog.repository.postgres.*;
 import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.exception.NotProperAuthorityException;
 import org.junit.jupiter.api.Assertions;
@@ -96,12 +96,12 @@ class PostingServiceTest {
         when(postingRepository.save(any())).thenReturn(Posting.builder().id(1L).categoryID(1L).userID(1L).build());
 
         // when
-        Long got = postingService.createPosting(1L, 1L, CreatePostingRequest.builder().categoryID(1L).build());
+        CreatePostingResponse got = postingService.createPosting(1L, 1L, CreatePostingRequest.builder().categoryID(1L).build());
 
         // then
         verify(tagRepository, never()).findByIdIn(any());
         verify(postingTagRepository, never()).saveAll(any());
-        Assertions.assertEquals(1L, got);
+        Assertions.assertEquals(CreatePostingResponse.builder().postingID(1L).build(), got);
     }
 
     @Test
@@ -144,12 +144,12 @@ class PostingServiceTest {
                 )
         ).thenReturn(null);
         // when
-        Long got = postingService.createPosting(1L, 1L, CreatePostingRequest.builder().tagIDs(List.of(1L, 2L, 3L)).categoryID(1L).build());
+        CreatePostingResponse got = postingService.createPosting(1L, 1L, CreatePostingRequest.builder().tagIDs(List.of(1L, 2L, 3L)).categoryID(1L).build());
 
         // then
         verify(tagRepository, times(1)).findByIdIn(List.of(1L, 2L, 3L));
         verify(postingTagRepository, times(1)).saveAll(any());
-        Assertions.assertEquals(1L, got);
+        Assertions.assertEquals(CreatePostingResponse.builder().postingID(1L).build(), got);
     }
 
     @Test

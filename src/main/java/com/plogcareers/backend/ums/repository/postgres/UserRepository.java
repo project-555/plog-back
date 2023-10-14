@@ -1,4 +1,4 @@
-package com.plogcareers.backend.ums.repository;
+package com.plogcareers.backend.ums.repository.postgres;
 
 import com.plogcareers.backend.ums.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
