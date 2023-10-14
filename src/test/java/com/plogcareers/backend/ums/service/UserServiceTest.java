@@ -1,11 +1,11 @@
 package com.plogcareers.backend.ums.service;
 
 import com.plogcareers.backend.blog.domain.entity.Blog;
-import com.plogcareers.backend.blog.repository.BlogRepository;
+import com.plogcareers.backend.blog.repository.postgres.BlogRepository;
 import com.plogcareers.backend.ums.domain.dto.GetUserResponse;
 import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.exception.UserNotFoundException;
-import com.plogcareers.backend.ums.repository.UserRepository;
+import com.plogcareers.backend.ums.repository.postgres.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

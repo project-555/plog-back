@@ -1,16 +1,11 @@
 package com.plogcareers.backend.ums.service;
 
-import com.plogcareers.backend.ums.domain.dto.UserJoinRequest;
-import com.plogcareers.backend.ums.domain.entity.User;
-import com.plogcareers.backend.ums.domain.entity.UserRole;
-import com.plogcareers.backend.ums.repository.UserRepository;
-import com.plogcareers.backend.ums.repository.UserRoleRepository;
-import org.springframework.stereotype.Service;
-
+import com.plogcareers.backend.ums.repository.postgres.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service

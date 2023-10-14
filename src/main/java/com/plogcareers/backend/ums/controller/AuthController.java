@@ -2,8 +2,6 @@ package com.plogcareers.backend.ums.controller;
 
 import com.plogcareers.backend.blog.domain.dto.RefreshAccessTokenResponse;
 import com.plogcareers.backend.common.domain.dto.ErrorResponse;
-import com.plogcareers.backend.common.domain.dto.SDataResponse;
-import com.plogcareers.backend.common.domain.dto.SResponse;
 import com.plogcareers.backend.common.exception.InvalidParamException;
 import com.plogcareers.backend.ums.constant.Auth;
 import com.plogcareers.backend.ums.domain.dto.*;
@@ -24,7 +22,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
-@Api(tags = "UMS Domain")
+@Api(tags = "Auth Domain")
 public class AuthController {
 
     private final AuthService authService;
@@ -36,7 +34,7 @@ public class AuthController {
             @ApiResponse(code = 201, message = "회원가입 정상처리"),
             @ApiResponse(code = 400, message = "회원가입 실패", response = ErrorResponse.class)
     })
-    public ResponseEntity<SResponse> join(@Valid @RequestBody UserJoinRequest request, BindingResult result) {
+    public ResponseEntity<Void> join(@Valid @RequestBody UserJoinRequest request, BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
@@ -48,12 +46,11 @@ public class AuthController {
     @PostMapping("/login")
     @ApiOperation(value = "로그인")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "로그인 성공(data)", response = UserLoginResponse.class),
-            @ApiResponse(code = 299, message = "로그인 성공(outer)", response = SDataResponse.class),
+            @ApiResponse(code = 200, message = "로그인 성공", response = UserLoginResponse.class),
             @ApiResponse(code = 400, message = "로그인 실패", response = ErrorResponse.class)
     })
-    public ResponseEntity<SResponse> login(@RequestBody UserLoginRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(authService.login(request)));
+    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(authService.login(request));
     }
 
     @ApiOperation(value = "회원가입 이메일 인증 메일 전송")
@@ -62,7 +59,8 @@ public class AuthController {
             @ApiResponse(code = 400, message = "사용자 요청 오류", response = ErrorResponse.class)
     })
     @PostMapping("/send-verify-join-email")
-    public ResponseEntity<SResponse> sendVerifyJoinEmail(@Valid @RequestBody SendVerifyJoinEmailRequest request, BindingResult result) {
+    public ResponseEntity<Void> sendVerifyJoinEmail(@Valid @RequestBody SendVerifyJoinEmailRequest request,
+                                                    BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
@@ -76,12 +74,12 @@ public class AuthController {
             @ApiResponse(code = 400, message = "이메일 인증 실패", response = ErrorResponse.class)
     })
     @PostMapping("/verify-join-email")
-    public ResponseEntity<SResponse> verifyJoinEmail(@Valid @RequestBody VerifyJoinEmailRequest request, BindingResult result) {
+    public ResponseEntity<VerifyJoinEmailResponse> verifyJoinEmail(@Valid @RequestBody VerifyJoinEmailRequest request,
+                                                                   BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        VerifyJoinEmailResponse response = authService.verifyJoinEmail(request);
-        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(response));
+        return ResponseEntity.status(HttpStatus.OK).body(authService.verifyJoinEmail(request));
     }
 
     @ApiOperation(value = "비밀번호 찾기 인증 메일 전송")
@@ -90,7 +88,7 @@ public class AuthController {
             @ApiResponse(code = 400, message = "비밀번호 찾기 이메일 전송 실패", response = ErrorResponse.class)
     })
     @PostMapping("/send-verify-find-password-email")
-    public ResponseEntity<SResponse> sendVerifyFindPasswordEmail(@Valid @RequestBody SendVerifyFindPasswordEmailRequest request, BindingResult result) {
+    public ResponseEntity<Void> sendVerifyFindPasswordEmail(@Valid @RequestBody SendVerifyFindPasswordEmailRequest request, BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
@@ -104,12 +102,12 @@ public class AuthController {
             @ApiResponse(code = 400, message = "비밀번호 찾기 이메일 인증 실패", response = ErrorResponse.class)
     })
     @PostMapping("/verify-find-password-email")
-    public ResponseEntity<SResponse> verifyFindPasswordEmail(@Valid @RequestBody VerifyFindPasswordEmailRequest request, BindingResult result) {
+    public ResponseEntity<VerifyFindPasswordEmailResponse> verifyFindPasswordEmail(@Valid @RequestBody VerifyFindPasswordEmailRequest request, BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
-        VerifyFindPasswordEmailResponse response = authService.verifyFindPasswordEmail(request);
-        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(response));
+
+        return ResponseEntity.status(HttpStatus.OK).body(authService.verifyFindPasswordEmail(request));
     }
 
     @ApiOperation(value = "비밀번호 변경")
@@ -118,7 +116,7 @@ public class AuthController {
             @ApiResponse(code = 400, message = "비밀번호 변경 실패", response = ErrorResponse.class)
     })
     @PostMapping("/change-password")
-    public ResponseEntity<SResponse> changePassword(@RequestBody ChangePasswordRequest request) {
+    public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request) {
         authService.changePassword(request);
         return ResponseEntity.noContent().build();
     }
@@ -130,10 +128,10 @@ public class AuthController {
             @ApiResponse(code = 401, message = "잘못된 사용자 요청", response = ErrorResponse.class),
     })
 
-    @PutMapping("/edit-profile")
-    public ResponseEntity<SResponse> updateUserProfile(@ApiIgnore @RequestHeader(name = Auth.TOKEN) String token,
-                                                       @Valid @RequestBody UpdateUserProfileRequest request,
-                                                       BindingResult result) {
+    @PostMapping("/edit-profile")
+    public ResponseEntity<Void> updateUserProfile(@ApiIgnore @RequestHeader(name = Auth.TOKEN) String token,
+                                                  @Valid @RequestBody UpdateUserProfileRequest request,
+                                                  BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
@@ -149,10 +147,10 @@ public class AuthController {
             @ApiResponse(code = 401, message = "잘못된 사용자 요청", response = ErrorResponse.class)
     })
 
-    @PutMapping("/edit-password")
-    public ResponseEntity<SResponse> updateUserPassword(@ApiIgnore @RequestHeader(name = Auth.TOKEN) String token,
-                                                        @Valid @RequestBody UpdateUserPasswordRequest request,
-                                                        BindingResult result) {
+    @PostMapping("/edit-password")
+    public ResponseEntity<Void> updateUserPassword(@ApiIgnore @RequestHeader(name = Auth.TOKEN) String token,
+                                                   @Valid @RequestBody UpdateUserPasswordRequest request,
+                                                   BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result);
         }
@@ -169,11 +167,11 @@ public class AuthController {
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PostMapping("/exit-user")
-    public ResponseEntity<SResponse> exitUser(@ApiIgnore @RequestHeader(name = Auth.TOKEN) String token,
-                                              @Valid @RequestBody ExitUserRequest request) {
+    public ResponseEntity<Void> exitUser(@ApiIgnore @RequestHeader(name = Auth.TOKEN) String token,
+                                         @Valid @RequestBody ExitUserRequest request) {
         Long loginedUserID = authService.getLoginedUserID(token);
         authService.exitUser(loginedUserID, request);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     @ApiOperation(value = "엑세스 토큰 리프레시")
@@ -182,9 +180,8 @@ public class AuthController {
             @ApiResponse(code = 401, message = "잘못된 사용자 요청", response = ErrorResponse.class)
     })
     @PostMapping("/refresh-access-token")
-    public ResponseEntity<SResponse> refreshToken(@ApiIgnore @RequestHeader(name = Auth.TOKEN) String token) {
+    public ResponseEntity<RefreshAccessTokenResponse> refreshToken(@ApiIgnore @RequestHeader(name = Auth.TOKEN) String token) {
         Long loginedUserID = authService.getLoginedUserID(token);
-        RefreshAccessTokenResponse newToken = authService.refreshAccessToken(loginedUserID);
-        return ResponseEntity.status(HttpStatus.OK).body(new SDataResponse<>(newToken));
+        return ResponseEntity.status(HttpStatus.OK).body(authService.refreshAccessToken(loginedUserID));
     }
 }

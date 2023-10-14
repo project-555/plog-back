@@ -3,7 +3,7 @@ package com.plogcareers.backend.blog.service;
 import com.plogcareers.backend.blog.domain.dto.PatchBlogRequest;
 import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
-import com.plogcareers.backend.blog.repository.BlogRepository;
+import com.plogcareers.backend.blog.repository.postgres.BlogRepository;
 import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.exception.NotProperAuthorityException;
 import org.junit.jupiter.api.Assertions;
