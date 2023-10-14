@@ -1,9 +1,6 @@
 package com.plogcareers.backend.ums.domain.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
@@ -12,6 +9,8 @@ import org.springframework.data.redis.core.TimeToLive;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode
+@ToString
 @RedisHash("emailVerifyCode")
 public class EmailVerifyCode {
     @Id

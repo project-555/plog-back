@@ -8,6 +8,8 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode
+@ToString
 public class VerifyJoinEmailResponse {
     @ApiModelProperty(value = "회원가입 이메일")
     String email;

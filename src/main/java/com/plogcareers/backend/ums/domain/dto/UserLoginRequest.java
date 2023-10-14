@@ -1,16 +1,14 @@
 package com.plogcareers.backend.ums.domain.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class UserLoginRequest {
     @ApiModelProperty(value = "로그인 이메일")
     private String email;
