@@ -1,6 +1,7 @@
 package com.plogcareers.backend.ums.service;
 
 import com.plogcareers.backend.blog.domain.entity.Blog;
+import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.repository.postgres.BlogRepository;
 import com.plogcareers.backend.ums.domain.dto.GetUserResponse;
 import com.plogcareers.backend.ums.domain.entity.User;
@@ -32,7 +33,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("getUser - 유저가 없는 경우 테스트")
-    void testGetUser_1() {
+    void getUser_1() {
         // given
         when(
                 userRepository.findById(-1L)
@@ -44,8 +45,32 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("getUser - 블로그가 없는 경우")
+    void getUser_2() {
+        User testUser = User.builder()
+                .id(1L)
+                .email("email")
+                .nickname("nickname")
+                .profileImageURL("profileImageUrl")
+                .build();
+        // given
+        when(
+                userRepository.findById(1L)
+        ).thenReturn(
+                Optional.of(testUser)
+        );
+        when(
+                blogRepository.findByUser(testUser)
+        ).thenReturn(
+                List.of()
+        );
+        // when + then
+        Assertions.assertThrows(BlogNotFoundException.class, () -> userService.getUser(1L));
+    }
+
+    @Test
     @DisplayName("getUser - 정상동작")
-    void testGetUser_2() {
+    void getUser_3() {
         User testUser = User.builder()
                 .id(1L)
                 .email("email")
