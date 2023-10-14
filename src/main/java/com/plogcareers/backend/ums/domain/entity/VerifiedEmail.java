@@ -10,6 +10,8 @@ import org.springframework.data.redis.core.TimeToLive;
 @Builder
 @Getter
 @Setter
+@EqualsAndHashCode
+@ToString
 @RedisHash("verifiedEmail")
 public class VerifiedEmail {
     @Id

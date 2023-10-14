@@ -4,6 +4,8 @@ import com.plogcareers.backend.blog.domain.dto.RefreshAccessTokenResponse;
 import com.plogcareers.backend.blog.domain.entity.Blog;
 import com.plogcareers.backend.blog.exception.BlogNotFoundException;
 import com.plogcareers.backend.blog.repository.postgres.BlogRepository;
+import com.plogcareers.backend.ums.component.AuthorizationCodeCase;
+import com.plogcareers.backend.ums.component.AuthorizationCodeGenerator;
 import com.plogcareers.backend.ums.domain.dto.*;
 import com.plogcareers.backend.ums.domain.entity.EmailVerifyCode;
 import com.plogcareers.backend.ums.domain.entity.User;
@@ -16,7 +18,6 @@ import com.plogcareers.backend.ums.repository.redis.EmailVerifyCodeRepository;
 import com.plogcareers.backend.ums.repository.redis.VerifiedEmailRepository;
 import com.plogcareers.backend.ums.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -37,29 +39,34 @@ public class AuthService {
     private final JavaMailSender javaMailSender;
     private final VerifiedEmailRepository verifiedEmailRepository;
     private final BlogRepository blogRepository;
+    private final AuthorizationCodeGenerator authorizationCodeGenerator;
 
     // 회원가입
+    @Transactional
     public void join(UserJoinRequest request) {
-
         // 인증된 이메일 조회
         VerifiedEmail verifiedEmail = verifiedEmailRepository.findById(request.getEmail()).orElseThrow(VerifyEmailNotFoundException::new);
         if (!verifiedEmail.getVerifyToken().equals(request.getVerifyToken())) {
             throw new VerifyTokenUnmatchedException();
         }
 
+        // 블로그명 중복 체크
+        if (blogRepository.existsByBlogName(request.getBlogName())) {
+            throw new BlogNameDuplicatedException();
+        }
+
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
 
         // 사용자 생성
-        User user = userRepository.save(request.toUserEntity(passwordEncoder));
+        User user = userRepository.save(request.toUserEntity(encodedPassword));
+
         userRoleRepository.save(
                 UserRole.builder()
                         .user(user)
                         .role("ROLE_USER")
                         .build()
         );
-
-        if (blogRepository.existsByBlogName(request.getBlogName())) {
-            throw new BlogNameDuplicatedException();
-        }
 
         // 사용자 블로그 생성
         blogRepository.save(request.toBlogEntity(user));
@@ -102,7 +109,10 @@ public class AuthService {
         if (!StringUtils.hasText(token)) {
             return 0L;
         }
-        return userRepository.findByEmail(jwtTokenProvider.getUserPk(jwtTokenProvider.resolveToken(token))).orElseThrow(UserNotFoundException::new).getId();
+        return userRepository
+                .findByEmail(jwtTokenProvider.getUserPk(jwtTokenProvider.resolveToken(token)))
+                .orElseThrow(UserNotFoundException::new)
+                .getId();
     }
 
 
@@ -112,7 +122,7 @@ public class AuthService {
             throw new EmailDuplicatedException();
         }
 
-        String verifyCode = RandomStringUtils.randomAlphanumeric(6).toUpperCase(); // 6자리 랜덤 문자열 생성
+        String verifyCode = authorizationCodeGenerator.generate(6, AuthorizationCodeCase.UPPER_CASE); // 6자리 랜덤 문자열 생성
 
         // Redis에 이메일 및 인증 코드 저장
         emailVerifyCodeRepository.save(
@@ -125,10 +135,11 @@ public class AuthService {
 
         // 유저에게 인증 이메일 전송
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+
         simpleMailMessage.setTo(request.getEmail());
         simpleMailMessage.setSubject("PlogCareers 회원가입 인증 메일입니다.");
-        // TODO: 이메일 내용 html화 하고, 꾸미기
-        simpleMailMessage.setText("인증번호는 " + verifyCode + " 입니다.");
+        simpleMailMessage.setText("인증번호는 " + verifyCode + " 입니다."); // TODO: 이메일 내용 html화 하고, 꾸미기
+
         javaMailSender.send(simpleMailMessage);
     }
 
@@ -142,7 +153,7 @@ public class AuthService {
         // 이메일 인증 코드 정보 삭제
         emailVerifyCodeRepository.delete(emailVerifyCode);
 
-        String verifyToken = RandomStringUtils.randomAlphanumeric(20);
+        String verifyToken = authorizationCodeGenerator.generate(20, AuthorizationCodeCase.NONE);
         // 인증된 이메일 정보 저장
         verifiedEmailRepository.save(
                 VerifiedEmail.builder()
@@ -165,7 +176,7 @@ public class AuthService {
         }
 
         // 인증 코드 생성
-        String verifyCode = RandomStringUtils.randomAlphanumeric(6).toUpperCase(); // 6자리 랜덤 문자열 생성
+        String verifyCode = authorizationCodeGenerator.generate(6, AuthorizationCodeCase.UPPER_CASE); // 6자리 대문자 랜덤 문자열 생성
 
         // Redis에 이메일 및 인증 코드 저장
         emailVerifyCodeRepository.save(
@@ -196,7 +207,7 @@ public class AuthService {
         emailVerifyCodeRepository.delete(emailVerifyCode);
 
         // 비밀번호 변경 인증 토큰 생성
-        String verifyToken = RandomStringUtils.randomAlphanumeric(20);
+        String verifyToken = authorizationCodeGenerator.generate(20, AuthorizationCodeCase.NONE);
         // 비밀번호 변경 토큰 정보 저장
         verifiedEmailRepository.save(
                 VerifiedEmail.builder()
@@ -223,6 +234,9 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(UserNotFoundException::new);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
+
+        // 비밀번호 변경 인증 토큰 정보 삭제
+        verifiedEmailRepository.delete(verifiedEmail);
     }
 
     public void updateUserProfile(Long loginedUserID, UpdateUserProfileRequest request) {

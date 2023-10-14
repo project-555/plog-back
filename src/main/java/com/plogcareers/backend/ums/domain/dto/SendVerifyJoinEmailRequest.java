@@ -2,6 +2,7 @@ package com.plogcareers.backend.ums.domain.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Builder
 public class SendVerifyJoinEmailRequest {
     @Email
     @NotNull
