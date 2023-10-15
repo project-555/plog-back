@@ -7,7 +7,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
-import static com.plogcareers.backend.blog.repository.VPostingRepositorySupportTest.postgres;
+import static com.plogcareers.backend.blog.repository.postgres.BaseRepositorySupportTest.postgres;
 
 @TestConfiguration
 public class DatabaseTestConfig {
