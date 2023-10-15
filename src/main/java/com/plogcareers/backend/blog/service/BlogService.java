@@ -12,6 +12,7 @@ import com.plogcareers.backend.blog.repository.postgres.TagRepository;
 import com.plogcareers.backend.ums.domain.dto.CheckBlogNameExistRequest;
 import com.plogcareers.backend.ums.exception.BlogNameDuplicatedException;
 import com.plogcareers.backend.ums.exception.NotProperAuthorityException;
+import io.netty.util.internal.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -65,16 +66,16 @@ public class BlogService {
         }
 
         // 카테고리 중복 체크
-        if (request.getCategoryName() != null && !request.getCategoryName().isEmpty() && categoryRepositorySupport.existsDuplicatedCategory(request.getBlogID(), request.getCategoryID(), request.getCategoryName())) {
+        if (!StringUtil.isNullOrEmpty(request.getCategoryName()) && categoryRepositorySupport.existsDuplicatedCategory(request.getBlogID(), request.getCategoryID(), request.getCategoryName())) {
             throw new CategoryDuplicatedException();
         }
 
 
         // 파라미터의 값이 없으면 기존 값을 유지한다.
-        if (request.getCategoryName() != null && !request.getCategoryName().isEmpty()) {
+        if (!StringUtil.isNullOrEmpty(request.getCategoryName())) {
             category.setCategoryName(request.getCategoryName());
         }
-        if (request.getCategoryDesc() != null && !request.getCategoryDesc().isEmpty()) {
+        if (!StringUtil.isNullOrEmpty(request.getCategoryDesc())) {
             category.setCategoryDesc(request.getCategoryDesc());
         }
 
