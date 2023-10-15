@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,9 +20,7 @@ public class VPostingRepositorySupportTest extends BaseRepositorySupportTest {
 
     @Autowired
     TestEntityManager testEntityManager;
-
     VPostingRepositorySupport vPostingRepositorySupport;
-
     @Autowired
     private BlogRepository blogRepository;
     @Autowired
@@ -35,6 +35,13 @@ public class VPostingRepositorySupportTest extends BaseRepositorySupportTest {
     private PostingRepository postingRepository;
     @Autowired
     private PostingTagRepository postingTagRepository;
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
 
     @BeforeEach
     void init() {
