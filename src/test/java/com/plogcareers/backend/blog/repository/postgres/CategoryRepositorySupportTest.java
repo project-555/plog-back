@@ -11,12 +11,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
-class CategoryRepositortySupportTest extends BaseRepositorySupportTest {
+class CategoryRepositorySupportTest extends BaseRepositorySupportTest {
 
 
     @Autowired
     TestEntityManager testEntityManager;
-    CategoryRepositortySupport categoryRepositortySupport;
+    CategoryRepositorySupport categoryRepositorySupport;
     @Autowired
     BlogRepository blogRepository;
     @Autowired
@@ -31,7 +31,17 @@ class CategoryRepositortySupportTest extends BaseRepositorySupportTest {
 
     @BeforeEach
     void init() {
-        categoryRepositortySupport = new CategoryRepositortySupport(testEntityManager.getEntityManager());
+        categoryRepositorySupport = new CategoryRepositorySupport(testEntityManager.getEntityManager());
+    }
+
+    @Test
+    @DisplayName("existsDuplicatedCategory - 빈 카테고리 명으로 요청")
+    void existsDuplicatedCategory_0() {
+        // given + when
+        boolean result = categoryRepositorySupport.existsDuplicatedCategory(1L, 2L, "");
+
+        // then
+        Assertions.assertFalse(result);
     }
 
     @Test
@@ -42,7 +52,7 @@ class CategoryRepositortySupportTest extends BaseRepositorySupportTest {
         Category category = categoryRepository.save(Category.builder().id(1L).categoryName("test").categoryDesc("test").blog(blog).build());
 
         // when
-        boolean result = categoryRepositortySupport.existsDuplicatedCategory(blog.getId(), 2L, category.getCategoryName());
+        boolean result = categoryRepositorySupport.existsDuplicatedCategory(blog.getId(), 2L, category.getCategoryName());
 
         // then
         Assertions.assertTrue(result);
@@ -56,7 +66,7 @@ class CategoryRepositortySupportTest extends BaseRepositorySupportTest {
         Category category = categoryRepository.save(Category.builder().id(1L).categoryName("test").categoryDesc("test").blog(blog).build());
 
         // when
-        boolean result = categoryRepositortySupport.existsDuplicatedCategory(blog.getId(), category.getId(), category.getCategoryName());
+        boolean result = categoryRepositorySupport.existsDuplicatedCategory(blog.getId(), category.getId(), category.getCategoryName());
 
         // then
         Assertions.assertFalse(result);
@@ -70,7 +80,7 @@ class CategoryRepositortySupportTest extends BaseRepositorySupportTest {
         Category category = categoryRepository.save(Category.builder().id(1L).categoryName("test").categoryDesc("test").blog(blog).build());
 
         // when
-        boolean result = categoryRepositortySupport.existsDuplicatedCategory(blog.getId(), 2L, "test2");
+        boolean result = categoryRepositorySupport.existsDuplicatedCategory(blog.getId(), 2L, "test2");
 
         // then
         Assertions.assertFalse(result);

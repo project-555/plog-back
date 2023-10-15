@@ -4,6 +4,7 @@ import com.plogcareers.backend.blog.domain.entity.Category;
 import com.plogcareers.backend.blog.domain.entity.QCategory;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.netty.util.internal.StringUtil;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +21,7 @@ public class CategoryRepositorySupport extends QuerydslRepositorySupport {
     }
 
     public Boolean existsDuplicatedCategory(Long blogID, Long categoryID, String categoryName) {
-        if (categoryName == null || categoryName.trim().isEmpty()) {
+        if (StringUtil.isNullOrEmpty(categoryName)) {
             return false;
         }
         BooleanBuilder where = new BooleanBuilder();
