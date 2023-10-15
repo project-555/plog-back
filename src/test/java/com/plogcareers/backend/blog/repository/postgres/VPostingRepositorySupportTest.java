@@ -1,42 +1,26 @@
-package com.plogcareers.backend.blog.repository;
+package com.plogcareers.backend.blog.repository.postgres;
 
-import com.plogcareers.backend.DBConnectionProvider;
-import com.plogcareers.backend.blog.domain.entity.Tag;
 import com.plogcareers.backend.blog.domain.entity.*;
-import com.plogcareers.backend.blog.repository.postgres.*;
-import com.plogcareers.backend.config.DatabaseTestConfig;
 import com.plogcareers.backend.ums.domain.entity.User;
 import com.plogcareers.backend.ums.repository.postgres.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.ContextConfiguration;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
-@Testcontainers
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@RequiredArgsConstructor
-@ContextConfiguration(classes = DatabaseTestConfig.class)
-public class VPostingRepositorySupportTest {
+public class VPostingRepositorySupportTest extends BaseRepositorySupportTest {
 
-    @Container
-    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-            "postgres:15.2"
-    ).withInitScript("schema-postgres.sql");
     @Autowired
     TestEntityManager testEntityManager;
+
     VPostingRepositorySupport vPostingRepositorySupport;
+
     @Autowired
     private BlogRepository blogRepository;
     @Autowired
@@ -51,25 +35,6 @@ public class VPostingRepositorySupportTest {
     private PostingRepository postingRepository;
     @Autowired
     private PostingTagRepository postingTagRepository;
-
-    @BeforeAll
-    static void beforeAll() {
-        postgres.start();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        postgres.stop();
-    }
-
-    @BeforeEach
-    void setUp() {
-        DBConnectionProvider connectionProvider = new DBConnectionProvider(
-                postgres.getJdbcUrl(),
-                postgres.getUsername(),
-                postgres.getPassword()
-        );
-    }
 
     @BeforeEach
     void init() {
