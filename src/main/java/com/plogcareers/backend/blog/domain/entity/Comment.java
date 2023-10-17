@@ -18,6 +18,8 @@ import java.util.ArrayList;
 @DynamicInsert
 @Builder
 @Setter
+@EqualsAndHashCode
+@ToString
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

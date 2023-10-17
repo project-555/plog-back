@@ -25,7 +25,7 @@ public class CommentRepositorySupport extends QuerydslRepositorySupport {
 
         return queryFactory.selectFrom(comment)
                 .where(comment.postingID.eq(postingId))
-                .orderBy(comment.parentCommentID.asc().nullsFirst())
+                .orderBy(comment.parentCommentID.desc().nullsFirst(), comment.id.asc())
                 .fetch();
     }
 }
