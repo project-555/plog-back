@@ -93,4 +93,19 @@ class DynamicLogContextTest {
         // then
         Assertions.assertEquals(",\"key2\":\"value2\"", got);
     }
+
+    @Test
+    @DisplayName("setFixedValueExists() should set fixedValueExists to the given value")
+    void test_6() {
+        // given
+        dynamicLogContext.setFixedValueExists(false);
+        dynamicLogContext.addField("key", "value");
+        dynamicLogContext.addField("key2", "value2");
+
+        // when
+        String got = dynamicLogContext.toString();
+
+        // then
+        Assertions.assertEquals("\"key\":\"value\",\"key2\":\"value2\"", got);
+    }
 }
