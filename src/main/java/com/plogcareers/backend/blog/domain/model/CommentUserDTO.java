@@ -15,4 +15,6 @@ public class CommentUserDTO {
     Long userID;
     @ApiModelProperty(value = "덧글을 남긴 유저 닉네임")
     String nickname;
+    @ApiModelProperty(value = "덧글을 남긴 유저 프로필 이미지 URL")
+    String profileImageURL;
 }

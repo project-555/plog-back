@@ -3,7 +3,6 @@ package com.plogcareers.backend.ums.domain.entity;
 import com.plogcareers.backend.blog.domain.dto.BlogUserDTO;
 import com.plogcareers.backend.blog.domain.dto.HomePostingUserDTO;
 import com.plogcareers.backend.blog.domain.entity.Blog;
-import com.plogcareers.backend.blog.domain.model.CommentUserDTO;
 import com.plogcareers.backend.blog.domain.model.PostingStarUserDTO;
 import com.plogcareers.backend.blog.domain.model.SubscribeUserDTO;
 import com.plogcareers.backend.ums.domain.dto.GetUserResponse;
@@ -87,14 +86,11 @@ public class User implements UserDetails {
                 .collect(Collectors.toList());
     }
 
-    public CommentUserDTO toCommentUserDTO() {
-        return CommentUserDTO.builder().userID(this.id).nickname(this.nickname).build();
-    }
-
     public PostingStarUserDTO toPostingStarUserDTO() {
         return PostingStarUserDTO.builder()
                 .id(this.id)
                 .nickname(this.nickname)
+                .profileImageURL(this.profileImageURL)
                 .build();
     }
 
