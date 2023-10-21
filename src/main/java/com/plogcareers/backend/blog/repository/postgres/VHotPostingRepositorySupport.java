@@ -1,8 +1,12 @@
 package com.plogcareers.backend.blog.repository.postgres;
 
-import com.plogcareers.backend.blog.domain.entity.*;
+import com.plogcareers.backend.blog.domain.entity.Posting;
+import com.plogcareers.backend.blog.domain.entity.QVHotPosting;
+import com.plogcareers.backend.blog.domain.entity.State;
+import com.plogcareers.backend.blog.domain.entity.VHotPosting;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.netty.util.internal.StringUtil;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -26,19 +30,28 @@ public class VHotPostingRepositorySupport extends QuerydslRepositorySupport {
                 )
                 .where(
                         ltPostingID(lastCursorID),
+                        containsTitleOrMdContent(search),
                         qHotPosting.stateID.eq(State.PUBLIC),
-                        qHotPosting.blogID.in(followingIDs),
-                        qHotPosting.title.upper().contains(search.toUpperCase())
-                                .or(qHotPosting.mdContent.upper().contains(search.toUpperCase()))
+                        qHotPosting.blogID.in(followingIDs)
                 )
                 .limit(pageSize)
                 .fetch();
+    }
+
+    private BooleanExpression containsTitleOrMdContent(String search) {
+        if (StringUtil.isNullOrEmpty(search)) {
+            return null;
+        }
+
+        return qHotPosting.title.upper().contains(search.toUpperCase())
+                .or(qHotPosting.mdContent.upper().contains(search.toUpperCase()));
     }
 
     private BooleanExpression ltPostingID(Long cursorID) {
         if (cursorID == null) {
             return null;
         }
+        
         return qHotPosting.id.lt(cursorID);
     }
 }
