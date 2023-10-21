@@ -42,7 +42,7 @@ public class ErrorLogFormatter {
         try {
             return mapper.writeValueAsString(map);
         } catch (JsonProcessingException e) {
-            return "\"N/A\""; // 발생 가능성 없음.
+            return String.format("\"%s\"", "JsonProcessingException"); // 발생 가능성 없음.
         }
 
     }
