@@ -2,10 +2,7 @@ package com.plogcareers.backend.blog.domain.dto;
 
 import com.plogcareers.backend.blog.domain.model.PostingStarDTO;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,6 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@EqualsAndHashCode
 public class ListPostingStarsResponse {
 
     @ApiModelProperty(value = "포스팅 좋아요 리스트")

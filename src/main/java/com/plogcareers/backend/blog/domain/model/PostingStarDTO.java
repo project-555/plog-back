@@ -8,6 +8,7 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
+@EqualsAndHashCode
 public class PostingStarDTO {
     @ApiModelProperty(value = "포스팅 좋아요 ID")
     private Long id;

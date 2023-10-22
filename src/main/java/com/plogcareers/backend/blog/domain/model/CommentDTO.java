@@ -3,10 +3,7 @@ package com.plogcareers.backend.blog.domain.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.plogcareers.backend.blog.domain.entity.Comment;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,6 +14,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class CommentDTO {
     @ApiModelProperty(value = "댓글 ID")
