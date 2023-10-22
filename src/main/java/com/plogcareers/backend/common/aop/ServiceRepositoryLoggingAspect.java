@@ -106,7 +106,7 @@ public class ServiceRepositoryLoggingAspect {
         MDC.put("exception", errorLogFormatter.json(exception));
 
         // FIXME: 로그 필드를 동적으로 설정하기
-        MDC.put("request", "null");
+        MDC.put("request", argumentLogFormatter.json(getParameterNames(joinPoint), getArgValues(joinPoint)));
         MDC.put("response", "null");
 
         // 에러 타입에 따른 로그 레벨 지정
