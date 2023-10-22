@@ -27,6 +27,24 @@ public class ControllerLoggingFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(ControllerLoggingFilter.class);
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
+    private void logByStatus(int status) {
+        switch (status / 100) {
+            case 2:
+                logger.info("success");
+                break;
+            case 3:
+                logger.info("redirect");
+                break;
+            case 4:
+                logger.warn("client error");
+                break;
+            case 5:
+                logger.error("internal server error");
+                break;
+            default:
+                break;
+        }
+    }
 
     @SneakyThrows
     @Override
@@ -45,11 +63,13 @@ public class ControllerLoggingFilter extends OncePerRequestFilter {
         }
 
         ContentCachingRequestWrapper cachingRequestWrapper = new ContentCachingRequestWrapper(request);
+        String requestBody = new String(cachingRequestWrapper.getContentAsByteArray());
+
         ContentCachingResponseWrapper cachingResponseWrapper = new ContentCachingResponseWrapper(response);
 
         filterChain.doFilter(cachingRequestWrapper, cachingResponseWrapper);
 
-        String requestBody = new String(cachingRequestWrapper.getContentAsByteArray());
+
         String responseBody = new String(cachingResponseWrapper.getContentAsByteArray());
 
         // 로깅 필드 지정
@@ -61,22 +81,7 @@ public class ControllerLoggingFilter extends OncePerRequestFilter {
         MDC.put("status", String.valueOf(cachingResponseWrapper.getStatus()));
 
         // 응답에 따른 에러 로그 레벨 지정
-        switch (cachingResponseWrapper.getStatus() / 100) {
-            case 2:
-                logger.info("success");
-                break;
-            case 3:
-                logger.info("redirect");
-                break;
-            case 4:
-                logger.warn("client error");
-                break;
-            case 5:
-                logger.error("intenal server error");
-                break;
-            default:
-                break;
-        }
+        logByStatus(cachingResponseWrapper.getStatus());
 
         // 로그 필드 초기화
         MDC.clear();
