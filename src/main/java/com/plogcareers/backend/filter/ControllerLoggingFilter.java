@@ -32,10 +32,11 @@ public class ControllerLoggingFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(request);
+        // requestID 가져오기
         String requestID = request.getHeader("requestID");
-        String caller = "";
 
         // caller 가져오기
+        String caller = "";
         if (handlerExecutionChain != null) {
             Object handler = handlerExecutionChain.getHandler();
             if (handler instanceof HandlerMethod handlerMethod) {
@@ -45,6 +46,8 @@ public class ControllerLoggingFilter extends OncePerRequestFilter {
 
         ContentCachingRequestWrapper cachingRequestWrapper = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper cachingResponseWrapper = new ContentCachingResponseWrapper(response);
+
+        filterChain.doFilter(cachingRequestWrapper, cachingResponseWrapper);
 
         String requestBody = new String(cachingRequestWrapper.getContentAsByteArray());
         String responseBody = new String(cachingResponseWrapper.getContentAsByteArray());
@@ -57,12 +60,28 @@ public class ControllerLoggingFilter extends OncePerRequestFilter {
         MDC.put("responseBody", StringUtil.isNullOrEmpty(responseBody) ? "null" : responseBody);
         MDC.put("status", String.valueOf(cachingResponseWrapper.getStatus()));
 
-        logger.info("");
+        // 응답에 따른 에러 로그 레벨 지정
+        switch (cachingResponseWrapper.getStatus() / 100) {
+            case 2:
+                logger.info("success");
+                break;
+            case 3:
+                logger.info("redirect");
+                break;
+            case 4:
+                logger.warn("client error");
+                break;
+            case 5:
+                logger.error("intenal server error");
+                break;
+            default:
+                break;
+        }
 
+        // 로그 필드 초기화
         MDC.clear();
 
-        filterChain.doFilter(cachingRequestWrapper, cachingResponseWrapper);
-
+        // 응답 본문 복사
         cachingResponseWrapper.copyBodyToResponse();
     }
 }
