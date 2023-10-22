@@ -60,6 +60,18 @@ public class ErrorResponse {
         return new ResponseEntity<>(errorResponse, errorCode.getStatus());
     }
 
+    public static ResponseEntity<ErrorResponse> toInternalErrorResponseEntity() {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .code(ErrorCode.ERR_INTERNAL_ERROR.getCode())
+                .message(ErrorCode.ERR_INTERNAL_ERROR.getMessage())
+                .build();
+
+        errorResponse.setTimestamp(LocalDateTime.now());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     //BindingResult.getFieldErrors() 메소드를 통해 전달받은 fieldErrors
     public void setUserFieldErrors(List<FieldError> fieldErrors) {
         userFieldErrors = fieldErrors.stream().map(fieldError -> new UserFieldError(
