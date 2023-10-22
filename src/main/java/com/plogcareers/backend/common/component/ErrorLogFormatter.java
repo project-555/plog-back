@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 @RequiredArgsConstructor
@@ -37,7 +38,9 @@ public class ErrorLogFormatter {
             map.put("message", errorCode.getMessage());
         } else {
             map.put("code", "INTERNAL_ERROR");
-            map.put("stacktrace", exception.getStackTrace());
+            // stacktrace는 근접한 5개의 스택만 보여준다.
+            StackTraceElement[] stacktrace = Arrays.stream(exception.getStackTrace()).toList().subList(0, 5).toArray(StackTraceElement[]::new);
+            map.put("stacktrace", stacktrace);
         }
         try {
             return mapper.writeValueAsString(map);
