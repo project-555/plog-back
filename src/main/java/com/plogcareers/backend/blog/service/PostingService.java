@@ -193,9 +193,6 @@ public class PostingService {
 
     public void updateComment(Long blogID, Long postingID, Long commentID, Long loginedUserID, UpdateCommentRequest request) throws NotProperAuthorityException, PostingNotFoundException, CommentNotFoundException {
         Blog blog = blogRepository.findById(blogID).orElseThrow(BlogNotFoundException::new);
-        if (!blog.isOwner(loginedUserID)) {
-            throw new NotProperAuthorityException();
-        }
 
         Posting posting = postingRepository.findById(postingID).orElseThrow(PostingNotFoundException::new);
         if (!blog.hasPosting(posting)) {
@@ -203,6 +200,9 @@ public class PostingService {
         }
 
         Comment comment = commentRepository.findById(commentID).orElseThrow(CommentNotFoundException::new);
+        if (!comment.isOwner(loginedUserID)) {
+            throw new NotProperAuthorityException();
+        }
         if (!posting.hasComment(comment)) {
             throw new PostingCommentUnmatchedException();
         }

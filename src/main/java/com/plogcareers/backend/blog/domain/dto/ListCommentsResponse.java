@@ -3,15 +3,17 @@ package com.plogcareers.backend.blog.domain.dto;
 import com.plogcareers.backend.blog.domain.entity.Comment;
 import com.plogcareers.backend.blog.domain.model.CommentDTO;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
+@EqualsAndHashCode
 public class ListCommentsResponse {
     @ApiModelProperty(value = "댓글 리스트")
     List<CommentDTO> comments = new ArrayList<>();

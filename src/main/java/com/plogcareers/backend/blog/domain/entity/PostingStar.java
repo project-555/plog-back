@@ -13,6 +13,7 @@ import javax.persistence.*;
 @Table(name = "posting_star", schema = "plog_blog")
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class PostingStar {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
