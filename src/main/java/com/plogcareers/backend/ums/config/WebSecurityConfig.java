@@ -41,6 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests() // 요청에 대한 사용권한 체크
                 .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/blogs/check-blog-name-exist").permitAll() // 블로그 명 중복 체크는 예외로 요청을 허용
                 .antMatchers(HttpMethod.POST, "/blogs/**").hasRole("USER")
                 .antMatchers(HttpMethod.PUT, "/blogs/**").hasRole("USER")
                 .antMatchers(HttpMethod.PATCH, "/blogs/**").hasRole("USER")
