@@ -1,4 +1,4 @@
-package com.plogcareers.backend.filter;
+package com.plogcareers.backend.common.filter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;

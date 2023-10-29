@@ -1,4 +1,4 @@
-package com.plogcareers.backend.filter;
+package com.plogcareers.backend.common.filter;
 
 import io.netty.util.internal.StringUtil;
 import lombok.RequiredArgsConstructor;

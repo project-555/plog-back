@@ -1,4 +1,4 @@
-package com.plogcareers.backend.filter;
+package com.plogcareers.backend.common.filter;
 
 
 import io.netty.util.internal.StringUtil;
@@ -16,10 +16,8 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
@@ -86,7 +84,7 @@ public class ControllerLoggingFilter extends OncePerRequestFilter {
 
     @SneakyThrows
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
         // 요청 핸들러 조회
         HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(request);
 
