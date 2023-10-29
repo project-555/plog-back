@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
@@ -18,6 +19,7 @@ public class UpdateUserProfileRequest {
     @ApiModelProperty(value = "수정을 요청하는 사용자 ID")
     private Long userID;
 
+    @NotEmpty
     @ApiModelProperty(value = "수정할 닉네임")
     private String nickName;
 
