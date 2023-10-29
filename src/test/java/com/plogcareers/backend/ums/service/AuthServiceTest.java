@@ -368,7 +368,7 @@ public class AuthServiceTest {
                         .nickname("test_nickname")
                         .password("test_password")
                         .blogName("test_blog")
-                        .sex(Sex.MALE)
+                        .sex(Sex.MALE.name())
                         .build()
         );
 

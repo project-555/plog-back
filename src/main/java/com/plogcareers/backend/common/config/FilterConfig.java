@@ -1,7 +1,7 @@
 package com.plogcareers.backend.common.config;
 
-import com.plogcareers.backend.filter.ControllerLoggingFilter;
-import com.plogcareers.backend.filter.InjectRequestIDFilter;
+import com.plogcareers.backend.common.filter.ControllerLoggingFilter;
+import com.plogcareers.backend.common.filter.InjectRequestIDFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;

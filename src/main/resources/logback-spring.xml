@@ -24,7 +24,7 @@
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
-    <logger name="com.plogcareers.backend.filter.ControllerLoggingFilter" level="INFO" additivity="false">
+    <logger name="com.plogcareers.backend.common.filter.ControllerLoggingFilter" level="INFO" additivity="false">
         <appender-ref ref='filterAppender'/>
     </logger>
     <logger name='com.plogcareers.backend.common.aop.ServiceRepositoryLoggingAspect' level='INFO' additivity='false'>
