@@ -21,13 +21,13 @@ public class UpdateUserProfileRequest {
 
     @NotEmpty
     @ApiModelProperty(value = "수정할 닉네임")
-    private String nickName;
+    private String nickname;
 
     @ApiModelProperty(value = "수정할 프로필 사진")
     private String profileImageURL;
 
     public User toUserEntity(User user) {
-        user.setNickname(this.nickName);
+        user.setNickname(this.nickname);
         user.setProfileImageURL(this.profileImageURL);
         return user;
     }
